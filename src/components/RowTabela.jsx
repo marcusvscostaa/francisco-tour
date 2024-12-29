@@ -26,7 +26,7 @@ export default function RowTabela(props){
         console.log(props.pagamentoreservas)
         {document.getElementById("demoPropv").innerHTML = scriptHtml}
         if(pagamentoreservas){
-            pagamentoreservas.map((item) => { item.id_reserva === props.reserva.idR&&setPagamento(item);})
+           setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
             
         }
         console.log(props.tour)
@@ -60,11 +60,11 @@ export default function RowTabela(props){
                 <td><a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#modal${props.reserva.idR}`}>
                
                     <i className="fas fa-money-bill-wave mr-2"></i>Ver &nbsp;
-                    {valorTotal > pagamento.valorPago && pagamento.valorPago > 0 && <span class="badge badge-pill badge-warning">Pendente</span>}
-                    {valorTotal <= pagamento.valorPago && <span class="badge badge-pill badge-success">Pago</span>}
-                    {pagamento.valorPago === 0 || pagamento.valorPago == ''&& <span class="badge badge-pill badge-danger">Não Pago</span>}
+                    {valorTotal > pagamento && pagamento > 0 && <span class="badge badge-pill badge-warning">Pendente</span>}
+                    {valorTotal <= pagamento && <span class="badge badge-pill badge-success">Pago</span>}
+                    {pagamento === 0 || pagamento == ''&& <span class="badge badge-pill badge-danger">Não Pago</span>}
                     </a>
-                    <ModalPagamento id={props.reserva.idR} pagamento={pagamento} valorTotal={valorTotal}/>
+                    <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} valorTotal={valorTotal}/>
                     </td>
                 <td className="text-left"><i className="fas fa-phone"></i> {props.reserva.telefone}</td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
@@ -75,7 +75,7 @@ export default function RowTabela(props){
                     </a>
                 <div id='demoPropv'></div>
                 </td>
-                <td><span class="badge badge-pill badge-danger">Cancelado</span></td>
+                <td><span class="badge badge-pill badge-success">confirmado</span></td>
                 <td>
                     <button type="button" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
                     <button type="button" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>

@@ -1,6 +1,8 @@
 import { use, useEffect, useState } from "react"
+import ReactDOM from 'react-dom';
 import TourPag from "./TourPag"
 import { uid } from 'uid/secure';
+import ModalComprovanre from "./ModalComprovante";
 const idPagamento = uid().toString();
 
 export default function ModalPagamento(props){
@@ -8,10 +10,18 @@ export default function ModalPagamento(props){
     const [showAddPag, setShowAddPag] = useState(false)
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
-    
-    useEffect(()=>{ 
-        console.log(props.pagamento.valorPago)
+    const [dadosPag, setDadosPag] = useState(props.pagamento.filter((item) => item.id_reserva === props.id));
+
+    const scriptHtml = `<script type="text/javascript">
+     { $(document).ready(() => {
+        $('[data-toggle="popover"]').popover();
+      })
+        }
+    </script>`
+    useEffect(()=>{
+        console.log(props.pagamento.valorPago)       
     },[])
+    
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -47,33 +57,67 @@ export default function ModalPagamento(props){
                     </button>
                 </div>
                 <div className="modal-body">
-                    {props.pagamento.valorPago?
+                    {props.pagamento?
                     <>
-                    <table className="table table-sm table-bordered " style={{pointerEvents: 'none'}}>
+                    <table className="table table-sm table-bordered ">
                     <thead>
                         <tr>
                             <th>Data</th>
-                            <th>Valor Total</th>
                             <th>Valor Pago</th>
-                            <th>Valor Restante</th>
                             <th>Comentário</th>
+                            <th>Comprovante</th>
+                            <th>Opções</th>
                         </tr>
                     </thead>
                     <tbody>
+                    {dadosPag&&dadosPag.map( (pag) =>
                         <tr>
-                            <td>{props.pagamento.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
-                            <td>R$: {props.valorTotal.toFixed(2).replace(".", ",")}</td>
-                            <td>R$: {props.pagamento.valorPago.toFixed(2).replace(".", ",")}</td>
-                            <td>R$: {(props.valorTotal - props.pagamento.valorPago).toFixed(2).replace(".", ",")}</td>
-                            <td>{props.pagamento.comentario}</td>
+                            <td>{pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
+                            <td>R$: {pag.valorPago.toFixed(2).replace(".", ",")}</td>
+                            <td>
+                                <a type="button" class="btn btn-sm btn-light" data-trigger="hover" data-toggle="popover" title="Comentário" data-content={pag.comentario}>
+                                    <i className="fas fa-comment-alt"></i>
+                                        &nbsp; Ver
+                                </a>
+                                <div id='demoPropv'></div>
+                            </td>
+                            <td>
+                                <a type="button" class="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${pag.idPagamento}`}>
+                                    <i className="fas fa-image	"></i>
+                                    &nbsp; Ver
+                                </a>
+                            </td>
+                            <td>
+                                <button type="button" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                                <button type="button" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                            </td>
                         </tr>
+                        )}
                     </tbody>
                     </table>
-                    <h5>Comprovante</h5>
-                    <div>
-                    <a style={show === false?{cursor: "zoom-in"}:{cursor: "zoom-out"}} onClick={ () => show === true?setShow(false):setShow(true)}>
-                    <img className="img-fluid img-thumbnail rounded" style={show === false?{width: '300px'}:{width: '100%'}} src={`http://127.0.0.1:8800/imagem/${props.pagamento.idPagamento}`}/>
-                    </a>
+                    <div  class="row ">
+                    <div className=" border rounded mb-3 ml-auto col-4 mr-3">
+                        <div class=" mb-4">
+                                <div class="">
+                                    <ul class="list-group list-group-flush">
+                                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                            Valor Total
+                                            <span>R$ {(props.valorTotal).toFixed(2).replace(".", ",")}</span>
+                                        </li>
+                                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                            Valor Pago
+                                            <span>R$ {dadosPag.reduce((sum, item) =>sum + item.valorPago,0).toFixed(2).replace(".", ",")}</span>
+                                        </li>
+                                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                            <div>
+                                                <strong>Valor Restante</strong>                                            
+                                            </div>
+                                        <span><strong>R$ {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0)).toFixed(2).replace(".", ",")}</strong></span>
+                                        </li>
+                                    </ul>
+                            </div>
+                        </div>
+                    </div>
                     </div>
                     </>
                     :<p>Não há dados de pagamento</p> }
