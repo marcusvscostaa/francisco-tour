@@ -48,7 +48,6 @@ export default function Tabela(props) {
                         >
                             <thead>
                                 <tr>
-                                    <th>ID</th>
                                     <th>Nome</th>
                                     <th>Email</th>
                                     <th>Telefone</th>
@@ -58,12 +57,12 @@ export default function Tabela(props) {
                                     <th>Zona</th>
                                     <th>Pais Origem</th>
                                     <th>Idioma</th>
+                                    <th>Configurações</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {(clients.map((client, index) => {
                                     return (<tr key={index}>
-                                        <td>{client.id}</td>
                                         <td>{client.nome}</td>
                                         <td>{client.email}</td>
                                         <td>{client.telefone}</td>
@@ -73,6 +72,11 @@ export default function Tabela(props) {
                                         <td>{client.zona}</td>
                                         <td>{client.paisOrigem}</td>
                                         <td>{client.idioma}</td>
+                                        <td>
+                                            <button type="button" title="Reserva" className="btn btn-sm mr-2 btn-primary"><i className="fas fa-hot-tub"></i></button>
+                                            <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                                            <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                        </td>
 
                                     </tr>)
                                 }))}

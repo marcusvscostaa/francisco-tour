@@ -13,32 +13,28 @@ export default function TourForm(props){
     const updateNumAdultos = (e) =>{
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, numeroAdultos: e.target.value, valorTotal: ((props.calculoTotal[props.numbTour - 1].numeroAdultos)*(props.calculoTotal[props.numbTour - 1].valorAdulto))
-                +((props.calculoTotal[props.numbTour - 1].numeroCriancas)*(props.calculoTotal[props.numbTour - 1].valorCriancas)) } : tour
+            tour.id === props.numbTour ? { ...tour, numeroAdultos: e.target.value}:tour
           );
         props.atualizarValor(dadosAtualizados)
     }
     const updateValorAdultos = (e) =>{
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, valorAdulto: e.target.value, valorTotal: ((props.calculoTotal[props.numbTour - 1].numeroAdultos)*(props.calculoTotal[props.numbTour - 1].valorAdulto))
-                +((props.calculoTotal[props.numbTour - 1].numeroCriancas)*(props.calculoTotal[props.numbTour - 1].valorCriancas)) } : tour
+            tour.id === props.numbTour ? { ...tour, valorAdulto: e.target.value}:tour
           );
         props.atualizarValor(dadosAtualizados)
     }
     const updateNumCriancas = (e) =>{
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, numeroCriancas: e.target.value, valorTotal: ((props.calculoTotal[props.numbTour - 1].numeroAdultos)*(props.calculoTotal[props.numbTour - 1].valorAdulto))
-                +((props.calculoTotal[props.numbTour - 1].numeroCriancas)*(props.calculoTotal[props.numbTour - 1].valorCriancas)) } : tour
+            tour.id === props.numbTour ? { ...tour, numeroCriancas: e.target.value}: tour
           );
         props.atualizarValor(dadosAtualizados)
     }
     const updateValorCriancas = (e) =>{
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, valorCriancas: e.target.value, valorTotal: ((props.calculoTotal[props.numbTour - 1].numeroAdultos)*(props.calculoTotal[props.numbTour - 1].valorAdulto))
-                +((props.calculoTotal[props.numbTour - 1].numeroCriancas)*(props.calculoTotal[props.numbTour - 1].valorCriancas)) } : tour
+            tour.id === props.numbTour ? { ...tour, valorCriancas: e.target.value}: tour
           );
         props.atualizarValor(dadosAtualizados)
     }

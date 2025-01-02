@@ -10,10 +10,10 @@ import ModalPagamento from "./ModalPagamento";
 
 export default function RowTabela(props){
     const [collapseTable, setCollapseTable] = useState(false);
-    const [pagamento, setPagamento] = useState({valorPago: false});
+    const [pagamento, setPagamento] = useState(false);
     const pagamentoreservas = (props.pagamentoreservas);
     const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
-    const valorTotal = dadosTour.reduce((sum, element)=> sum + element.valorTotal, 0);
+    const valorTotal = dadosTour.reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     console.log(pagamentoreservas.valorPago)
     const myRef = useRef(null);
     const scriptHtml = `<script type="text/javascript">
@@ -27,10 +27,10 @@ export default function RowTabela(props){
         {document.getElementById("demoPropv").innerHTML = scriptHtml}
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
-            
+        
         }
         console.log(props.tour)
-        console.log(pagamento)
+        console.log(props.reserva.nome, pagamento,  dadosTour)
     },[])
 
     return (
@@ -62,7 +62,7 @@ export default function RowTabela(props){
                     <i className="fas fa-money-bill-wave mr-2"></i>Ver &nbsp;
                     {valorTotal > pagamento && pagamento > 0 && <span class="badge badge-pill badge-warning">Pendente</span>}
                     {valorTotal <= pagamento && <span class="badge badge-pill badge-success">Pago</span>}
-                    {pagamento === 0 || pagamento == ''&& <span class="badge badge-pill badge-danger">Não Pago</span>}
+                    {pagamento == 0 && dadosTour != '' && <span class="badge badge-pill badge-danger">Não Pago</span>}
                     </a>
                     <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} valorTotal={valorTotal}/>
                     </td>
@@ -77,8 +77,8 @@ export default function RowTabela(props){
                 </td>
                 <td><span class="badge badge-pill badge-success">confirmado</span></td>
                 <td>
-                    <button type="button" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                    <button type="button" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                    <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                    <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                 </td>
             </tr>
                 {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} nomeCliente={props.reserva.nome}/>}

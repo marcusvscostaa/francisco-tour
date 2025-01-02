@@ -3,7 +3,7 @@ import TourForm from "./TourForm";
 import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
-import { data } from "jquery";
+
 const idReserva = uid().toString();
 const idCliente = uid(16).toString();
 const idPagamento = uid().toString();
@@ -26,6 +26,7 @@ export default function Formulario(props) {
         { id: "5", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
         { id: "6", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 }
     ]);
+    const [modalStatus, setModalStatus] = useState([]);
 
     useEffect(() => {
         console.log(dadosTour)
@@ -61,7 +62,7 @@ export default function Formulario(props) {
         setaddPag(!addPag);
         console.log(numberTour)
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
        
         console.log(formFields)
@@ -69,63 +70,90 @@ export default function Formulario(props) {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formFields)
-        };
+        };        
 
-        fetch('http://localhost:8800/cliente', requestOptions)
-            .then( response => console.log(response.json()))
-            .then(data => {
-                const reqReserva = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        id: idReserva,
-                        id_cliente: idCliente,
-                        comentario: comentarioReserva,
-                        valorTotal: (calculoTotal[0].numeroAdultos * calculoTotal[0].valorAdulto + calculoTotal[0].numeroCriancas * calculoTotal[0].valorCriancas
-                            + calculoTotal[1].numeroAdultos * calculoTotal[1].valorAdulto + calculoTotal[1].numeroCriancas * calculoTotal[1].valorCriancas
-                            + calculoTotal[2].numeroAdultos * calculoTotal[2].valorAdulto + calculoTotal[2].numeroCriancas * calculoTotal[2].valorCriancas
-                            + calculoTotal[3].numeroAdultos * calculoTotal[3].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[3].valorCriancas
-                            + calculoTotal[4].numeroAdultos * calculoTotal[4].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[4].valorCriancas
-                            + calculoTotal[5].numeroAdultos * calculoTotal[5].valorAdulto + calculoTotal[5].numeroCriancas * calculoTotal[5].valorCriancas)
-                    })
-                }
-                fetch('http://localhost:8800/reserva', reqReserva)
-                .then( response => console.log(response.json()))
-                
-                numberTour.map((tour) => {        
-                    const requestOps = {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(calculoTotal[tour-1])
-                };
-                    fetch('http://localhost:8800/tour', requestOps)
-                    .then( response => console.log(response.json()))
-                    console.log(calculoTotal[tour-1])
-                })
-                const formData = new FormData();
-                if(imagemUpload){formData.append("comprovante", imagemUpload)}
-                if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
-                if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
-                if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
-                if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
-                if(dadosPagForm.valorRestante){formData.append("valorRestante", dadosPagForm.valorRestante);}
-                if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-                if(idPagamento){formData.append("idPagamento", idPagamento);}
-            
+        const response = await fetch('http://localhost:8800/cliente', requestOptions).catch((e) => console.log(e));
+            console.log(response)
+            if(response.ok){
+                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Cliente Salvo Com Sucesso"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)          
+            }else{
+                setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
+            }
 
-                const reqPagReserva = {
-                    method: 'POST',
-                    body: formData
-                }
-                fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
-                .then( response => console.log(response.json()))
+        const reqReserva = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                id: idReserva,
+                id_cliente: idCliente,
+                comentario: comentarioReserva
             })
+        }   
+        const response1 = await fetch('http://localhost:8800/reserva', reqReserva)
+        .catch( e => console.log(e))
+        if(response1.ok){
+            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Reserva Salva Com Sucesso"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)          
+        }else{
+            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erros ao Salvar Reserva"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
+        }
+  
+           
+        numberTour.map(async (tour) => {        
+            const requestOps = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(calculoTotal[tour-1])
+        };
+            
+        const response2 = await fetch('http://localhost:8800/tour', requestOps)
+            .catch( e => console.log(e))
+            console.log(calculoTotal[tour-1])
+            if(response2.ok){
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Tour Salvo Com Sucesso"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)          
+            }else{
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erros ao Salvar Tour"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
+            }
+    
+            
+        })
+               
+        const formData = new FormData();
+        if(imagemUpload){formData.append("comprovante", imagemUpload)}
+        if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
+        if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+        if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+        if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+        if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+        if(idPagamento){formData.append("idPagamento", idPagamento);}
+    
+
+        const reqPagReserva = {
+            method: 'POST',
+            body: formData
+        }
+    
+        const response4 = await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
+        .catch( e => console.log(e))
+        if(response4.ok){
+            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Pagamento Salvo Com Sucesso"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)          
+        }else{
+            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: false, message: "Erros ao Salvar Pagamento"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+        }
 
         
     }
 
     return (
         <div className="card shadow mb-4">
+            <ModalAlert dados={modalStatus} />
             {props.modalAlert}
             <div className="card-header py-3">
                 <h6 className="m-0 font-weight-bold text-primary">Dados do Cliente</h6>

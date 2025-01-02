@@ -28,10 +28,10 @@ export default function RowTabelaChild(props){
                                 <td>R$: {dataT.valorAdulto.toFixed(2).replace(".", ",")}</td>
                                 <td>{dataT.quantidadeCriancas}</td>
                                 <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
-                                <td>R$: {dataT.valorTotal.toFixed(2).replace(".", ",")}</td>
+                                <td>R$: {((dataT.quantidadeAdultos*dataT.valorAdulto) +( dataT.quantidadeCriancas*dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
                                 <td>
-                                <button type="button" class="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
+                                <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                                 </td>
                         </tr>
                     </tbody>

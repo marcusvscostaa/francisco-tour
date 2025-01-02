@@ -59,9 +59,11 @@ export default function ModalPagamento(props){
                 <div className="modal-body">
                     {props.pagamento?
                     <>
+                    <div className="table-responsive">
                     <table className="table table-sm table-bordered ">
                     <thead>
                         <tr>
+                            <th>ID Pagamento</th>
                             <th>Data</th>
                             <th>Valor Pago</th>
                             <th>Comentário</th>
@@ -72,6 +74,7 @@ export default function ModalPagamento(props){
                     <tbody>
                     {dadosPag&&dadosPag.map( (pag) =>
                         <tr>
+                            <td>{pag.idPagamento}</td>
                             <td>{pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
                             <td>R$: {pag.valorPago.toFixed(2).replace(".", ",")}</td>
                             <td>
@@ -95,6 +98,7 @@ export default function ModalPagamento(props){
                         )}
                     </tbody>
                     </table>
+                    </div>
                     <div  class="row ">
                     <div className=" border rounded mb-3 ml-auto col-4 mr-3">
                         <div class=" mb-4">
