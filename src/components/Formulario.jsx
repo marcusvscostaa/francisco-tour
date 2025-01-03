@@ -72,16 +72,21 @@ export default function Formulario(props) {
             body: JSON.stringify(formFields)
         };        
 
-        const response = await fetch('http://localhost:8800/cliente', requestOptions).catch((e) => console.log(e));
-            console.log(response)
-            if(response.ok){
-                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Cliente Salvo Com Sucesso"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)          
-            }else{
-                setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente"}])
+        await fetch('http://localhost:8800/cliente', requestOptions)
+        .then(response => {
+            if (!response.ok) {
+                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
+                throw new Error('Network response was not ok');
             }
-
+            return response.json();
+          }).then(data => {
+            setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
+          }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)})
+ 
         const reqReserva = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -91,15 +96,21 @@ export default function Formulario(props) {
                 comentario: comentarioReserva
             })
         }   
-        const response1 = await fetch('http://localhost:8800/reserva', reqReserva)
-        .catch( e => console.log(e))
-        if(response1.ok){
-            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Reserva Salva Com Sucesso"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)          
-        }else{
-            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erros ao Salvar Reserva"}])
+        await fetch('http://localhost:8800/reserva', reqReserva)
+        .then(response => {
+            if (!response.ok) {
+                setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+          }).then(data => {
+            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
-        }
+          }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)})
+ 
   
            
         numberTour.map(async (tour) => {        
@@ -109,44 +120,57 @@ export default function Formulario(props) {
             body: JSON.stringify(calculoTotal[tour-1])
         };
             
-        const response2 = await fetch('http://localhost:8800/tour', requestOps)
-            .catch( e => console.log(e))
-            console.log(calculoTotal[tour-1])
-            if(response2.ok){
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Tour Salvo Com Sucesso"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)          
-            }else{
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erros ao Salvar Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
+        await fetch('http://localhost:8800/tour', requestOps)
+        .then(response => {
+            if (!response.ok) {
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
+                throw new Error('Network response was not ok');
             }
+            return response.json();
+          }).then(data => {
+            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
+          }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)})
     
             
         })
                
-        const formData = new FormData();
-        if(imagemUpload){formData.append("comprovante", imagemUpload)}
-        if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
-        if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
-        if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
-        if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
-        if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-        if(idPagamento){formData.append("idPagamento", idPagamento);}
+        
+        if(addPag){
+            const formData = new FormData();
+            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
+            if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+            if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+            if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+            if(idPagamento){formData.append("idPagamento", idPagamento);}
+        
     
+            const reqPagReserva = {
+                method: 'POST',
+                body: formData
+            }
 
-        const reqPagReserva = {
-            method: 'POST',
-            body: formData
-        }
-    
-        const response4 = await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
-        .catch( e => console.log(e))
-        if(response4.ok){
-            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Pagamento Salvo Com Sucesso"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)          
-        }else{
-            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: false, message: "Erros ao Salvar Pagamento"}])
+            await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
+            .then(response => {
+            if (!response.ok) {
+                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+            }).then(data => {
+            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+            }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)})
         }
+        
 
         
     }
@@ -163,31 +187,31 @@ export default function Formulario(props) {
                 <form className="row g-3 needs-validation" onSubmit={handleSubmit}>
                     <div className="col-md-5 mb-3">
                         <label for="validationCustom01" className="form-label" >Nome Completo</label>
-                        <input type="text" className="form-control form-control-sm" name="nome" id="validationCustom01" onChange={handleChange}  required/>
+                        <input type="text" value={formFields.nome} className="form-control form-control-sm" name="nome" id="validationCustom01" onChange={handleChange}  required/>
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputTelefone" className="form-label">Telefone</label>
-                        <input type="tel" className="form-control form-control-sm" name="telefone" id="validationCustom02" onChange={handleChange}  required/>
+                        <input type="tel" value={formFields.telefone} className="form-control form-control-sm" name="telefone" id="validationCustom02" onChange={handleChange}  required/>
                     </div>
                     <div className="col-md-5 mb-3">
                         <label for="inputEmail" className="form-label aria-describedby">Email</label>
-                        <input type="email" className="form-control form-control-sm" name="email" id="inputEmail" onChange={handleChange} required/>
+                        <input type="email" value={formFields.email} className="form-control form-control-sm" name="email" id="inputEmail" onChange={handleChange} required/>
                     </div>
                     <div className="col-md-5 mb-3">
                         <label for="inputEndereco" className="form-label">Endereço</label>
-                        <input type="text" className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleChange}  required/>
+                        <input type="text" value={formFields.endereco} className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleChange}  required/>
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputHotel" className="form-label">Hotel</label>
-                        <input type="text" className="form-control form-control-sm" name="hotel" id="inputHotel" onChange={handleChange} />
+                        <input type="text" value={formFields.hotel} className="form-control form-control-sm" name="hotel" id="inputHotel" onChange={handleChange} />
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputQuarto" className="form-label">Nº Quarto</label>
-                        <input type="number" className="form-control form-control-sm" name="quarto" id="inputQuarto" onChange={handleChange} />
+                        <input type="number" value={formFields.quarto} className="form-control form-control-sm" name="quarto" id="inputQuarto" onChange={handleChange} />
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="zona">Zona</label>
-                        <select className="form-control form-control-sm" name="zona" id="zona" onChange={handleChange}>
+                        <select value={formFields.zona} className="form-control form-control-sm" name="zona" id="zona" onChange={handleChange}>
                             <option selected>Zona...</option>
                             <option value="Centro">Centro</option>
                             <option value="Bairro">Bairro</option>
@@ -196,7 +220,7 @@ export default function Formulario(props) {
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="paisOrigem">Pais de Origem</label>
-                        <select className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
+                        <select value={formFields.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
                             <option value="" disabled selected>Pais...</option>
                             <option value="Brasil">Brasil</option>
                             <option value="Chile">Chile</option>
@@ -205,7 +229,7 @@ export default function Formulario(props) {
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="idioma">Idioma</label>
-                        <select className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
+                        <select value={formFields.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
                             <option value='' disabled selected>Idioma...</option>
                             <option value="Português">Português</option>
                             <option value="Espanhol">Espanhol</option>
@@ -214,7 +238,7 @@ export default function Formulario(props) {
                     </div>
                     <div class="col-md-6 mb-3">
                         <label for="validationTextarea">Comentário da Reserva</label>
-                        <textarea class="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>
+                        <textarea value={comentarioReserva} class="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>
                     </div>
 
                     {numberTour.map((index) => {
@@ -250,23 +274,14 @@ export default function Formulario(props) {
                         <div className="ml-auto mb-2">
                             <p class="text-gray-900 text-lg mb-2">
                                 Valor total: R$ {
-                                    (calculoTotal[0].numeroAdultos * calculoTotal[0].valorAdulto + calculoTotal[0].numeroCriancas * calculoTotal[0].valorCriancas
-                                        + calculoTotal[1].numeroAdultos * calculoTotal[1].valorAdulto + calculoTotal[1].numeroCriancas * calculoTotal[1].valorCriancas
-                                        + calculoTotal[2].numeroAdultos * calculoTotal[2].valorAdulto + calculoTotal[2].numeroCriancas * calculoTotal[2].valorCriancas
-                                        + calculoTotal[3].numeroAdultos * calculoTotal[3].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[3].valorCriancas
-                                        + calculoTotal[4].numeroAdultos * calculoTotal[4].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[4].valorCriancas
-                                        + calculoTotal[5].numeroAdultos * calculoTotal[5].valorAdulto + calculoTotal[5].numeroCriancas * calculoTotal[5].valorCriancas).toFixed(2).replace(".", ",")
+                                    calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0).toFixed(2).replace(".", ",")
                                 }
                             </p>
                         </div>
                     </div>
                     {
-                        addPag == true ? <TourPag dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={(calculoTotal[0].numeroAdultos * calculoTotal[0].valorAdulto + calculoTotal[0].numeroCriancas * calculoTotal[0].valorCriancas
-                            + calculoTotal[1].numeroAdultos * calculoTotal[1].valorAdulto + calculoTotal[1].numeroCriancas * calculoTotal[1].valorCriancas
-                            + calculoTotal[2].numeroAdultos * calculoTotal[2].valorAdulto + calculoTotal[2].numeroCriancas * calculoTotal[2].valorCriancas
-                            + calculoTotal[3].numeroAdultos * calculoTotal[3].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[3].valorCriancas
-                            + calculoTotal[4].numeroAdultos * calculoTotal[4].valorAdulto + calculoTotal[4].numeroCriancas * calculoTotal[4].valorCriancas
-                            + calculoTotal[5].numeroAdultos * calculoTotal[5].valorAdulto + calculoTotal[5].numeroCriancas * calculoTotal[5].valorCriancas)} /> : null
+                        addPag == true ? <TourPag dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
+                            calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0)} /> : null
                     }
                     <div className="w-100 d-flex ml-3 mr-3 mb-3">
                         <div className=" ml-auto mt-auto">

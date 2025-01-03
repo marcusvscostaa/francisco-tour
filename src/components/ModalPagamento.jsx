@@ -133,7 +133,7 @@ export default function ModalPagamento(props){
                         </div>}
                     {showAddPag&& 
                     <form onSubmit={handleSubmit}>
-                        <TourPag  valorTotal = {props.valorTotal} dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm}/>
+                        <TourPag  valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0))} dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm}/>
                         <div className="d-flex" >
                             <button className="ml-auto btn btn-primary" type="submit">
                                 Enviar

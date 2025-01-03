@@ -22,6 +22,7 @@ export default function TourForm(props){
         const dadosAtualizados = dados.map((tour) =>
             tour.id === props.numbTour ? { ...tour, valorAdulto: e.target.value}:tour
           );
+        console.log(dados)  
         props.atualizarValor(dadosAtualizados)
     }
     const updateNumCriancas = (e) =>{
@@ -42,13 +43,6 @@ export default function TourForm(props){
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
             tour.id === props.numbTour ? { ...tour, tour: e.target.value } : tour
-          );
-        props.atualizarValor(dadosAtualizados)
-    }
-    const updateidReserva = (e) =>{
-        const dados =  props.calculoTotal;
-        const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, id_reserva: e.target.value } : tour
           );
         props.atualizarValor(dadosAtualizados)
     }
@@ -83,11 +77,11 @@ export default function TourForm(props){
               <div className="row g-3">
                   <div className="col-md-2 mb-3">
                       <label for="inputDate" className="form-label">Data</label>
-                      <input type="date" className="form-control form-control-sm" onChange={updateDataTour} id="inputDate" required/>
+                      <input type="date" value={props.calculoTotal.data} className="form-control form-control-sm" onChange={updateDataTour} id="inputDate" required/>
                   </div>
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="destino">Destino</label>
-                      <select className="form-control form-control-sm" id="detino" onChange={updateDestino} required>
+                      <select  value={props.calculoTotal.destino} className="form-control form-control-sm" id="detino" onChange={updateDestino} required>
                           <option value='' disabled selected>Destino...</option>
                           <option value="1">One</option>
                           <option value="2">Two</option>
@@ -96,32 +90,30 @@ export default function TourForm(props){
                   </div>
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="tour" >Tour</label>
-                      <select className="form-control form-control-sm" id="tour" onChange={updateTour} required>
+                      <select value={props.calculoTotal.tour} className="form-control form-control-sm" id="tour" onChange={updateTour} required>
                           <option value='' disabled selected>Tour..</option>
                           <option value="1">One</option>
                           <option value="2">Two</option>
                           <option value="3">Three</option>
                       </select>
                   </div>
-                  <h1>{}</h1>
                   <div className="col-md-2 mb-3">
                         <label for="numeroAdultos" className="form-label">Nº Adultos</label>
-                        <input type="number" className="form-control form-control-sm" id="numeroAdultos" placeholder='0' onChange={updateNumAdultos} required />
+                        <input value={props.calculoTotal.numeroAdultos} type="number" className="form-control form-control-sm" id="numeroAdultos" placeholder='0' onChange={updateNumAdultos} required />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="valorAdulto" className="form-label">Valor Adulto</label>
-                        <input type="number" className="form-control form-control-sm" id="valorAdulto" placeholder='0' onChange={updateValorAdultos} required />
+                        <input value={props.calculoTotal.valorAdulto} type="number" className="form-control form-control-sm" id="valorAdulto" placeholder='0' onChange={updateValorAdultos} required />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="numeroCriancas" className="form-label">Nº Crianças</label>
-                        <input type="number" className="form-control form-control-sm" id="numeroCriancas" placeholder='0' onChange={updateNumCriancas} />
+                        <input value={props.calculoTotal.numeroCriancas} type="number" className="form-control form-control-sm" id="numeroCriancas" placeholder='0' onChange={updateNumCriancas} />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="valorCriancas" className="form-label">Valor Criança</label>
-                        <input type="number" className="form-control form-control-sm" id="valorCriancas" placeholder='0' onChange={updateValorCriancas} />
+                        <input value={props.calculoTotal.valorCriancas} type="number" className="form-control form-control-sm" id="valorCriancas" placeholder='0' onChange={updateValorCriancas} />
                   </div>
               </div>
-              <butto type="submit">Enviar</butto>    
           </div>
           </div>
           <p>{props.idReserva}</p>

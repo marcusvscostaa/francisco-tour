@@ -1,4 +1,5 @@
 import ReactDOM from 'react-dom';
+import ModalAdicionarTour from './ModalAdiconarTour';
 
 export default function RowTabelaChild(props){
     return ReactDOM.createPortal(
@@ -40,7 +41,8 @@ export default function RowTabelaChild(props){
                 }
             </table>
             <div className='w-100 d-flex'>
-                <button type="button" class="ml-auto btn btn-sm btn-info">Adiconar Tour</button>
+                <button type="button" data-toggle="modal" data-target={`#modalT${props.idcollapseTable.substr(0, 11)}`} class="ml-auto btn btn-sm btn-info">Adiconar Tour</button>
+                <ModalAdicionarTour id={props.idcollapseTable.substr(0, 11)} />
             </div>
             </td>
        ,

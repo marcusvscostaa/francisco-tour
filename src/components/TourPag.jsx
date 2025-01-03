@@ -61,12 +61,12 @@ export default function TourPag(props){
               <div className="row g-3">
                   <div className="col-md-2 mb-3">
                       <label for="inputDate" className="form-label">Data</label>
-                      <input type="date" name="dataPagamento" onChange={handleChange} className="form-control form-control-sm" id="inputDate" required/>
+                      <input type="date" name="dataPagamento" value={props.dadosPagForm.dataPagamento} onChange={handleChange} className="form-control form-control-sm" id="inputDate" required/>
                   </div>
                 
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="formaPag">Forma de Pagamento</label>
-                      <select className="form-control form-control-sm" onChange={handleChange} name="formaPagamento" id="formaPag">
+                      <select className="form-control form-control-sm" value={props.dadosPagForm.formaPagamento} onChange={handleChange} name="formaPagamento" id="formaPag">
                           <option selected>Escolher...</option>
                           <option value="1">One</option>
                           <option value="2">Two</option>
@@ -76,18 +76,18 @@ export default function TourPag(props){
                   
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
-                      <label for="numeroAdultos" className="form-label">Valor Total</label>
+                      <label for="numeroAdultos" className="form-label">Valor Devido</label>
                       <input type="number"  value={props.valorTotal.toFixed(2)} className="form-control form-control-sm disabledTextInput" id="numeroAdultos"/>
                       </fieldset>
                   </div>
                   <div className="col-md-2 mb-3">
                       <label for="valorAdulto" className="form-label">Valor Pago</label>
-                      <input type="number" name="valorPago" className="form-control form-control-sm" onChange={handleChange}  id="valorAdulto" required/>
+                      <input type="number" name="valorPago" value={props.dadosPagForm.valorPago} className="form-control form-control-sm" onChange={handleChange}  id="valorAdulto" required/>
                   </div>
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
                       <label for="numeroCriancas" className="form-label">Valor Restante</label>
-                      <input type="number" name="valorRestante" className="form-control form-control-sm" onChange={handleChange} value={(props.valorTotal - valorRestante)} id="numeroCriancas"/>
+                      <input type="number" name="valorRestante" className="form-control form-control-sm" onChange={handleChange} value={(props.valorTotal - valorRestante).toFixed(2)} id="numeroCriancas"/>
                       </fieldset>
                   </div>
                   <div className="col-md-3 mb-3">
@@ -100,7 +100,7 @@ export default function TourPag(props){
                   </div>
                   <div class="col-md-6 mb-3">
                       <label for="validationTextarea">Comentário do Pagamento</label>
-                  <textarea name="comentario" class="form-control" onChange={handleChange} id="validationTextarea" placeholder="Escreva um comentário..."></textarea>
+                  <textarea name="comentario" value={props.dadosPagForm.comentario} class="form-control" onChange={handleChange} id="validationTextarea" placeholder="Escreva um comentário..."></textarea>
                   </div>
               </div>
               </form>

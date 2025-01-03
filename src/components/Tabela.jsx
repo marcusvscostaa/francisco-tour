@@ -73,7 +73,7 @@ export default function Tabela(props) {
                                         <td>{client.paisOrigem}</td>
                                         <td>{client.idioma}</td>
                                         <td>
-                                            <button type="button" title="Reserva" className="btn btn-sm mr-2 btn-primary"><i className="fas fa-hot-tub"></i></button>
+                                            <button type="button" title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i class="fa fa-plus"></i></button>
                                             <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
                                             <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                                         </td>
