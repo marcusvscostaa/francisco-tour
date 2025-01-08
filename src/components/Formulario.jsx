@@ -14,7 +14,8 @@ export default function Formulario(props) {
     const [addTour, setaddTour] = useState(2);
     const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
-    const [formFields, setFormFields] = useState(false);
+    const [formReserva, setformReserva] = useState({id: idReserva, id_cliente: idCliente});
+    const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: idReserva});
@@ -53,9 +54,17 @@ export default function Formulario(props) {
         const name = event.target.name
         const value = event.target.value
 
-        const newFormFields = { ...formFields, id: idCliente ,[name]: value }
+        const newformCliente = { ...formCliente, id: idCliente ,[name]: value }
 
-        setFormFields(newFormFields)
+        setformCliente(newformCliente)
+    }
+    function handleReserva(event) {
+        const name = event.target.name
+        const value = event.target.value
+
+        const newformReservsa = { ...formReserva,[name]: value }
+
+        setformReserva(newformReservsa)
     }
     
     const pagCheck = () => {
@@ -65,24 +74,26 @@ export default function Formulario(props) {
     const handleSubmit = async (e) => {
         e.preventDefault();
        
-        console.log(formFields)
+        console.log(formCliente)
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formFields)
+            body: JSON.stringify(formCliente)
         };        
 
         await fetch('http://localhost:8800/cliente', requestOptions)
         .then(response => {
+            if(response.status === 200) {
+                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
+                },10000)
+            }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
-          }).then(data => {
-            setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)})
@@ -90,23 +101,21 @@ export default function Formulario(props) {
         const reqReserva = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                id: idReserva,
-                id_cliente: idCliente,
-                comentario: comentarioReserva
-            })
+            body: JSON.stringify(formReserva)
         }   
         await fetch('http://localhost:8800/reserva', reqReserva)
         .then(response => {
+            if(response.status === 200) {
+                setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
+                },10000)
+            }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
-          }).then(data => {
-            setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)})
@@ -122,15 +131,18 @@ export default function Formulario(props) {
             
         await fetch('http://localhost:8800/tour', requestOps)
         .then(response => {
+            if(response.status === 200) {
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                    window.location.reload();
+                },10000)
+            }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
-          }).then(data => {
-            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)})
@@ -157,15 +169,16 @@ export default function Formulario(props) {
 
             await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
             .then(response => {
+            if(response.status === 200){
+                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+            }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
-            }).then(data => {
-            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
             }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)})
@@ -187,31 +200,31 @@ export default function Formulario(props) {
                 <form className="row g-3 needs-validation" onSubmit={handleSubmit}>
                     <div className="col-md-5 mb-3">
                         <label for="validationCustom01" className="form-label" >Nome Completo</label>
-                        <input type="text" value={formFields.nome} className="form-control form-control-sm" name="nome" id="validationCustom01" onChange={handleChange}  required/>
+                        <input type="text" value={formCliente.nome} className="form-control form-control-sm" name="nome" id="validationCustom01" onChange={handleChange}  required/>
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputTelefone" className="form-label">Telefone</label>
-                        <input type="tel" value={formFields.telefone} className="form-control form-control-sm" name="telefone" id="validationCustom02" onChange={handleChange}  required/>
+                        <input type="tel" value={formCliente.telefone} className="form-control form-control-sm" name="telefone" id="validationCustom02" onChange={handleChange}  required/>
                     </div>
                     <div className="col-md-5 mb-3">
                         <label for="inputEmail" className="form-label aria-describedby">Email</label>
-                        <input type="email" value={formFields.email} className="form-control form-control-sm" name="email" id="inputEmail" onChange={handleChange} required/>
+                        <input type="email" value={formCliente.email} className="form-control form-control-sm" name="email" id="inputEmail" onChange={handleChange} required/>
                     </div>
                     <div className="col-md-5 mb-3">
                         <label for="inputEndereco" className="form-label">Endereço</label>
-                        <input type="text" value={formFields.endereco} className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleChange}  required/>
+                        <input type="text" value={formReserva.endereco} className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleReserva}  required/>
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputHotel" className="form-label">Hotel</label>
-                        <input type="text" value={formFields.hotel} className="form-control form-control-sm" name="hotel" id="inputHotel" onChange={handleChange} />
+                        <input type="text" value={formReserva.hotel} className="form-control form-control-sm" name="hotel" id="inputHotel" onChange={handleReserva} />
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputQuarto" className="form-label">Nº Quarto</label>
-                        <input type="number" value={formFields.quarto} className="form-control form-control-sm" name="quarto" id="inputQuarto" onChange={handleChange} />
+                        <input type="number" value={formReserva.quarto} className="form-control form-control-sm" name="quarto" id="inputQuarto" onChange={handleReserva} />
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="zona">Zona</label>
-                        <select value={formFields.zona} className="form-control form-control-sm" name="zona" id="zona" onChange={handleChange}>
+                        <select value={formReserva.zona} className="form-control form-control-sm" name="zona" id="zona" onChange={handleReserva}>
                             <option selected>Zona...</option>
                             <option value="Centro">Centro</option>
                             <option value="Bairro">Bairro</option>
@@ -220,7 +233,7 @@ export default function Formulario(props) {
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="paisOrigem">Pais de Origem</label>
-                        <select value={formFields.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
+                        <select value={formCliente.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
                             <option value="" disabled selected>Pais...</option>
                             <option value="Brasil">Brasil</option>
                             <option value="Chile">Chile</option>
@@ -229,7 +242,7 @@ export default function Formulario(props) {
                     </div>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="idioma">Idioma</label>
-                        <select value={formFields.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
+                        <select value={formCliente.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
                             <option value='' disabled selected>Idioma...</option>
                             <option value="Português">Português</option>
                             <option value="Espanhol">Espanhol</option>

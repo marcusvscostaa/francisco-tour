@@ -4,7 +4,17 @@ import ModalAdicionarTour from './ModalAdiconarTour';
 export default function RowTabelaChild(props){
     return ReactDOM.createPortal(
             <td colSpan="9" className="bg-dark text-white noHover" >
-                <p>Tours: {props.nomeCliente}</p>
+                <div>
+
+                <address>
+                    {props.reserva.endereco && <> <span class="badge badge-secondary"><i className='fas fa-map-marker-alt'></i> Endereço: </span> {props.reserva.endereco}<br/></>}
+                    {props.reserva.hotel && <> <span class="badge badge-secondary"><i className='fas fa-hotel'></i> Hotel: </span> {props.reserva.hotel}</>}
+                    {props.reserva.quarto && <> <span class="badge badge-secondary"><i className='fas fa-bed'></i> Quarto: </span> {props.reserva.quarto}<br/></>}
+                    {props.reserva.zona && <> <span class="badge badge-secondary"><i className='fas fa-city'></i> Zona: </span> {props.reserva.zona}<br/></>}
+                </address>
+                </div>
+
+        
             <table className="table table-sm table-dark noHover" style={{pointerEvents: 'none'}}>
                             <thead>
                                 <tr>

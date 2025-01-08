@@ -78,7 +78,7 @@ export default function TabelaReservas(props) {
                                 <tr>
                                     <th>Nome</th>
                                     <th>Data</th>
-                                    <th>Tour</th>
+                                    <th>Tour/Endereço</th>
                                     <th>Pagamento</th>
                                     <th className="text-left">Telefone</th>
                                     <th>Valor Total</th>
@@ -88,7 +88,7 @@ export default function TabelaReservas(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {reservas.map((reserva, index) => {                                   
+                                {reservas&&reservas.map((reserva, index) => {                                   
                                     return (<RowTabela pagamentoreservas={pagamentoreservas} reserva={reserva} index={index} tour={tour} />)   
                                 })}
                             </tbody>

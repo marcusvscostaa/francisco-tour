@@ -14,6 +14,7 @@ export default function RowTabela(props){
     const pagamentoreservas = (props.pagamentoreservas);
     const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
     const valorTotal = dadosTour.reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
+    const [statusReserva, setStatusReserva] = useState('Confirmado')
     console.log(pagamentoreservas.valorPago)
     const myRef = useRef(null);
     const scriptHtml = `<script type="text/javascript">
@@ -24,6 +25,17 @@ export default function RowTabela(props){
     </script>`
     useEffect(()=>{
         console.log(props.pagamentoreservas)
+        if(props.reserva.status){          
+            if(props.reserva.status === 'Confirmado'){
+                setStatusReserva({status: 'Confirmado', class: "fas fa-check-circle text-success"})
+            }else if(props.reserva.status === 'Pendente'){
+                setStatusReserva({status: 'Pendente', class: "fas fa-exclamation-triangle text-warning"})
+            }else if(props.reserva.status === 'Cancelado'){
+                setStatusReserva({status: 'Cancelado', class: "fas fa-ban text-danger"})
+            }            
+        }else{
+            setStatusReserva({status: 'Confirmado', class: "fas fa-check-circle text-success"})
+        }
         {document.getElementById("demoPropv").innerHTML = scriptHtml}
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
@@ -32,6 +44,26 @@ export default function RowTabela(props){
         console.log(props.tour)
         console.log(props.reserva.nome, pagamento,  dadosTour)
     },[])
+
+    const handleChange = (e)=> {
+        const requestOptions = {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
+        };
+        fetch('http://localhost:8800/mudarStatus', requestOptions)
+        .then(response => {
+            console.log(response)
+          })   
+        if(e.target.value === 'Confirmado'){
+            setStatusReserva({status: e.target.value, class: "fas fa-check-circle text-success"})
+        }else if(e.target.value === 'Pendente'){
+            setStatusReserva({status: e.target.value, class: "fas fa-exclamation-triangle text-warning"})
+        }else if(e.target.value === 'Cancelado'){
+            setStatusReserva({status: e.target.value, class: "fas fa-ban text-danger"})
+        }
+    }
+
 
     return (
         <Fragment>
@@ -58,30 +90,40 @@ export default function RowTabela(props){
                         {/* collapseTable && <RowTabelaChild dadosTour={dadosTour} collapseTable={collapseTable} idcollapseTable={idcollapseTable}/> */}    
                 </td>
                 <td><a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#modal${props.reserva.idR}`}>
-               
-                    <i className="fas fa-money-bill-wave mr-2"></i>Ver &nbsp;
-                    {valorTotal > pagamento && pagamento > 0 && <span class="badge badge-pill badge-warning">Pendente</span>}
-                    {valorTotal <= pagamento && <span class="badge badge-pill badge-success">Pago</span>}
-                    {pagamento == 0 && dadosTour != '' && <span class="badge badge-pill badge-danger">Não Pago</span>}
+                    {valorTotal > pagamento && pagamento > 0 && <span className="badge badge-pill badge-warning">Pendente</span>}
+                    {valorTotal <= pagamento && <span className="badge badge-pill badge-success">Pago</span>}
+                    {pagamento == 0 && dadosTour != '' && <span className="badge badge-pill badge-danger">Não Pago</span>}
                     </a>
                     <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} valorTotal={valorTotal}/>
                     </td>
                 <td className="text-left"><i className="fas fa-phone"></i> {props.reserva.telefone}</td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
                 <td>
-                    <a type="button" class="btn btn-sm btn-light" data-trigger="hover" data-toggle="popover" title="Comentário" data-content={props.reserva.comentario}>
+                    <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="popover" title="Comentário" data-content={props.reserva.comentario}>
                     <i className="fas fa-comment-alt"></i>
                         &nbsp; Ver
                     </a>
                 <div id='demoPropv'></div>
                 </td>
-                <td><span class="badge badge-pill badge-success">confirmado</span></td>
                 <td>
-                    <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                    <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                    <div class="dropdown">
+                    
+                    <a type="button" data-toggle="dropdown" aria-expanded="false">
+                    <i title={statusReserva.status} className={statusReserva.class}></i>
+                    </a>
+                    <div style={{minWidth: "40px"}} class="dropdown-menu dropdown-menu-right">
+                        <button className="dropdown-item" value="Confirmado" onClick={handleChange}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
+                        <button className="dropdown-item" value="Pendente"   onClick={handleChange}><i className="fas fa-exclamation-triangle text-warning"></i> Pendente</button>
+                        <button className="dropdown-item" value="Cancelado"  onClick={handleChange}><i className="fas fa-ban text-danger"></i> Cancelado</button>
+                    </div>
+                    </div>                    
+                </td>
+                <td>
+                    <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                    <button type="button" title="Deletar" className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                 </td>
             </tr>
-                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} nomeCliente={props.reserva.nome}/>}
+                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} reserva={props.reserva}/>}
     </Fragment>
     )
 }

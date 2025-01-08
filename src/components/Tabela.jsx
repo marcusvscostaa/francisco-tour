@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../dataTable/dataTables.bootstrap4.min.css";
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
+import ModalAdiconarReserva from "./ModalAdiconarReserva";
 
 DataTable.use(DT);
 
@@ -50,11 +51,7 @@ export default function Tabela(props) {
                                 <tr>
                                     <th>Nome</th>
                                     <th>Email</th>
-                                    <th>Telefone</th>
-                                    <th>Endereço</th>
-                                    <th>Hotel</th>
-                                    <th>Quarto</th>
-                                    <th>Zona</th>
+                                    <th className="text-left">Telefone</th>
                                     <th>Pais Origem</th>
                                     <th>Idioma</th>
                                     <th>Configurações</th>
@@ -65,17 +62,14 @@ export default function Tabela(props) {
                                     return (<tr key={index}>
                                         <td>{client.nome}</td>
                                         <td>{client.email}</td>
-                                        <td>{client.telefone}</td>
-                                        <td>{client.endereco}</td>
-                                        <td>{client.hotel}</td>
-                                        <td>{client.quarto}</td>
-                                        <td>{client.zona}</td>
+                                        <td className="text-left">{client.telefone}</td>
                                         <td>{client.paisOrigem}</td>
                                         <td>{client.idioma}</td>
                                         <td>
-                                            <button type="button" title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i class="fa fa-plus"></i></button>
+                                            <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i class="fa fa-plus"></i></button>
                                             <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
                                             <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                            <ModalAdiconarReserva dados={client} id={client.id} />
                                         </td>
 
                                     </tr>)
