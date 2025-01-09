@@ -19,16 +19,20 @@ export default function ModalAdicionarTour(props){
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
             }).then(data => {
+                if(data){
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                    window.location.reload();
+                 },5000)
+                }
             }).catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)})
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)})
         }
     
     return(

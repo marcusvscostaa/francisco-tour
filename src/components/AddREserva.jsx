@@ -61,29 +61,7 @@ export default  function AddReserva(props){
         };
         const handleSubmit = async (e) => {
             e.preventDefault();
-           
-            console.log(formFields)
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(formFields)
-            };        
-    
-            await fetch('http://localhost:8800/cliente', requestOptions)
-            .then(response => {
-                if (!response.ok) {
-                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-              }).then(data => {
-                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
-              }).catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)})
-     
+                 
             const reqReserva = {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },

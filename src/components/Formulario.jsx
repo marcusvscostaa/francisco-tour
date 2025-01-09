@@ -14,7 +14,7 @@ export default function Formulario(props) {
     const [addTour, setaddTour] = useState(2);
     const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
-    const [formReserva, setformReserva] = useState({id: idReserva, id_cliente: idCliente});
+    const [formReserva, setformReserva] = useState({id: idReserva});
     const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
@@ -62,9 +62,13 @@ export default function Formulario(props) {
         const name = event.target.name
         const value = event.target.value
 
-        const newformReservsa = { ...formReserva,[name]: value }
+        const id = props.idCliente.status? props.idCliente.id: idCliente
+
+        const newformReservsa = { ...formReserva,[name]: value, id_cliente: id }
 
         setformReserva(newformReservsa)
+
+        console.log(formReserva)
     }
     
     const pagCheck = () => {
@@ -81,23 +85,28 @@ export default function Formulario(props) {
             body: JSON.stringify(formCliente)
         };        
 
-        await fetch('http://localhost:8800/cliente', requestOptions)
-        .then(response => {
-            if(response.status === 200) {
-                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
-                },10000)
-            }
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-          }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},10000)})
- 
+        if((!props.addReserva)){
+            await fetch('http://localhost:8800/cliente', requestOptions)
+            .then(response => {
+                if(response.status === 200) {
+                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
+                    },5000)
+                }
+                if (!response.ok) {
+                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},5000)
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+              }).catch(e => {
+                setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))},5000)})
+     
+        }
+
+        
+        
         const reqReserva = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -108,17 +117,17 @@ export default function Formulario(props) {
             if(response.status === 200) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                },10000)
+                },5000)
             }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},5000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},10000)})
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))},5000)})
  
   
            
@@ -135,17 +144,17 @@ export default function Formulario(props) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                     window.location.reload();
-                },10000)
+                },5000)
             }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)})
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)})
     
             
         })
@@ -171,17 +180,17 @@ export default function Formulario(props) {
             .then(response => {
             if(response.status === 200){
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
             }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
             }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},10000)})
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
         }
         
 
@@ -193,11 +202,13 @@ export default function Formulario(props) {
             <ModalAlert dados={modalStatus} />
             {props.modalAlert}
             <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Dados do Cliente</h6>
+                <h6 className="m-0 font-weight-bold text-primary">{props.title}</h6>
             </div>
             
             <div className="card-body">
                 <form className="row g-3 needs-validation" onSubmit={handleSubmit}>
+                    {!(props.addReserva)?
+                    <>
                     <div className="col-md-5 mb-3">
                         <label for="validationCustom01" className="form-label" >Nome Completo</label>
                         <input type="text" value={formCliente.nome} className="form-control form-control-sm" name="nome" id="validationCustom01" onChange={handleChange}  required/>
@@ -209,7 +220,8 @@ export default function Formulario(props) {
                     <div className="col-md-5 mb-3">
                         <label for="inputEmail" className="form-label aria-describedby">Email</label>
                         <input type="email" value={formCliente.email} className="form-control form-control-sm" name="email" id="inputEmail" onChange={handleChange} required/>
-                    </div>
+                    </div></>:""
+                    }
                     <div className="col-md-5 mb-3">
                         <label for="inputEndereco" className="form-label">Endereço</label>
                         <input type="text" value={formReserva.endereco} className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleReserva}  required/>
@@ -231,6 +243,8 @@ export default function Formulario(props) {
                             <option value="Sul">Sul</option>
                         </select>
                     </div>
+                    {!(props.addReserva)&&
+                    <>
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="paisOrigem">Pais de Origem</label>
                         <select value={formCliente.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
@@ -248,7 +262,8 @@ export default function Formulario(props) {
                             <option value="Espanhol">Espanhol</option>
                             <option value="Inglês">Inglês</option>
                         </select>
-                    </div>
+                    </div></>
+                    }
                     <div class="col-md-6 mb-3">
                         <label for="validationTextarea">Comentário da Reserva</label>
                         <textarea value={comentarioReserva} class="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>

@@ -18,7 +18,7 @@ export default function NovaReserva(){
         comissoes="collapse-item" 
         tabelaCliente="nav-item"
         nomePagina="Nova Reserva" 
-        componente={<Formulario />}/>
+        componente={<Formulario idCliente={{status: false}} title="Dados Cliente"/>}/>
         </div>
         <a className="scroll-to-top rounded" href="#page-top">
             <i class="fas fa-angle-up"></i>

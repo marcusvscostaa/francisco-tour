@@ -1,4 +1,5 @@
 import AddReserva from "./AddREserva";
+import Formulario from "./Formulario";
 
 export default function ModalAdiconarReserva(props){
 
@@ -8,13 +9,13 @@ export default function ModalAdiconarReserva(props){
                 <div className="modal-dialog modal-xl" role="document">
                     <div className="modal-content">
                         <div className="modal-header">
-                            <h5 className="modal-title" id="modalLabel">Adicionar Reserva</h5>
+                            <h5 className="modal-title" id="modalLabel">Nova Reserva</h5>
                             <button className="close" type="button" data-dismiss="modal" aria-label="Close">
                                 <span aria-hidden="true">×</span>
                             </button>
                         </div>
                         <div className="modal-body">
-                            <AddReserva dataClient ={props.dados} />                  
+                            <Formulario title="Dados Reserva" idCliente={{status: true, id: props.id}}addReserva={true} dataClient ={props.dados} />                  
                         </div>
                     </div>
                 </div>
