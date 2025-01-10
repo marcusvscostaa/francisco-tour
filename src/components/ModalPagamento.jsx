@@ -3,14 +3,17 @@ import ReactDOM from 'react-dom';
 import TourPag from "./TourPag"
 import { uid } from 'uid/secure';
 import ModalComprovanre from "./ModalComprovante";
+import ModalAlert from "./ModalAlert";
+import ModalDelete from "./ModalDelete";
+import ModalComentario from "./ModalComentario";
 const idPagamento = uid().toString();
 
 export default function ModalPagamento(props){
-    const [show, setShow] = useState(false)
     const [showAddPag, setShowAddPag] = useState(false)
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
     const [dadosPag, setDadosPag] = useState(props.pagamento.filter((item) => item.id_reserva === props.id));
+    const [modalStatus, setModalStatus] = useState([]);
 
     const scriptHtml = `<script type="text/javascript">
      { $(document).ready(() => {
@@ -41,13 +44,30 @@ export default function ModalPagamento(props){
                 method: 'POST',
                 body: formData
             }
-            fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
-            .then( response => console.log(response.json()))
+            fetch('http://localhost:8800/reservaPagamento', reqPagReserva).then(response => {
+                if (!response.ok) {
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+                }).then(data => {
+                    if(data){
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                            window.location.reload();
+                        },5000)
+                    }
+                })
+                .catch(e => {
+                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
     }
 
     return (        
     <div className="modal fade text-dark" id={`modal${props.id}`} data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
+        <ModalAlert dados={modalStatus} />
         <div className="modal-dialog modal-xl" role="document">
             <div className="modal-content">
                 <div className="modal-header">
@@ -78,11 +98,11 @@ export default function ModalPagamento(props){
                             <td>{pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
                             <td>R$: {pag.valorPago.toFixed(2).replace(".", ",")}</td>
                             <td>
-                                <a type="button" class="btn btn-sm btn-light" data-trigger="hover" data-toggle="popover" title="Comentário" data-content={pag.comentario}>
+                                <a type="button" class="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${pag.idPagamento}`} title="Comentário">
                                     <i className="fas fa-comment-alt"></i>
                                         &nbsp; Ver
                                 </a>
-                                <div id='demoPropv'></div>
+                                <ModalComentario title={'Comentário Pagamento'} id={pag.idPagamento} comentario={pag.comentario}/>                
                             </td>
                             <td>
                                 <a type="button" class="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${pag.idPagamento}`}>
@@ -92,7 +112,8 @@ export default function ModalPagamento(props){
                             </td>
                             <td>
                                 <button type="button" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                                <button type="button" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
                             </td>
                         </tr>
                         )}

@@ -5,6 +5,7 @@ import $ from "jquery";
 import ReactDOM from 'react-dom';
 import ModalAlert from "./ModalAlert";
 import ModalPagamento from "./ModalPagamento";
+import ModalComentario from "./ModalComentario";
 
 
 
@@ -36,7 +37,6 @@ export default function RowTabela(props){
         }else{
             setStatusReserva({status: 'Confirmado', class: "fas fa-check-circle text-success"})
         }
-        {document.getElementById("demoPropv").innerHTML = scriptHtml}
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
         
@@ -99,11 +99,11 @@ export default function RowTabela(props){
                 <td className="text-left"><i className="fas fa-phone"></i> {props.reserva.telefone}</td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
                 <td>
-                    <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="popover" title="Comentário" data-content={props.reserva.comentario}>
+                    <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${props.reserva.idR}`} title="Comentário">
                     <i className="fas fa-comment-alt"></i>
                         &nbsp; Ver
                     </a>
-                <div id='demoPropv'></div>
+                    <ModalComentario title={'Comentário Reserva'} id={props.reserva.idR} comentario={props.reserva.comentario}/>
                 </td>
                 <td>
                     <div class="dropdown">

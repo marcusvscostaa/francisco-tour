@@ -60,11 +60,11 @@ export default function Tabela(props) {
                             <tbody>
                                 {(clients.map((client, index) => {
                                     return (<tr key={index}>
-                                        <td>{client.nome}</td>
-                                        <td>{client.email}</td>
-                                        <td className="text-left">{client.telefone}</td>
-                                        <td>{client.paisOrigem}</td>
-                                        <td>{client.idioma}</td>
+                                        <td><i className="fas fa-user-alt"></i>&nbsp;{client.nome}</td>
+                                        <td><i class="fa fa-envelope"></i>&nbsp;{client.email}</td>
+                                        <td className="text-left"> <a href={`https://api.whatsapp.com/send?phone=${client.telefone}`} target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i>&nbsp;{client.telefone}</a></td>
+                                        <td><i className="fas fa-globe-americas	"></i>&nbsp;{client.paisOrigem}</td>
+                                        <td><i class="fa fa-language"></i>&nbsp;{client.idioma}</td>
                                         <td>
                                             <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i class="fa fa-plus"></i></button>
                                             <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
