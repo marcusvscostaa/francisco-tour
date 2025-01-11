@@ -96,7 +96,7 @@ export default function RowTabela(props){
                     </a>
                     <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} valorTotal={valorTotal}/>
                     </td>
-                <td className="text-left"><i className="fas fa-phone"></i> {props.reserva.telefone}</td>
+                <td className="text-left"><a href={`https://api.whatsapp.com/send?phone=${props.reserva.telefone}`} title="Abrir Whatsapp" target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i> {props.reserva.telefone}</a></td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
                 <td>
                     <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${props.reserva.idR}`} title="Comentário">
