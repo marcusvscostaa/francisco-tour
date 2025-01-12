@@ -7,6 +7,19 @@ export default function TourPag(props){
     const [nomeArquivo, setNomeArquivo] = useState("Escolher Arquivo")
     const [image, setImage] = useState("")
     const [arquvio, setArqivo] = useState("")
+
+    useEffect(()=>{
+        if(props.editPag){
+            props.setDadosPagForm({
+                dataPagamento: props.dados[0].dataPagamento.substr(0, 10),
+                formaPagamento: props.dados[0].formaPagamento,
+                valorPago: props.dados[0].valorPago,
+                comentario: props.dados[0].comentario,
+            })
+            setImage(`http://127.0.0.1:8800/imagem/${props.dados[0].idPagamento}`)
+            setValorRestante(props.dados[0].valorPago)
+        }
+    },[])
     
     const handleChange = (e) => {
         const name = e.target.name
@@ -31,6 +44,7 @@ export default function TourPag(props){
         }else{
             const newFormFields = { ...props.dadosPagForm ,[name]: value}
             props.setDadosPagForm(newFormFields)
+            console.log(props.dadosPagForm.dataPagamento)
         }
         console.log(props.dadosPagForm)
 
@@ -54,7 +68,7 @@ export default function TourPag(props){
         <div className="col-md-12">
         <div className="card mb-4 border-dark">
           <div className="card-header text-lg">
-              Informações do Pagamento
+              {`${props.title} Pagamento ${props.editPag ? props.dados[0].idPagamento : ''}`} 
           </div>
           <div className="card-body">
               <form>
@@ -84,6 +98,7 @@ export default function TourPag(props){
                       <label for="valorAdulto" className="form-label">Valor Pago</label>
                       <input type="number" name="valorPago" value={props.dadosPagForm.valorPago} className="form-control form-control-sm" onChange={handleChange}  id="valorAdulto" required/>
                   </div>
+                  
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
                       <label for="numeroCriancas" className="form-label">Valor Restante</label>

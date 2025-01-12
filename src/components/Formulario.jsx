@@ -308,7 +308,7 @@ export default function Formulario(props) {
                         </div>
                     </div>
                     {
-                        addPag == true ? <TourPag dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
+                        addPag == true ? <TourPag title='Adicionar' dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
                             calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0)} /> : null
                     }
                     <div className="w-100 d-flex ml-3 mr-3 mb-3">

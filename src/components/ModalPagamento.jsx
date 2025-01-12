@@ -10,6 +10,7 @@ const idPagamento = uid().toString();
 
 export default function ModalPagamento(props){
     const [showAddPag, setShowAddPag] = useState(false)
+    const [showEditPag, setShowEditPag] = useState({status: false})
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
     const [dadosPag, setDadosPag] = useState(props.pagamento.filter((item) => item.id_reserva === props.id));
@@ -72,7 +73,7 @@ export default function ModalPagamento(props){
             <div className="modal-content">
                 <div className="modal-header">
                     <h5 className="modal-title" id="modalLabel">Dados Pagamento</h5>
-                    <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+                    <button className="close" type="button" onClick={() => setShowEditPag({status: false})} data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
                 </div>
@@ -111,7 +112,7 @@ export default function ModalPagamento(props){
                                 </a>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                                <button type="button" class="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
                                 <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                                 <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
                             </td>
@@ -146,7 +147,7 @@ export default function ModalPagamento(props){
                     </div>
                     </>
                     :<p>Não há dados de pagamento</p> }
-                    {!showAddPag && 
+                    {!showAddPag && !(showEditPag.status) && 
                         <div className="d-flex" >
                             <button className="ml-auto btn btn-primary" onClick={() => setShowAddPag(true)}>
                                 Adicionar Pagamento
@@ -154,7 +155,22 @@ export default function ModalPagamento(props){
                         </div>}
                     {showAddPag&& 
                     <form onSubmit={handleSubmit}>
-                        <TourPag  valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0))} dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm}/>
+                        <TourPag title='Adicionar' valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0))} dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm}/>
+                        <div className="d-flex" >
+                            <button className="ml-auto btn btn-primary" type="submit">
+                                Enviar
+                            </button>
+                        </div>
+                    </form> }    
+                    {showEditPag.status&& 
+                    <form onSubmit={handleSubmit}>
+                        <TourPag 
+                            title='Editar'
+                            editPag={showEditPag.status} 
+                            idPag={showEditPag.id} dados={dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)} 
+                            valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0) + dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)[0].valorPago)} 
+                            dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} 
+                            setDadosPagForm = {setDadosPagForm}/>
                         <div className="d-flex" >
                             <button className="ml-auto btn btn-primary" type="submit">
                                 Enviar
