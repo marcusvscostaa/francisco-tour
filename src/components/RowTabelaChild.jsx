@@ -1,5 +1,6 @@
 import ReactDOM from 'react-dom';
 import ModalAdicionarTour from './ModalAdiconarTour';
+import ModalDeleteTour from './ModalDeleteTour';
 
 export default function RowTabelaChild(props){
     return ReactDOM.createPortal(
@@ -12,10 +13,8 @@ export default function RowTabelaChild(props){
                     {props.reserva.quarto && <> <span class="badge badge-secondary"><i className='fas fa-bed'></i> Quarto: </span> {props.reserva.quarto}<br/></>}
                     {props.reserva.zona && <> <span class="badge badge-secondary"><i className='fas fa-city'></i> Zona: </span> {props.reserva.zona}<br/></>}
                 </address>
-                </div>
-
-        
-            <table className="table table-sm table-dark noHover" style={{pointerEvents: 'none'}}>
+                </div>        
+            <table className="table table-sm table-dark noHover" >
                             <thead>
                                 <tr>
                                     <th>Destino</th>
@@ -41,8 +40,9 @@ export default function RowTabelaChild(props){
                                 <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
                                 <td>R$: {((dataT.quantidadeAdultos*dataT.valorAdulto) +( dataT.quantidadeCriancas*dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
                                 <td>
-                                <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
-                                <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <button type="button" style={{cursor: "pointer"}} title="Editar" class="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
+                                <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <ModalDeleteTour title="Tour" idTour={dataT.idtour}/>
                                 </td>
                         </tr>
                     </tbody>

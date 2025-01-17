@@ -65,7 +65,43 @@ export default function ModalPagamento(props){
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
     }
 
-    return (        
+
+    const handerEdit = (e) => {
+        e.preventDefault();
+        const formData = new FormData();
+            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+            if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+            if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+            console.log(dadosPagForm)
+
+            const reqPagReserva = {
+                method: 'PUT',
+                body: formData
+            }
+            fetch(`http://localhost:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {
+                if (!response.ok) {
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+                }).then(data => {
+                    if(data){
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                            window.location.reload();
+                        },5000)
+                    }
+                })
+                .catch(e => {
+                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
+
+    }
+
+    return(        
     <div className="modal fade text-dark" id={`modal${props.id}`} data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
         <ModalAlert dados={modalStatus} />
@@ -163,7 +199,7 @@ export default function ModalPagamento(props){
                         </div>
                     </form> }    
                     {showEditPag.status&& 
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handerEdit}>
                         <TourPag 
                             title='Editar'
                             editPag={showEditPag.status} 
