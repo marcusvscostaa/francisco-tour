@@ -21,7 +21,7 @@ export default function NovaReserva(){
         componente={<Formulario idCliente={{status: false}} title="Dados Cliente"/>}/>
         </div>
         <a className="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
+            <i className="fas fa-angle-up"></i>
         </a>
         <LogoutModal />
         </>

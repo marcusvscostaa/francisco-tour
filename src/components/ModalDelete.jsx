@@ -30,17 +30,17 @@ export default function ModalDelete(props){
     }
 
     return (
-        <div class="modal fade" tabindex="-1" id={`deletePag${props.idPag}`}>
+        <div className="modal fade" tabindex="-1" id={`deletePag${props.idPag}`}>
             <ModalAlert dados={modalStatus} />
             
-            <div class="modal-dialog modal-dialog-centered ">
-                <div class="modal-content bg-light text-dark" role="alert">
-                    <div class='modal-header'>
-                    <h5 class="alert-heading"><i className="fas fa-exclamation-triangle text-warning"></i> Excluir o {props.title} {props.idPag}</h5>
+            <div className="modal-dialog modal-dialog-centered ">
+                <div className="modal-content bg-light text-dark" role="alert">
+                    <div className='modal-header'>
+                    <h5 className="alert-heading"><i className="fas fa-exclamation-triangle text-warning"></i> Excluir o {props.title} {props.idPag}</h5>
                     </div>
-                    <div class="modal-footer mb-0">
+                    <div className="modal-footer mb-0">
                         <p className="mr-auto">Clique fora do card para fechar</p>
-                        <button type="button" class="btn btn-danger" onClick={handerDelete} ><i className="fa fa-trash"></i> Sim</button>
+                        <button type="button" className="btn btn-danger" onClick={handerDelete} ><i className="fa fa-trash"></i> Sim</button>
                     </div>
                 </div>
             </div>

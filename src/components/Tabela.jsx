@@ -30,15 +30,15 @@ export default function Tabela(props) {
 
 
     return (
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Tabela Clientes</h6>
+        <div className="card shadow mb-4">
+            <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">Tabela Clientes</h6>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
-                    {!clients?.length ? <div class="d-flex justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
+            <div className="card-body">
+                <div className="table-responsive">
+                    {!clients?.length ? <div className="d-flex justify-content-center">
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only">Loading...</span>
                         </div>
                     </div> :
                         <DataTable
@@ -61,14 +61,14 @@ export default function Tabela(props) {
                                 {(clients.map((client, index) => {
                                     return (<tr key={index}>
                                         <td><i className="fas fa-user-alt"></i>&nbsp;{client.nome}</td>
-                                        <td><i class="fa fa-envelope"></i>&nbsp;{client.email}</td>
+                                        <td><i className="fa fa-envelope"></i>&nbsp;{client.email}</td>
                                         <td className="text-left"> <a href={`https://api.whatsapp.com/send?phone=${client.telefone}`} target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i>&nbsp;{client.telefone}</a></td>
                                         <td><i className="fas fa-globe-americas	"></i>&nbsp;{client.paisOrigem}</td>
-                                        <td><i class="fa fa-language"></i>&nbsp;{client.idioma}</td>
+                                        <td><i className="fa fa-language"></i>&nbsp;{client.idioma}</td>
                                         <td>
-                                            <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i class="fa fa-plus"></i></button>
-                                            <button type="button" title="Editar" class="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                                            <button type="button" title="Deletar" class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                            <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i className="fa fa-plus"></i></button>
+                                            <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
+                                            <button type="button" title="Deletar" className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                                             <ModalAdiconarReserva dados={client} id={client.id} />
                                         </td>
 

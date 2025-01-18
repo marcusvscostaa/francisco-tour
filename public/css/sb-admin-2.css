@@ -7093,9 +7093,6 @@ button.bg-dark:focus {
     align-self: stretch !important;
   }
 }
-.noHover{
-  pointer-events: none;
-}
 
 @media (min-width: 768px) {
   .flex-md-row {

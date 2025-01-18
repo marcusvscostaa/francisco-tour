@@ -107,15 +107,15 @@ export default function TourPag(props){
                   </div>
                   <div className="col-md-3 mb-3">
                       <label for="valorCriancas"  className="form-label">Comprovante</label>
-                            <div class="custom-file mb-2">
-                                <input type="file" name="comprovante" class="custom-file-input form-control-sm" id="customFile" onChange={handleChange} />
-                                <label class="custom-file-label col-form-label-sm" for="customFile">{nomeArquivo !== "Escolher Arquivo"?(nomeArquivo.name):nomeArquivo}</label>
+                            <div className="custom-file mb-2">
+                                <input type="file" name="comprovante" className="custom-file-input form-control-sm" id="customFile" onChange={handleChange} />
+                                <label className="custom-file-label col-form-label-sm" for="customFile">{nomeArquivo !== "Escolher Arquivo"?(nomeArquivo.name):nomeArquivo}</label>
                             </div>
-                            <img class="img-thumbnail" src={image}></img>
+                            <img className="img-thumbnail" src={image}></img>
                   </div>
-                  <div class="col-md-6 mb-3">
+                  <div className="col-md-6 mb-3">
                       <label for="validationTextarea">Comentário do Pagamento</label>
-                  <textarea name="comentario" value={props.dadosPagForm.comentario} class="form-control" onChange={handleChange} id="validationTextarea" placeholder="Escreva um comentário..."></textarea>
+                  <textarea name="comentario" value={props.dadosPagForm.comentario} className="form-control" onChange={handleChange} id="validationTextarea" placeholder="Escreva um comentário..."></textarea>
                   </div>
               </div>
               </form>

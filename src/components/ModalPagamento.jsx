@@ -135,21 +135,21 @@ export default function ModalPagamento(props){
                             <td>{pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
                             <td>R$: {pag.valorPago.toFixed(2).replace(".", ",")}</td>
                             <td>
-                                <a type="button" class="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${pag.idPagamento}`} title="Comentário">
+                                <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${pag.idPagamento}`} title="Comentário">
                                     <i className="fas fa-comment-alt"></i>
                                         &nbsp; Ver
                                 </a>
                                 <ModalComentario title={'Comentário Pagamento'} id={pag.idPagamento} comentario={pag.comentario}/>                
                             </td>
                             <td>
-                                <a type="button" class="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${pag.idPagamento}`}>
+                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${pag.idPagamento}`}>
                                     <i className="fas fa-image	"></i>
                                     &nbsp; Ver
                                 </a>
                             </td>
                             <td>
-                                <button type="button" class="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
-                                <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} class="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
+                                <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                                 <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
                             </td>
                         </tr>
@@ -157,20 +157,20 @@ export default function ModalPagamento(props){
                     </tbody>
                     </table>
                     </div>
-                    <div  class="row ">
+                    <div  className="row ">
                     <div className=" border rounded mb-3 ml-auto col-4 mr-3">
-                        <div class=" mb-4">
-                                <div class="">
-                                    <ul class="list-group list-group-flush">
-                                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                        <div className=" mb-4">
+                                <div className="">
+                                    <ul className="list-group list-group-flush">
+                                        <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
                                             Valor Total
                                             <span>R$ {(props.valorTotal).toFixed(2).replace(".", ",")}</span>
                                         </li>
-                                        <li class="list-group-item d-flex justify-content-between align-items-center px-0">
+                                        <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                                             Valor Pago
                                             <span>R$ {dadosPag.reduce((sum, item) =>sum + item.valorPago,0).toFixed(2).replace(".", ",")}</span>
                                         </li>
-                                            <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                            <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                             <div>
                                                 <strong>Valor Restante</strong>                                            
                                             </div>

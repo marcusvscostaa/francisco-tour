@@ -19,20 +19,24 @@ export default function TabelaReservas(props) {
         defaultContent: ''
     }]}
 
-    useEffect( async () => {
-        await fetch("http://127.0.0.1:8800/reservas", {
+    useEffect( () => {
+        fetch("http://127.0.0.1:8800/reservas", {
             method: "GET",
         })
             .then((response) => response.json())
             .then((data) => {
-                setReservas(data);
+                if(data.fatal === false){
+                    setReservas(false)
+                }else{
+                    setReservas(data);
+                }
                 console.log(reservas)
                 //console.log(data);
             })
             .catch((error) => console.log(error));
         
         
-        await fetch("http://127.0.0.1:8800/tour", {
+        fetch("http://127.0.0.1:8800/tour", {
             method: "GET",
         })
             .then((response) => response.json())
@@ -43,7 +47,7 @@ export default function TabelaReservas(props) {
             })
             .catch((error) => console.log(error));
        
-        await fetch("http://127.0.0.1:8800/reservaPagamento", {
+        fetch("http://127.0.0.1:8800/reservaPagamento", {
             method: "GET",
         })
             .then((response) => response.json())
@@ -60,19 +64,19 @@ export default function TabelaReservas(props) {
 
 
     return (
-        <div class="card shadow mb-4">
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Tabela Reservas</h6>
+        <div className="card shadow mb-4">
+            <div className="card-header py-3">
+                <h6 className="m-0 font-weight-bold text-primary">Tabela Reservas</h6>
             </div>
-            <div class="card-body">
-                <div class="table-responsive">
+            <div className="card-body">
+                <div className="table-responsive">
                     {reservas && tour && pagamentoreservas?
-                    
                         <DataTable
                             className="table table-sm table-hover mr-0 mt-3 w-100 "
                             cellspacing="0"
                             width="100%"
                             id="dataTable"
+                            {...console.log(reservas)}
                         >
                             <thead>
                                 <tr>
@@ -93,9 +97,9 @@ export default function TabelaReservas(props) {
                                 })}
                             </tbody>
                         </DataTable>
-                        :<div class="d-flex justify-content-center">
-                        <div class="spinner-border" role="status">
-                            <span class="sr-only">Loading...</span>
+                        :<div className="d-flex justify-content-center">
+                        <div className="spinner-border" role="status">
+                            <span className="sr-only">Loading...</span>
                         </div>
                     </div> 
                     }

@@ -264,9 +264,9 @@ export default function Formulario(props) {
                         </select>
                     </div></>
                     }
-                    <div class="col-md-6 mb-3">
+                    <div className="col-md-6 mb-3">
                         <label for="validationTextarea">Comentário da Reserva</label>
-                        <textarea value={comentarioReserva} class="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>
+                        <textarea value={comentarioReserva} className="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>
                     </div>
 
                     {numberTour.map((index) => {
@@ -282,25 +282,25 @@ export default function Formulario(props) {
                     <div className="col-md-12">
 
                         {
-                            addTour <= 6 ? <button type="button" onClick={handleClick} class="btn btn-icon-split btn-dark btn-sm mb-3">
-                                <span class="icon text-white-50">
-                                    <i class="fa fa-plus"></i>
+                            addTour <= 6 ? <button type="button" onClick={handleClick} className="btn btn-icon-split btn-dark btn-sm mb-3">
+                                <span className="icon text-white-50">
+                                    <i className="fa fa-plus"></i>
                                 </span>
-                                <span class="text">Adicionar Outro Tour</span>
+                                <span className="text">Adicionar Outro Tour</span>
 
                             </button> : null
 
                         }
                     </div>
                     <div className="col-md-12 mb-2 d-flex border-bottom">
-                        <div class="form-check">
-                            <input class="form-check-input" checked={addPag} onChange={pagCheck} type="checkbox" value="" id="flexCheckDefault" />
-                            <label class="form-check-label" for="flexCheckDefault">
+                        <div className="form-check">
+                            <input className="form-check-input" checked={addPag} onChange={pagCheck} type="checkbox" value="" id="flexCheckDefault" />
+                            <label className="form-check-label" for="flexCheckDefault">
                                 Adicionar Pagamento
                             </label>
                         </div>
                         <div className="ml-auto mb-2">
-                            <p class="text-gray-900 text-lg mb-2">
+                            <p className="text-gray-900 text-lg mb-2">
                                 Valor total: R$ {
                                     calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0).toFixed(2).replace(".", ",")
                                 }

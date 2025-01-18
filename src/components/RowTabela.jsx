@@ -28,14 +28,14 @@ export default function RowTabela(props){
         console.log(props.pagamentoreservas)
         if(props.reserva.status){          
             if(props.reserva.status === 'Confirmado'){
-                setStatusReserva({status: 'Confirmado', class: "fas fa-check-circle text-success"})
+                setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
             }else if(props.reserva.status === 'Pendente'){
-                setStatusReserva({status: 'Pendente', class: "fas fa-exclamation-triangle text-warning"})
+                setStatusReserva({status: 'Pendente', className: "fas fa-exclamation-triangle text-warning"})
             }else if(props.reserva.status === 'Cancelado'){
-                setStatusReserva({status: 'Cancelado', class: "fas fa-ban text-danger"})
+                setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
         }else{
-            setStatusReserva({status: 'Confirmado', class: "fas fa-check-circle text-success"})
+            setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
         }
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
@@ -56,11 +56,11 @@ export default function RowTabela(props){
             console.log(response)
           })   
         if(e.target.value === 'Confirmado'){
-            setStatusReserva({status: e.target.value, class: "fas fa-check-circle text-success"})
+            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
         }else if(e.target.value === 'Pendente'){
-            setStatusReserva({status: e.target.value, class: "fas fa-exclamation-triangle text-warning"})
+            setStatusReserva({status: e.target.value, className: "fas fa-exclamation-triangle text-warning"})
         }else if(e.target.value === 'Cancelado'){
-            setStatusReserva({status: e.target.value, class: "fas fa-ban text-danger"})
+            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
         }
     }
 
@@ -106,12 +106,12 @@ export default function RowTabela(props){
                     <ModalComentario title={'Comentário Reserva'} id={props.reserva.idR} comentario={props.reserva.comentario}/>
                 </td>
                 <td>
-                    <div class="dropdown">
+                    <div className="dropdown">
                     
                     <a type="button" data-toggle="dropdown" aria-expanded="false">
-                    <i title={statusReserva.status} className={statusReserva.class}></i>
+                    <i title={statusReserva.status} className={statusReserva.className}></i>
                     </a>
-                    <div style={{minWidth: "40px"}} class="dropdown-menu dropdown-menu-right">
+                    <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
                         <button className="dropdown-item" value="Confirmado" onClick={handleChange}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
                         <button className="dropdown-item" value="Pendente"   onClick={handleChange}><i className="fas fa-exclamation-triangle text-warning"></i> Pendente</button>
                         <button className="dropdown-item" value="Cancelado"  onClick={handleChange}><i className="fas fa-ban text-danger"></i> Cancelado</button>

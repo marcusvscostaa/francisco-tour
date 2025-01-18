@@ -18,7 +18,7 @@ export default function TabelaCliente(){
         componente={<Tabela/>}/>
         </div>
         <a className="scroll-to-top rounded" href="#page-top">
-            <i class="fas fa-angle-up"></i>
+            <i className="fas fa-angle-up"></i>
         </a>
         <LogoutModal />
         </>
