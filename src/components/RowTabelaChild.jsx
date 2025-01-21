@@ -1,6 +1,7 @@
 import ReactDOM from 'react-dom';
 import ModalAdicionarTour from './ModalAdiconarTour';
 import ModalDeleteTour from './ModalDeleteTour';
+import ModalEditarTour from './ModalEditarTour';
 
 export default function RowTabelaChild(props){
     return ReactDOM.createPortal(
@@ -43,8 +44,9 @@ export default function RowTabelaChild(props){
                                 <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
                                 <td>R$: {((dataT.quantidadeAdultos*dataT.valorAdulto) +( dataT.quantidadeCriancas*dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
                                 <td>
-                                <button type="button" style={{cursor: "pointer"}} title="Editar" className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
-                                <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
+                                <ModalEditarTour dados={dataT} idtour={dataT.idtour}/>
+                                <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>                                
                                 <ModalDeleteTour title="Tour" idTour={dataT.idtour}/>
                                 </td>
                         </tr>

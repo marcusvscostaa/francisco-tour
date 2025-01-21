@@ -78,6 +78,7 @@ export default function ModalPagamento(props){
 
             const reqPagReserva = {
                 method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
                 body: formData
             }
             fetch(`http://localhost:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {
@@ -102,7 +103,7 @@ export default function ModalPagamento(props){
     }
 
     return(        
-    <div className="modal fade text-dark" id={`modal${props.id}`} data-backdrop="static" data-keyboard="false" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+    <div className="modal fade text-dark" id={`modal${props.id}`} data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel"
     aria-hidden="true">
         <ModalAlert dados={modalStatus} />
         <div className="modal-dialog modal-xl" role="document">
