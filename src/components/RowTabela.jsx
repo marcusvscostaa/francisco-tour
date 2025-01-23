@@ -38,7 +38,7 @@ export default function RowTabela(props){
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
         }
         if(pagamentoreservas){
-           setPagamento(pagamentoreservas.filter((item) => item.id_reserva === props.reserva.idR).reduce((sum, element)=> sum + element.valorPago, 0))
+           setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
         
         }
         console.log(props.tour)

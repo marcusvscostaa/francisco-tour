@@ -6,6 +6,7 @@ import ModalComprovanre from "./ModalComprovante";
 import ModalAlert from "./ModalAlert";
 import ModalDelete from "./ModalDelete";
 import ModalComentario from "./ModalComentario";
+import TabalaPagamento from "./TabelaPagamento";
 const idPagamento = uid().toString();
 
 export default function ModalPagamento(props){
@@ -15,6 +16,8 @@ export default function ModalPagamento(props){
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
     const [dadosPag, setDadosPag] = useState(props.pagamento.filter((item) => item.id_reserva === props.id));
     const [modalStatus, setModalStatus] = useState([]);
+    const [modalSpinner, setModalSpinner] = useState(false);
+    const [statusReserva, setStatusReserva] = useState('Pago')
 
     const scriptHtml = `<script type="text/javascript">
      { $(document).ready(() => {
@@ -23,7 +26,7 @@ export default function ModalPagamento(props){
         }
     </script>`
     useEffect(()=>{
-        console.log(props.pagamento.valorPago)       
+        console.log(props.pagamento.valorPago)
     },[])
     
 
@@ -48,21 +51,29 @@ export default function ModalPagamento(props){
             fetch('http://localhost:8800/reservaPagamento', reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                    },2000)
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
                 }).then(data => {
                     if(data){
                         setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                        setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                            setModalSpinner(false)
                             window.location.reload();
-                        },5000)
+                        },2000)
                     }
                 })
                 .catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                    setModalSpinner(false)
+                },2000)})
     }
 
 
@@ -78,29 +89,38 @@ export default function ModalPagamento(props){
 
             const reqPagReserva = {
                 method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
                 body: formData
             }
             fetch(`http://localhost:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                    },2000)
                     throw new Error('Network response was not ok');
                 }
                 return response.json();
                 }).then(data => {
+                    console.log(data);
                     if(data){
                         setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
+                        setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                            setModalSpinner(false)
                             window.location.reload();
-                        },5000)
+                        },2000)
                     }
                 })
                 .catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
+                    setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                    },2000)})
 
     }
+
 
     return(        
     <div className="modal fade text-dark" id={`modal${props.id}`} data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel"
@@ -126,34 +146,20 @@ export default function ModalPagamento(props){
                             <th>Valor Pago</th>
                             <th>Comentário</th>
                             <th>Comprovante</th>
+                            <th>Status</th>
                             <th>Opções</th>
                         </tr>
                     </thead>
                     <tbody>
                     {dadosPag&&dadosPag.map( (pag) =>
-                        <tr>
-                            <td>{pag.idPagamento}</td>
-                            <td>{pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
-                            <td>R$: {pag.valorPago.toFixed(2).replace(".", ",")}</td>
+                    <tr>
+                        <TabalaPagamento pag={pag} />
                             <td>
-                                <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${pag.idPagamento}`} title="Comentário">
-                                    <i className="fas fa-comment-alt"></i>
-                                        &nbsp; Ver
-                                </a>
-                                <ModalComentario title={'Comentário Pagamento'} id={pag.idPagamento} comentario={pag.comentario}/>                
-                            </td>
-                            <td>
-                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${pag.idPagamento}`}>
-                                    <i className="fas fa-image	"></i>
-                                    &nbsp; Ver
-                                </a>
-                            </td>
-                            <td>
-                                <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
-                                <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                                <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
-                            </td>
-                        </tr>
+                            <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
+                            <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                            <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
+                        </td>
+                    </tr>
                         )}
                     </tbody>
                     </table>
@@ -169,13 +175,13 @@ export default function ModalPagamento(props){
                                         </li>
                                         <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                                             Valor Pago
-                                            <span>R$ {dadosPag.reduce((sum, item) =>sum + item.valorPago,0).toFixed(2).replace(".", ",")}</span>
+                                            <span>R$ {dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0).toFixed(2).replace(".", ",")}</span>
                                         </li>
                                             <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                             <div>
                                                 <strong>Valor Restante</strong>                                            
                                             </div>
-                                        <span><strong>R$ {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0)).toFixed(2).replace(".", ",")}</strong></span>
+                                        <span><strong>R$ {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0)).toFixed(2).replace(".", ",")}</strong></span>
                                         </li>
                                     </ul>
                             </div>
@@ -213,8 +219,13 @@ export default function ModalPagamento(props){
                                 Enviar
                             </button>
                         </div>
-                    </form> }    
+                    </form> }
                 </div>
+                {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 
+                        <div className="spinner-border text-secondary m-auto" style={{width: '3rem', height: '3rem'}} role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>}  
             </div>
         </div>
     </div>)

@@ -4,6 +4,7 @@ import TourForm from "./TourForm";
 
 export default function ModalEditarTour(props){
     const [modalStatus, setModalStatus] = useState([]);
+    const [modalSpinner, setModalSpinner] = useState(false);
     const [calculoTotal, setcalculoTotal] = useState(
         [{  id: "1",
             data:(props.dados.data).substr(0, 10), 
@@ -14,77 +15,43 @@ export default function ModalEditarTour(props){
             numeroCriancas: props.dados.quantidadeCriancas, 
             valorCriancas: props.dados.valorCrianca }]
     );
-    const [dadosEnviar, setDadosEnviar]   = useState({})
-
+    
     const handerEdit = (e) => {
         e.preventDefault();
-        let dadosAtualizado = {}  
-        if((props.dados.data).substr(0, 10) !== calculoTotal[0].data){
-            dadosAtualizado = {...dadosEnviar, data: calculoTotal[0].data}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar) 
-            console.log("data diferente")   
-        }
-        if(props.dados.destino != calculoTotal[0].destino){
-            dadosAtualizado = {...dadosEnviar, destino: calculoTotal[0].destino}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)
-            console.log("detino diferente")   
-
-        }
-        if(props.dados.tour != calculoTotal[0].tour){
-            dadosAtualizado = {...dadosEnviar, tour: calculoTotal[0].tour}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)  
-            console.log("tour diferente")   
-
-        }
-        if(props.dados.quantidadeAdultos != calculoTotal[0].numeroAdultos){
-            dadosAtualizado = {...dadosEnviar, quantidadeAdultos: calculoTotal[0].numeroAdultos}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)    
-        }
-        if(props.dados.valorAdulto != calculoTotal[0].valorAdulto){
-            dadosAtualizado = {...dadosEnviar, valorAdulto: calculoTotal[0].valorAdulto}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)    
-        }
-        if(props.dados.quantidadeCriancas != calculoTotal[0].numeroCriancas){
-            dadosAtualizado = {...dadosEnviar, quantidadeCriancas: calculoTotal[0].numeroCriancas}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)    
-        }
-        if(props.dados.valorCrianca != calculoTotal[0].valorCriancas){
-            dadosAtualizado = {...dadosEnviar, valorCrianca: calculoTotal[0].valorCriancas}
-            setDadosEnviar(dadosAtualizado)
-            console.log(dadosEnviar)    
-        }
-
         
         const editTour = {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(dadosAtualizado)
+            body: JSON.stringify(calculoTotal[0])
         }
         fetch(`http://localhost:8800/tour/${props.idtour}`, editTour).then(response => {
             console.log(response);  
             if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)
+                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                    setModalSpinner(false)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
             }).then(data => {
                 if(data){
+                    console.log(data);
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Tour", titulo: "Tour"}])
+                    setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        //window.location.reload();
-                    },5000)
+                        setModalSpinner(false)
+                        window.location.reload();
+                    },2000)
                 }
             })
             .catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Tour: " + e, titulo: "Tour"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},5000)})
+            setModalSpinner(true)
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                setModalSpinner(false)
+            },2000)})
 
 
 
@@ -114,8 +81,14 @@ export default function ModalEditarTour(props){
                         <button type="button" className="btn btn-warning" onClick={handerEdit} ><i className="fas fa-edit"></i> Editar Tour</button>
                     </div>
                     </form>
+                    {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 
+                        <div className="spinner-border text-secondary m-auto" style={{width: '3rem', height: '3rem'}} role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>}
                 </div>
             </div>
+
         </div>
     )
 }

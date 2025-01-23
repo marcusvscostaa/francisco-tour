@@ -28,7 +28,7 @@ export default function ModalAlert(props){
             <div className={`toast-header ${dado.status?"bg-success":"bg-danger"} text-white`}>
             <strong className="mr-auto">{dado.status?"Sucesso " + dado.titulo:"Erro " + dado.titulo}</strong>
             </div>
-            <div className="toast-body">
+            <div className="toast-body text-dark">
            {dado.message}
             </div>
         </div>)
