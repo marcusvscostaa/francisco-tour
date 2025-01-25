@@ -14,7 +14,7 @@ export default function RowTabela(props){
     const [pagamento, setPagamento] = useState(false);
     const pagamentoreservas = (props.pagamentoreservas);
     const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
-    const valorTotal = dadosTour.reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
+    const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     const [statusReserva, setStatusReserva] = useState('Confirmado')
     console.log(pagamentoreservas.valorPago)
     const myRef = useRef(null);

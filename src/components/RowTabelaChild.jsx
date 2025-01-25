@@ -2,8 +2,12 @@ import ReactDOM from 'react-dom';
 import ModalAdicionarTour from './ModalAdiconarTour';
 import ModalDeleteTour from './ModalDeleteTour';
 import ModalEditarTour from './ModalEditarTour';
+import { useState, useEffect } from 'react';
+import StatusTour from './StatusTour';
 
 export default function RowTabelaChild(props){
+        const [statusReserva, setStatusReserva] = useState('Confirmado')
+    
     return ReactDOM.createPortal(
             <td colSpan="9" className="bg-dark text-white" >
             <div>
@@ -28,6 +32,7 @@ export default function RowTabelaChild(props){
                             <th>N° Crianças</th>
                             <th>Valor Criança</th>
                             <th>Valor Total</th>
+                            <th>Status</th>
                             <th>Configurações</th>
                         </tr>
                     </thead>
@@ -42,7 +47,10 @@ export default function RowTabelaChild(props){
                                 <td>R$: {dataT.valorAdulto.toFixed(2).replace(".", ",")}</td>
                                 <td>{dataT.quantidadeCriancas}</td>
                                 <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
-                                <td>R$: {((dataT.quantidadeAdultos*dataT.valorAdulto) +( dataT.quantidadeCriancas*dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
+                                <td>R$: {((dataT.quantidadeAdultos * dataT.valorAdulto) + (dataT.quantidadeCriancas * dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
+                                <td>
+                                    <StatusTour id={dataT.idtour} status={dataT.status} />
+                                </td>
                                 <td>
                                 <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
                                 <ModalEditarTour dados={dataT} idtour={dataT.idtour}/>

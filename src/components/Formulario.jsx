@@ -21,12 +21,12 @@ export default function Formulario(props) {
     const [comentarioReserva, setcomentarioReserva] = useState("");
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: idReserva});
     const [calculoTotal, setcalculoTotal] = useState([
-        { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
-        { id: "2", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
-        { id: "3", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
-        { id: "4", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
-        { id: "5", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
-        { id: "6", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 }
+        { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
+        { id: "2", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
+        { id: "3", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
+        { id: "4", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
+        { id: "5", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
+        { id: "6", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' }
     ]);
     const [modalStatus, setModalStatus] = useState([]);
 
@@ -199,6 +199,7 @@ export default function Formulario(props) {
             if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
             if(idPagamento){formData.append("idPagamento", idPagamento);}
+            formData.append("status", "Pago");
         
     
             const reqPagReserva = {
