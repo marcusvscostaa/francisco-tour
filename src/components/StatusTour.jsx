@@ -36,10 +36,10 @@ export default function StatusTour(props){
                   })   
                 if(e.target.value === 'Confirmado'){
                     setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-                    window.location.reload(false);
+                    props.setUpdateCount(true)
                 }else if(e.target.value === 'Cancelado'){
                     setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-                    window.location.reload(false);
+                    props.setUpdateCount(true)
                 }
             }
             

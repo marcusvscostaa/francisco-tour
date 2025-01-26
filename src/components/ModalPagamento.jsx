@@ -14,7 +14,7 @@ export default function ModalPagamento(props){
     const [showEditPag, setShowEditPag] = useState({status: false})
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
-    const [dadosPag, setDadosPag] = useState(props.pagamento.filter((item) => item.id_reserva === props.id));
+    const dadosPag = props.pagamento.filter((item) => item.id_reserva === props.id);
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
     const [statusReserva, setStatusReserva] = useState('Pago')
@@ -64,7 +64,7 @@ export default function ModalPagamento(props){
                         setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                             setModalSpinner(false)
-                            window.location.reload();
+                            props.setUpdateCount(true)
                         },2000)
                     }
                 })
@@ -108,7 +108,8 @@ export default function ModalPagamento(props){
                         setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                             setModalSpinner(false)
-                            window.location.reload();
+                            props.setUpdateCount(true)
+                            setShowEditPag({status: false})   
                         },2000)
                     }
                 })
@@ -153,7 +154,7 @@ export default function ModalPagamento(props){
                     <tbody>
                     {dadosPag&&dadosPag.map( (pag) =>
                     <tr>
-                        <TabalaPagamento pag={pag} />
+                        <TabalaPagamento updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} pag={pag} />
                             <td>
                             <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
                             <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
@@ -198,7 +199,12 @@ export default function ModalPagamento(props){
                         </div>}
                     {showAddPag&& 
                     <form onSubmit={handleSubmit}>
-                        <TourPag title='Adicionar' valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0))} dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm}/>
+                        <TourPag title='Adicionar' 
+                        valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0))}
+                        dadosPagForm={dadosPagForm} 
+                        setImagemUpload={setImagemUpload} 
+                        setDadosPagForm = {setDadosPagForm}/>
+                        
                         <div className="d-flex" >
                             <button className="ml-auto btn btn-primary" type="submit">
                                 Enviar
@@ -211,7 +217,7 @@ export default function ModalPagamento(props){
                             title='Editar'
                             editPag={showEditPag.status} 
                             idPag={showEditPag.id} dados={dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)} 
-                            valorTotal = {(props.valorTotal - dadosPag.reduce((sum, item) =>sum + item.valorPago,0) + dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)[0].valorPago)} 
+                            valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0) + dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)[0].valorPago)} 
                             dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} 
                             setDadosPagForm = {setDadosPagForm}/>
                         <div className="d-flex" >

@@ -6,12 +6,14 @@ import ReactDOM from 'react-dom';
 import ModalAlert from "./ModalAlert";
 import ModalPagamento from "./ModalPagamento";
 import ModalComentario from "./ModalComentario";
+import ModalDeleteReserva from "./ModalDeleteReserva";
 
 
 
 export default function RowTabela(props){
     const [collapseTable, setCollapseTable] = useState(false);
     const [pagamento, setPagamento] = useState(false);
+    const [updateCount, setUpdateCount] = useState(false)
     const pagamentoreservas = (props.pagamentoreservas);
     const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
     const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
@@ -43,7 +45,8 @@ export default function RowTabela(props){
         }
         console.log(props.tour)
         console.log(props.reserva.nome, pagamento,  dadosTour)
-    },[])
+        setUpdateCount(false)
+    },[props.updateCount])
 
     const handleChange = (e)=> {
         const requestOptions = {
@@ -92,9 +95,9 @@ export default function RowTabela(props){
                 <td><a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#modal${props.reserva.idR}`}>
                     {valorTotal > pagamento && pagamento > 0 && <span className="badge badge-pill badge-warning">Pendente</span>}
                     {valorTotal <= pagamento && <span className="badge badge-pill badge-success">Pago</span>}
-                    {pagamento == 0 && dadosTour != '' && <span className="badge badge-pill badge-danger">Não Pago</span>}
+                    {pagamento == 0 && valorTotal != 0 && <span className="badge badge-pill badge-danger">Não Pago</span>}
                     </a>
-                    <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} valorTotal={valorTotal}/>
+                    <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} updateCount={props.updateCount} valorTotal={valorTotal} setUpdateCount={props.setUpdateCount}/>
                     </td>
                 <td className="text-left"><a href={`https://api.whatsapp.com/send?phone=${props.reserva.telefone}`} title="Abrir Whatsapp" target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i> {props.reserva.telefone}</a></td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
@@ -119,11 +122,12 @@ export default function RowTabela(props){
                     </div>                    
                 </td>
                 <td>
-                    <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                    <button type="button" title="Deletar" className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                    <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning" ><i className="fas fa-edit"></i></button>
+                    <button type="button" title="Deletar" data-toggle='modal' data-target={`#reservaDelete${props.reserva.idR}`}className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                    <ModalDeleteReserva idR = {props.reserva.idR} />
                 </td>
             </tr>
-                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} reserva={props.reserva}/>}
+                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}
     </Fragment>
     )
 }

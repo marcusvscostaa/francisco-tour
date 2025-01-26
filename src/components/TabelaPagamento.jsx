@@ -14,18 +14,7 @@ export default function TabalaPagamento(props){
             }else if(props.pag.status === 'Cancelado'){
                 setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
-        }else{
-            setStatusReserva({status: 'Pago', className: "fas fa-check-circle text-success"})
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({status: 'Pago', idPagamento: props.pag.idPagamento})
-            };
-            fetch('http://localhost:8800/mudarStatusPagamento', requestOptions)
-            .then(response => {
-                console.log(response)
-            })   
-        }    
+        }   
     },[])
 
         const handleChange = (e)=> {
@@ -37,13 +26,13 @@ export default function TabalaPagamento(props){
             fetch('http://localhost:8800/mudarStatusPagamento', requestOptions)
             .then(response => {
                 console.log(response)
-              })   
+              })
+              props.setUpdateCount(true)   
             if(e.target.value === 'Pago'){
                 setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-                window.location.reload(false);
+               
             }else if(e.target.value === 'Cancelado'){
                 setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-                window.location.reload(false);
             }
         }
     return(

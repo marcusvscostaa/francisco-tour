@@ -70,7 +70,7 @@ export default function TourForm(props){
         <div className="card mb-4 border-dark">
           <div className="card-header text-lg">
               Tour {props.numbTour}
-              {props.numbTour!="1"?<button type="button" onClick={() => props.removerTour(props.numbTour)} className="close" aria-label="Close">
+              {props.numbTour!=="1"?<button type="button" onClick={() => props.removerTour(props.numbTour)} className="close" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>:null}
           </div>
@@ -100,19 +100,19 @@ export default function TourForm(props){
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="numeroAdultos" className="form-label">Nº Adultos</label>
-                        <input value={props.calculoTotal[props.numbTour-1].numeroAdultos} type="number" className="form-control form-control-sm" id="numeroAdultos" placeholder='0' onChange={updateNumAdultos} required />
+                        <input value={props.calculoTotal[props.numbTour-1].numeroAdultos === 0?'':props.calculoTotal[props.numbTour-1].numeroAdultos} type="number" className="form-control form-control-sm" id="numeroAdultos" placeholder='0' onChange={updateNumAdultos} required />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="valorAdulto" className="form-label">Valor Adulto</label>
-                        <input value={props.calculoTotal[props.numbTour-1].valorAdulto} type="number" className="form-control form-control-sm" id="valorAdulto" placeholder='0' onChange={updateValorAdultos} required />
+                        <input value={props.calculoTotal[props.numbTour-1].valorAdulto === 0?'':props.calculoTotal[props.numbTour-1].valorAdulto} type="number" className="form-control form-control-sm" id="valorAdulto" placeholder='0' onChange={updateValorAdultos} required />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="numeroCriancas" className="form-label">Nº Crianças</label>
-                        <input value={props.calculoTotal[props.numbTour-1].numeroCriancas} type="number" className="form-control form-control-sm" id="numeroCriancas" placeholder='0' onChange={updateNumCriancas} />
+                        <input value={props.calculoTotal[props.numbTour-1].numeroCriancas ===0?'':props.calculoTotal[props.numbTour-1].numeroCriancas} type="number" className="form-control form-control-sm" id="numeroCriancas" placeholder='0' onChange={updateNumCriancas} />
                   </div>
                   <div className="col-md-2 mb-3">
                         <label for="valorCriancas" className="form-label">Valor Criança</label>
-                        <input value={props.calculoTotal[props.numbTour-1].valorCriancas} type="number" className="form-control form-control-sm" id="valorCriancas" placeholder='0' onChange={updateValorCriancas} />
+                        <input value={props.calculoTotal[props.numbTour-1].valorCriancas ===0?'':props.calculoTotal[props.numbTour-1].valorCriancas} type="number" className="form-control form-control-sm" id="valorCriancas" placeholder='0' onChange={updateValorCriancas} />
                   </div>
               </div>
           </div>

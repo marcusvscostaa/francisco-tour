@@ -11,6 +11,8 @@ const table = new DT;
 export default function TabelaReservas(props) {
     const [tour, setTour] = useState(false);
     const [reservas, setReservas] = useState(false);
+    const [updateCount, setUpdateCount] = useState(false);
+    const [updateData, setUpdateData] = useState(false);
     const [pagamentoreservas, setPagamentoreservas] = useState(false);
     const columns =  {"columns": [{
         className: 'dt-control',
@@ -57,9 +59,13 @@ export default function TabelaReservas(props) {
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-            
+        
+        setUpdateCount(false)
+        setTimeout(() => setUpdateData(true), 1000)
+        setTimeout(() => setUpdateData(false), 1500)    
+    
 
-    }, []);
+    }, [updateCount]);
 
 
 
@@ -93,7 +99,7 @@ export default function TabelaReservas(props) {
                             </thead>
                             <tbody>
                                 {reservas&&reservas.map((reserva, index) => {                                   
-                                    return (<RowTabela pagamentoreservas={pagamentoreservas} reserva={reserva} index={index} tour={tour} />)   
+                                    return (<RowTabela pagamentoreservas={pagamentoreservas} setUpdateCount={setUpdateCount} updateCount={updateData} reserva={reserva} index={index} tour={tour} />)   
                                 })}
                             </tbody>
                         </DataTable>
