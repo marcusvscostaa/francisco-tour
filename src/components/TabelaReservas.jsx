@@ -60,11 +60,10 @@ export default function TabelaReservas(props) {
             })
             .catch((error) => console.log(error));
         
-        setUpdateCount(false)
-        setTimeout(() => setUpdateData(true), 1000)
-        setTimeout(() => setUpdateData(false), 1500)    
-    
-
+        setTimeout(() => {setUpdateData(true)
+        }, 1000)
+        setTimeout(() => setUpdateData(false), 1500)  
+        setUpdateCount(false)        
     }, [updateCount]);
 
 

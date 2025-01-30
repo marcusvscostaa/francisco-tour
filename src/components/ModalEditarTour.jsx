@@ -42,7 +42,8 @@ export default function ModalEditarTour(props){
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
-                        window.location.reload();
+                        props.setUpdateCount(true)
+                        document.getElementById(`CloseEditarTour${props.idtour}`).click()
                     },2000)
                 }
             })
@@ -66,7 +67,7 @@ export default function ModalEditarTour(props){
                 <div className="modal-content bg-light text-dark" role="alert">
                     <div className='modal-header'>
                         <h5 className="alert-heading"><i className="fas fa-exclamation-triangle text-warning"></i> Editar o Tour {props.idtour}</h5>
-                        <button className="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <button className="close" id={`CloseEditarTour${props.idtour}`} type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>

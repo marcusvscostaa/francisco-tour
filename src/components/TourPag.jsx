@@ -22,9 +22,9 @@ export default function TourPag(props){
     },[])
     
     const handleChange = (e) => {
+        
         const name = e.target.name
         const value = e.target.value
-
         if(name === "valorPago"){
             
             setValorRestante(value)

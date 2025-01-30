@@ -176,7 +176,7 @@ export default function Formulario(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                     setModalSpinner(false) 
-                    window.location.reload();
+                    window.location.replace("/minhasReservas");
                 },2000)
             }
           }).catch(e => {

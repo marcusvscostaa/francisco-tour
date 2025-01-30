@@ -26,8 +26,9 @@ export default function ModalPagamento(props){
         }
     </script>`
     useEffect(()=>{
-        console.log(props.pagamento.valorPago)
-    },[])
+        console.log(dadosPag)
+        console.log(props.pagamento)
+    },[props.updateCount])
     
 
     const handleSubmit = (e) => {
@@ -42,6 +43,7 @@ export default function ModalPagamento(props){
             if(dadosPagForm.valorRestante){formData.append("valorRestante", dadosPagForm.valorRestante);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
             if(idPagamento){formData.append("idPagamento", idPagamento);}
+            formData.append("status", "Pago");
         
 
             const reqPagReserva = {
@@ -64,6 +66,8 @@ export default function ModalPagamento(props){
                         setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                             setModalSpinner(false)
+                            setShowAddPag(false)
+                            setDadosPagForm({id_reserva: props.id})
                             props.setUpdateCount(true)
                         },2000)
                     }
@@ -109,7 +113,8 @@ export default function ModalPagamento(props){
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                             setModalSpinner(false)
                             props.setUpdateCount(true)
-                            setShowEditPag({status: false})   
+                            setShowEditPag({status: false})
+                            setImagemUpload(false)   
                         },2000)
                     }
                 })
@@ -136,7 +141,7 @@ export default function ModalPagamento(props){
                     </button>
                 </div>
                 <div className="modal-body">
-                    {props.pagamento?
+                    {dadosPag.length !== 0?
                     <>
                     <div className="table-responsive">
                     <table className="table table-sm table-bordered ">
@@ -158,7 +163,7 @@ export default function ModalPagamento(props){
                             <td>
                             <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
                             <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                            <ModalDelete title="Pagamento" idPag={pag.idPagamento}/>
+                            <ModalDelete title="Pagamento" setUpdateCount={props.setUpdateCount} idPag={pag.idPagamento}/>
                         </td>
                     </tr>
                         )}

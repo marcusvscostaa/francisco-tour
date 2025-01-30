@@ -3,7 +3,7 @@ import ModalAlert from "./ModalAlert";
 
 export default function ModalDelete(props){
     const [modalStatus, setModalStatus] = useState([]);
-    
+    const [modalSpinner, setModalSpinner] = useState(false);    
    
     const handerDelete = async () => {
         const requestOps = {
@@ -13,19 +13,28 @@ export default function ModalDelete(props){
         .then(response => {
             if(response.status === 200) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso Excluir Pagamento" , titulo: "Pagamento"}])
+                setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                    window.location.reload();
-                },5000)
+                    setModalSpinner(false)
+                    props.setUpdateCount(true)
+                    document.getElementById(`deletePag${props.idPag}`).click()                    
+                },2000)
             }
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                    setModalSpinner(false)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Excluir Pagamento: " + e , titulo: "Pagamento"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)})
+            setModalSpinner(true)
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                setModalSpinner(false)
+            },2000)})
     
     }
 
@@ -42,6 +51,11 @@ export default function ModalDelete(props){
                         <p className="mr-auto">Clique fora do card para fechar</p>
                         <button type="button" className="btn btn-danger" onClick={handerDelete} ><i className="fa fa-trash"></i> Sim</button>
                     </div>
+                    {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 
+                        <div className="spinner-border text-secondary m-auto" style={{width: '3rem', height: '3rem'}} role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>} 
                 </div>
             </div>
         </div>

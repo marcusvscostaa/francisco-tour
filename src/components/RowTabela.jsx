@@ -7,6 +7,7 @@ import ModalAlert from "./ModalAlert";
 import ModalPagamento from "./ModalPagamento";
 import ModalComentario from "./ModalComentario";
 import ModalDeleteReserva from "./ModalDeleteReserva";
+import ModalEditarReserva from "./ModalEditarReserva";
 
 
 
@@ -122,9 +123,10 @@ export default function RowTabela(props){
                     </div>                    
                 </td>
                 <td>
-                    <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning" ><i className="fas fa-edit"></i></button>
+                    <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning" data-toggle='modal' data-target={`#reservaEditar${props.reserva.idR}`}><i className="fas fa-edit"></i></button>
+                    <ModalEditarReserva dadosReserva={props.reserva} setUpdateCount={props.setUpdateCount} idR={props.reserva.idR}/>
                     <button type="button" title="Deletar" data-toggle='modal' data-target={`#reservaDelete${props.reserva.idR}`}className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                    <ModalDeleteReserva idR = {props.reserva.idR} />
+                    <ModalDeleteReserva idR = {props.reserva.idR} setUpdateCount={props.setUpdateCount}/>
                 </td>
             </tr>
                 {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}

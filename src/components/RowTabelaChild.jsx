@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react';
 import StatusTour from './StatusTour';
 
 export default function RowTabelaChild(props){
-        const [statusReserva, setStatusReserva] = useState('Confirmado')
+    const [statusReserva, setStatusReserva] = useState('Confirmado')
     
     return ReactDOM.createPortal(
             <td colSpan="9" className="bg-dark text-white" >
@@ -53,9 +53,9 @@ export default function RowTabelaChild(props){
                                 </td>
                                 <td>
                                 <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
-                                <ModalEditarTour dados={dataT} idtour={dataT.idtour}/>
+                                <ModalEditarTour dados={dataT} setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
                                 <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>                                
-                                <ModalDeleteTour title="Tour" idTour={dataT.idtour}/>
+                                <ModalDeleteTour title="Tour" setUpdateCount={props.setUpdateCount} idTour={dataT.idtour}/>
                                 </td>
                         </tr>
                     </tbody>
@@ -66,7 +66,7 @@ export default function RowTabelaChild(props){
             </div>
             <div className='w-100 d-flex'>
                 <button type="button" data-toggle="modal" data-target={`#modalT${props.idcollapseTable.substr(0, 11)}`} className="ml-auto btn btn-sm btn-info">Adiconar Tour</button>
-                <ModalAdicionarTour id={props.idcollapseTable.substr(0, 11)} />
+                <ModalAdicionarTour id={props.idcollapseTable.substr(0, 11)} setUpdateCount={props.setUpdateCount}/>
             </div>
             </td>
        ,

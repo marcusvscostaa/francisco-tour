@@ -3,6 +3,7 @@ import ModalAlert from "./ModalAlert";
 
 export default function ModalDeleteTour(props){
     const [modalStatus, setModalStatus] = useState([]);
+    const [modalSpinner, setModalSpinner] = useState(false);
 
     const handerDelete = async (e) => {
         e.preventDefault();
@@ -11,21 +12,32 @@ export default function ModalDeleteTour(props){
         };
         await fetch(`http://localhost:8800/tour/${props.idTour}`, requestOps)
         .then(response => {
-            if(response.status === 200) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso Excluir Pagamento" , titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                    window.location.reload();
-                },5000)
-            }
+
             if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Pagamento"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)
+                    setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Pagamento"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                    setModalSpinner(false)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
+          }).then(data =>{
+            if(data){
+                    setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso Excluir Pagamento" , titulo: "Pagamento"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                    setModalSpinner(false)
+                    props.setUpdateCount(true)
+                    document.getElementById(`tourDelete${props.idTour}`).click()
+                },2000)
+            }
           }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Excluir Pagamento: " + e , titulo: "Pagamento"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},5000)})
+                setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Excluir Pagamento: " + e , titulo: "Pagamento"}])
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                setModalSpinner(false)
+            },2000)})
     
     }
 
@@ -42,6 +54,11 @@ export default function ModalDeleteTour(props){
                         <p className="mr-auto">Clique fora do card para fechar</p>
                         <button type="button" className="btn btn-danger" onClick={handerDelete} ><i className="fa fa-trash"></i> Sim</button>
                     </div>
+                    {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 
+                        <div className="spinner-border text-secondary m-auto" style={{width: '3rem', height: '3rem'}} role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
+                    </div>} 
                 </div>
             </div>
         </div>

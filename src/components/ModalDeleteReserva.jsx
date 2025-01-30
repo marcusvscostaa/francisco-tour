@@ -18,7 +18,7 @@ export default function(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                     setModalSpinner(false)
-                },5000)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
@@ -29,14 +29,14 @@ export default function(props) {
                 console.log(data)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                     setModalSpinner(false)
-                },5000)
+                },2000)
             }
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Excluir Pagamento: " + e , titulo: "Pagamento"}])
             setModalSpinner(true)
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                 setModalSpinner(false)
-            },5000)})
+            },2000)})
         
             const deleteTour = {
             method: 'DELETE'
@@ -49,7 +49,7 @@ export default function(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
                     setModalSpinner(false)
-                },5000)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
@@ -59,14 +59,14 @@ export default function(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
                     setModalSpinner(false)
-                },5000)
+                },2000)
             }
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Excluir Tour: " + e , titulo: "Tour"}])
             setModalSpinner(true)
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
                 setModalSpinner(false)
-            },5000)})
+            },2000)})
         
         const deleteReserva = {
             method: 'DELETE'
@@ -79,7 +79,7 @@ export default function(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                     setModalSpinner(false)
-                },5000)
+                },2000)
                 throw new Error('Network response was not ok');
             }
             return response.json();
@@ -89,15 +89,17 @@ export default function(props) {
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                     setModalSpinner(false)
-                    window.location.reload();                    
-                },5000)
+                    //window.location.reload();
+                    props.setUpdateCount(true)
+                    document.getElementById(`reservaDelete${props.idR}`).click()                    
+                },2000)
             }
           }).catch(e => {
             setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Excluir Reserva: " + e , titulo: "Reserva"}])
             setModalSpinner(true)
             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                 setModalSpinner(false)
-            },5000)})
+            },2000)})
     
     }
     return(

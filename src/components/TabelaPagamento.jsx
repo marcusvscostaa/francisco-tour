@@ -15,7 +15,7 @@ export default function TabalaPagamento(props){
                 setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
         }   
-    },[])
+    },[props.updateCount])
 
         const handleChange = (e)=> {
             const requestOptions = {
