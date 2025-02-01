@@ -54,7 +54,7 @@ export default function ModalEditarReserva(props) {
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
                         props.setUpdateCount(true)
-                        document.getElementById(`reservaEditar${props.idR}`).click()
+                        document.getElementById(`CloseEditarTour${props.idR}`).click()
                     },2000)
                 }
             })
@@ -77,8 +77,8 @@ export default function ModalEditarReserva(props) {
             <div className="modal-dialog modal-dialog-centered modal-xl">
                 <div className="modal-content bg-light text-dark" role="alert">
                     <div className='modal-header'>
-                        <h5 className="alert-heading"><i className="fas fa-exclamation-triangle text-warning"></i> Editar Reserva {props.idtour}</h5>
-                        <button className="close" id={`CloseEditarTour${props.idtour}`} type="button" data-dismiss="modal" aria-label="Close">
+                        <h5 className="alert-heading"><i className="fas fa-exclamation-triangle text-warning"></i> Editar Reserva {props.idR}</h5>
+                        <button className="close" id={`CloseEditarTour${props.idR}`} type="button" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>

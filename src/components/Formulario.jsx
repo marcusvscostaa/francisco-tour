@@ -34,7 +34,7 @@ export default function Formulario(props) {
         console.log(dadosTour)
     },[])
     const handleClick = () => {
-        if (numberTour.length < 5) {
+        if (numberTour.length <= 5) {
             setaddTour(addTour + 1);
             setNumberTour([...numberTour, addTour]);
         } else {
@@ -307,7 +307,7 @@ export default function Formulario(props) {
                     }
                     <div className="col-md-6 mb-3">
                         <label for="validationTextarea">Comentário da Reserva</label>
-                        <textarea value={comentarioReserva} className="form-control" id="validationTextarea" placeholder="Escreva um comentário..." onChange={(e)=> setcomentarioReserva(e.target.value)}></textarea>
+                        <textarea value={formReserva.comentario} name="comentario" className="form-control" placeholder="Escreva um comentário..." onChange={handleReserva}></textarea>
                     </div>
 
                     {numberTour.map((index) => {
