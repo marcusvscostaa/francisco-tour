@@ -39,6 +39,15 @@ export default function RowTabela(props){
             }            
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
+            const requestOptions = {
+                method: 'put',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
+            };
+            fetch('http://localhost:8800/mudarStatus', requestOptions)
+        .then(response => {
+            console.log(response)
+          })
         }
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
@@ -51,7 +60,7 @@ export default function RowTabela(props){
 
     const handleChange = (e)=> {
         const requestOptions = {
-            method: 'POST',
+            method: 'put',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
         };

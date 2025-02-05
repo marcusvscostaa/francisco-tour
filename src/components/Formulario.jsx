@@ -65,7 +65,7 @@ export default function Formulario(props) {
 
         const id = props.idCliente.status? props.idCliente.id: idCliente
 
-        const newformReservsa = { ...formReserva,[name]: value, id_cliente: id, status: 'Confirmado' }
+        const newformReservsa = { ...formReserva,[name]: value, id_cliente: id, status: 'Confirmado', dataReserva: new Date().toISOString().split('T')[0] }
 
         setformReserva(newformReservsa)
 

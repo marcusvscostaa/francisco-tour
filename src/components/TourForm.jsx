@@ -53,6 +53,7 @@ export default function TourForm(props){
             tour.id === props.numbTour ? { ...tour, data: e.target.value } : tour
           );
         props.atualizarValor(dadosAtualizados)
+        console.log(e.target.value)
     }
     const updateDestino = (e) =>{
         const dados =  props.calculoTotal;
