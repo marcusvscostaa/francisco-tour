@@ -1,6 +1,7 @@
 import logo from './logo.svg';
 import './App.css';
 import './components/Sidebar';
+import './sb-admin-2.css'
 
 import Sidebar from './components/Sidebar';
 import LogoutModal from './components/LogoutModal';

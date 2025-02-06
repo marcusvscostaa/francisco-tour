@@ -126,7 +126,6 @@ export default function RowTabela(props){
                     </a>
                     <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
                         <button className="dropdown-item" value="Confirmado" onClick={handleChange}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
-                        <button className="dropdown-item" value="Pendente"   onClick={handleChange}><i className="fas fa-exclamation-triangle text-warning"></i> Pendente</button>
                         <button className="dropdown-item" value="Cancelado"  onClick={handleChange}><i className="fas fa-ban text-danger"></i> Cancelado</button>
                     </div>
                     </div>                    

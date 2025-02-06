@@ -8,11 +8,11 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale );
 export default function PainelPizza(props){
 
     const data = {
-        labels: ["Confirmado", "Pendente", "Cancelado"],
+        labels: ["Confirmado", "Cancelado"],
         datasets: [{
-          data: [55, 30, 15],
-          backgroundColor: ['#1cc88a', '#f6c23e', '#e74a3b'],
-          hoverBackgroundColor: ['#48f8b9', '#ffd770', '#f2796d'],
+          data: [props.dadoQuantidade.confirmadas, props.dadoQuantidade.canceladas],
+          backgroundColor: ['#1cc88a', '#e74a3b'],
+          hoverBackgroundColor: ['#48f8b9', '#f2796d'],
           hoverBorderColor: "rgb(234, 236, 244)",
         }],
       }
@@ -40,7 +40,7 @@ export default function PainelPizza(props){
         <div class="card shadow mb-4">
             <div
                 class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Reservas 2025</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Reservas {props.anoSelecionado}</h6>
                 <div class="dropdown no-arrow">
                     <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
                         data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -63,9 +63,6 @@ export default function PainelPizza(props){
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
                         <i class="fas fa-circle text-success"></i> Confirmada
-                    </span>
-                    <span class="mr-2">
-                        <i class="fas fa-circle text-warning"></i> Pendente
                     </span>
                     <span class="mr-2">
                         <i class="fas fa-circle text-danger"></i> Cancelada

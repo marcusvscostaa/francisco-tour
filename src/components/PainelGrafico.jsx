@@ -45,17 +45,17 @@ export default function PainelGrafico(props){
     const data= {
         labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         datasets: [{
-          label: "Venda Ano",      
+          label: "Vendas Confirmadas",      
           fill: true,
           lineTension: 0.3,
-          backgroundColor: "rgba(65, 99, 201, 0.13)",
-          borderColor: "rgba(78, 115, 223, 1)",
+          backgroundColor: "rgba(65, 201, 97, 0.13)",
+          borderColor: "rgb(78, 223, 115)",
           pointRadius: 3,
-          pointBackgroundColor: "rgba(78, 115, 223, 1)",
-          pointBorderColor: "rgba(78, 115, 223, 1)",
+          pointBackgroundColor: "rgb(21, 224, 99)",
+          pointBorderColor: "rgb(78, 223, 93)",
           pointHoverRadius: 3,
-          pointHoverBackgroundColor: "rgba(78, 115, 223, 1)",
-          pointHoverBorderColor: "rgba(78, 115, 223, 1)",
+          pointHoverBackgroundColor: "rgb(0, 150, 75)",
+          pointHoverBorderColor: "rgb(0, 138, 35)",
           pointHitRadius: 10,
           pointBorderWidth: 2,
           data: [props.dadoAno.jan, 
@@ -70,6 +70,32 @@ export default function PainelGrafico(props){
                  props.dadoAno.out, 
                  props.dadoAno.nov, 
                  props.dadoAno.dez],
+        },{
+          label: "Vendas Canceladas",      
+          fill: true,
+          lineTension: 0.3,
+          backgroundColor: "rgba(223, 78, 78, 0.05)",
+          borderColor: "rgb(223, 78, 78)",
+          pointRadius: 3,
+          pointBackgroundColor: "rgb(223, 78, 78)",
+          pointBorderColor: "rgb(223, 78, 78)",
+          pointHoverRadius: 3,
+          pointHoverBackgroundColor: "rgb(223, 78, 78)",
+          pointHoverBorderColor: "rgb(223, 93, 78)",
+          pointHitRadius: 10,
+          pointBorderWidth: 2,
+          data: [-(props.dadoAno.janCld), 
+                 -(props.dadoAno.fevCld), 
+                 -(props.dadoAno.marCld), 
+                 -(props.dadoAno.abrCld), 
+                 -(props.dadoAno.maiCld), 
+                 -(props.dadoAno.junCld), 
+                 -(props.dadoAno.julCld), 
+                 -(props.dadoAno.agoCld), 
+                 -(props.dadoAno.setCld), 
+                 -(props.dadoAno.outCld), 
+                 -(props.dadoAno.novCld), 
+                 -(props.dadoAno.dezCld)],
         }
     ],
       }
@@ -120,9 +146,9 @@ export default function PainelGrafico(props){
             },
         },scales: {
             y: {
-              stacked: true,
+              stacked: false,
               ticks: {
-                maxTicksLimit: 5,
+                maxTicksLimit: 10,
                 padding: 10,
                 // Include a dollar sign in the ticks
                 callback: function(value, index, values) {
@@ -154,19 +180,20 @@ export default function PainelGrafico(props){
             <div class="card shadow mb-4">
                 <div
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">VENDAS 2025</h6>
+                    <h6 class="m-0 font-weight-bold text-primary">RESERVAS {props.anoSelecionado}</h6>
                     <div class="dropdown no-arrow">
-                        <a class="dropdown-toggle" href="#" role="button" id="dropdownMenuLink"
+                        <a type="button" class="dropdown-toggle btn btn-primary" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            <i class="fas fa-ellipsis-v fa-sm fa-fw text-gray-400"></i>
+                            <span>{props.anoSelecionado}</span>
+                            <i className="fas fa-calendar-alt fa-fw ml-1 text-gray-400"></i>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right shadow animated--fade-in"
                             aria-labelledby="dropdownMenuLink">
-                            <div class="dropdown-header">Dropdown Header:</div>
-                            <a class="dropdown-item" href="#">Action</a>
-                            <a class="dropdown-item" href="#">Another action</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Something else here</a>
+                            <div class="dropdown-header">Selecionar Ano</div>
+                            <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2024); props.setUpdateCount(true)}}>2024</a>
+                            <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2025); props.setUpdateCount(true)}}>2025</a>
+                            <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2026); props.setUpdateCount(true)}}>2026</a>
+                            <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2027); props.setUpdateCount(true)}}>2027</a>
                         </div>
                     </div>
                 </div>

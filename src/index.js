@@ -9,10 +9,12 @@ import AgendaReservas from './pages/AgendaReservas';
 import MinhasReservas from './pages/MinhasReservas';
 import Comissoes from './pages/Comissoes';
 import TabelaCliente from './pages/TabelaClientes';
+import PaginaNaoEncontrada from './pages/PaginaNaoEncontrada';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
       <Routes>
+        <Route path='*' element={<PaginaNaoEncontrada />} />
         <Route path="/" element={<App />} />
         <Route path="novaReserva" element={<NovaReserva />}/>
         <Route path="agendaReservas" element={<AgendaReservas />}/>

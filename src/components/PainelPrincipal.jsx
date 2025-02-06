@@ -6,8 +6,13 @@ const currentYear = date.getFullYear();
 
 export default function PainelPrincipal(){
     const [dadoAno, setDadoAno] = useState('')
+    const [dadoMesAtual, setDadoMesAtual] = useState('')
+    const [dadoQuantidade, setDadoQuantidade] = useState('')
+    const [dadoQuantidadeAtual, setQuantidadeAtua] = useState('')
+    const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
+    const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
-        fetch(`http://127.0.0.1:8800/reservavalormes/${currentYear}`, {
+        fetch(`http://127.0.0.1:8800/reservavalormes/${anoSelecionado}`, {
             method: "GET",
         })
             .then((response) => response.json())
@@ -17,11 +22,42 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
+        fetch(`http://127.0.0.1:8800/reservavalormesatual`, {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setDadoMesAtual(data);
+                console.log(dadoMesAtual)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+        fetch(`http://127.0.0.1:8800/reservaquantidade/${anoSelecionado}`, {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setDadoQuantidade(data);
+                console.log(dadoMesAtual)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+        fetch(`http://127.0.0.1:8800/reservaquantidadeatual`, {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setQuantidadeAtua(data);
+                console.log(dadoMesAtual)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
 
 
         console.log(dadoAno)
+        setUpdateCount(false)
 
-    },[])
+    },[updateCount])
     return(
     <>
     <div class="row">
@@ -30,9 +66,9 @@ export default function PainelPrincipal(){
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
-                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
-                                Vendas (Mês Atual)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.vendaMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                            <div class="text-xs font-weight-bolder text-primary text-uppercase mb-1">
+                                Vendas {`${date.toLocaleString('default', { month: 'long' })}/${date.getFullYear()}`}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMesAtual&&dadoMesAtual.vendaMesAtual.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -47,7 +83,7 @@ export default function PainelPrincipal(){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
-                                Vendas (Ano)</div>
+                                Vendas Confirmadas ({anoSelecionado})</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         </div>
                         <div class="col-auto">
@@ -63,7 +99,7 @@ export default function PainelPrincipal(){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                Vendas Canceladas (Ano)</div>
+                                Vendas Canceladas ({anoSelecionado})</div>
                             <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                         </div>
                         <div class="col-auto">
@@ -79,8 +115,8 @@ export default function PainelPrincipal(){
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                TOTAL RESERVAS (Mês Atual)</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">50</div>
+                                RESERVAS {`${date.toLocaleString('default', { month: 'long' })}/${date.getFullYear()}`}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{dadoQuantidadeAtual.quantidadeAtual}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-hot-tub fa-2x text-gray-300"></i>
@@ -91,8 +127,8 @@ export default function PainelPrincipal(){
         </div>
     </div>
     <div class="row">
-        <PainelGrafico dadoAno={dadoAno} />
-        <PainelPizza />
+        <PainelGrafico dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
+        <PainelPizza dadoQuantidade={dadoQuantidade} dadoQuantidadeAtual={dadoQuantidadeAtual}  anoSelecionado={anoSelecionado}/>
     </div>
     </>
     )
