@@ -87,7 +87,7 @@ export default function Formulario(props) {
         };        
 
         if((!props.addReserva)){
-            await fetch('http://localhost:8800/cliente', requestOptions)
+            await fetch('http://192.168.0.105:8800/cliente', requestOptions)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
@@ -124,7 +124,7 @@ export default function Formulario(props) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formReserva)
         }   
-        await fetch('http://localhost:8800/reserva', reqReserva)
+        await fetch('http://192.168.0.105:8800/reserva', reqReserva)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
@@ -159,7 +159,7 @@ export default function Formulario(props) {
             body: JSON.stringify(calculoTotal[tour-1])
         };
             
-        await fetch('http://localhost:8800/tour', requestOps)
+        await fetch('http://192.168.0.105:8800/tour', requestOps)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
@@ -207,7 +207,7 @@ export default function Formulario(props) {
                 body: formData
             }
 
-            await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
+            await fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva)
             .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
@@ -349,7 +349,17 @@ export default function Formulario(props) {
                         </div>
                     </div>
                     {
-                        addPag == true ? <TourPag title='Adicionar' dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
+                        addPag == true ? <TourPag title='Adicionar' 
+                                            dadosPagForm={dadosPagForm} 
+                                            idReserva ={idReserva} 
+                                            setImagemUpload={setImagemUpload}
+                                            namePago={'Pago'} 
+                                            removerPag={setaddPag} 
+                                            type={"Pagamento"} 
+                                            devido={'Devido'} 
+                                            setDadosPagForm = {setDadosPagForm}
+                                            numbTour="pag" 
+                                            valorTotal={
                             calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0)} /> : null
                     }
                     <div className="w-100 d-flex ml-3 mr-3 mb-3">

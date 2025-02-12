@@ -50,7 +50,7 @@ export default function ModalPagamento(props){
                 method: 'POST',
                 body: formData
             }
-            fetch('http://localhost:8800/reservaPagamento', reqPagReserva).then(response => {
+            fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                     setModalSpinner(true)
@@ -95,7 +95,7 @@ export default function ModalPagamento(props){
                 method: 'PUT',
                 body: formData
             }
-            fetch(`http://localhost:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {
+            fetch(`http://192.168.0.105:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                     setModalSpinner(true)
@@ -159,9 +159,9 @@ export default function ModalPagamento(props){
                     <tbody>
                     {dadosPag&&dadosPag.map( (pag) =>
                     <tr>
-                        <TabalaPagamento updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} pag={pag} />
-                            <td>
-                            <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status} ><i className="fas fa-edit	"></i></button>
+                        <TabalaPagamento updateCount={props.updateCount} disabledButton={props.disabledButton} setUpdateCount={props.setUpdateCount} pag={pag} />
+                        <td>
+                            <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status || showAddPag} ><i className="fas fa-edit	"></i></button>
                             <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
                             <ModalDelete title="Pagamento" setUpdateCount={props.setUpdateCount} idPag={pag.idPagamento}/>
                         </td>
@@ -204,7 +204,11 @@ export default function ModalPagamento(props){
                         </div>}
                     {showAddPag&& 
                     <form onSubmit={handleSubmit}>
-                        <TourPag title='Adicionar' 
+                        <TourPag title='Adicionar'
+                        namePago={'Pago'} 
+                        removerPag={setShowAddPag} 
+                        type={"Pagamento"} 
+                        devido={'Devido'}  
                         valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0))}
                         dadosPagForm={dadosPagForm} 
                         setImagemUpload={setImagemUpload} 
@@ -220,10 +224,16 @@ export default function ModalPagamento(props){
                     <form onSubmit={handerEdit}>
                         <TourPag 
                             title='Editar'
+                            namePago={'Pago'} 
+                            removerPag={setShowEditPag} 
+                            type={"Pagamento"} 
+                            devido={'Devido'} 
                             editPag={showEditPag.status} 
-                            idPag={showEditPag.id} dados={dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)} 
+                            idPag={showEditPag.id} 
+                            dados={dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)} 
                             valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0) + dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)[0].valorPago)} 
-                            dadosPagForm={dadosPagForm} setImagemUpload={setImagemUpload} 
+                            dadosPagForm={dadosPagForm} 
+                            setImagemUpload={setImagemUpload} 
                             setDadosPagForm = {setDadosPagForm}/>
                         <div className="d-flex" >
                             <button className="ml-auto btn btn-primary" type="submit">

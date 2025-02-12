@@ -1,55 +1,40 @@
 import { useState, useEffect } from "react"
 
-export default function StatusTour(props){
-    const [statusReserva, setStatusReserva] = useState('Confirmado')
+export default function StatusEstorno(props){
+    const [statusReserva, setStatusReserva] = useState('Pago')
 
     useEffect(()=>{
         if(props.status){          
-            if(props.status === 'Confirmado'){
-                setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
+            if(props.status === 'Pago'){
+                setStatusReserva({status: 'Pago', className: "fas fa-check-circle text-success"})
             }else if(props.status === 'Cancelado'){
                 setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
-        }else{
-            setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            const requestOptions = {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({status: 'Confirmado', idtour: props.id})
-            };
-            fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
-            .then(response => {
-                console.log(response)
-            })   
-        }    
-    },[props.updateCount])
-
+        }
+    },[])
     const handleChange = (e)=> {
         const requestOptions = {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({status: e.target.value, idtour: props.id})
+            body: JSON.stringify({status: e.target.value, idEstorno: props.id})
         };
-        fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+        fetch('http://192.168.0.105:8800/mudarStatusEstorno', requestOptions)
         .then(response => {
             console.log(response)
             })   
-        if(e.target.value === 'Confirmado'){
+        if(e.target.value === 'Pago'){
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-            props.setUpdateCount(true)
         }else if(e.target.value === 'Cancelado'){
             setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-            props.setUpdateCount(true)
         }
     }
-            
     return (
     <div className="dropdown">
         <a type="button" data-toggle="dropdown" aria-expanded="false" >
             <i title={statusReserva.status} className={statusReserva.className}></i>
         </a>
         <div style={{ minWidth: "40px" }} className="dropdown-menu dropdown-menu-right">
-            <button className="dropdown-item" value="Confirmado" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
+            <button className="dropdown-item" value="Pago" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-check-circle text-success"></i> Pago</button>
             <button className="dropdown-item" value="Cancelado" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-ban text-danger"></i> Cancelado</button>
         </div>
     </div>

@@ -1,0 +1,154 @@
+import { useEffect, useState } from "react";
+import PainelGrafico from "./PainelGrafico";
+import PainelPizza from "./PainelPizza";
+import TabelaFinanceiro from "./TabelaFinanceiro";
+const date = new Date();
+const currentYear = date.getFullYear();
+
+export default function PainelFinanceiro(){
+        const [dadoAno, setDadoAno] = useState('')
+        const [tour, setTour] = useState(false);
+        const [reservas, setReservas] = useState(false);
+        const [estorno, setEstorno] = useState(false);
+        const [pagamentoreservas, setPagamentoreservas] = useState(false);
+        const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
+        const [updateCount, setUpdateCount] = useState(false)
+        useEffect(()=>{
+            fetch(`http://192.168.0.105:8800/pagamentoreservavalormes/${anoSelecionado}`, {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setDadoAno(data);
+                    console.log(dadoAno)
+                    //console.log(data);
+                })
+                .catch((error) => console.log(error));
+            fetch("http://192.168.0.105:8800/reservas", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if(data.fatal === false){
+                        setReservas(false)
+                    }else{
+                        setReservas(data);
+                    }
+                    console.log(reservas)
+                    //console.log(data);
+                })
+                .catch((error) => console.log(error));
+            fetch("http://192.168.0.105:8800/tour", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setTour(data);
+                    console.log(tour)
+                    //console.log(data);
+                })
+                .catch((error) => console.log(error));
+            
+            fetch("http://192.168.0.105:8800/reservaPagamento", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setPagamentoreservas(data);
+                    console.log(pagamentoreservas)
+                    //console.log(data);
+                })
+                .catch((error) => console.log(error));
+                fetch("http://192.168.0.105:8800/estorno", {
+                    method: "GET",
+                })
+                    .then((response) => response.json())
+                    .then((data) => {
+                        if(data.fatal === false){
+                            setEstorno(false)
+                        }else{
+                            setEstorno(data);
+                        }
+                        console.log(estorno)
+                        //console.log(data);
+                    })
+                    .catch((error) => console.log(error));
+    
+            console.log(dadoAno)
+            setUpdateCount(false)
+    
+        },[updateCount])
+        return(
+        <>
+        <div class="row">
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-success shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bolder text-success text-uppercase mb-1">
+                                    FATURAMENTO {anoSelecionado}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    REEMBOLSOS {anoSelecionado}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-danger shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
+                                    Vendas Canceladas ({anoSelecionado})</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-times-circle fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xl-3 col-md-6 mb-4">
+                <div class="card border-left-info shadow h-100 py-2">
+                    <div class="card-body">
+                        <div class="row no-gutters align-items-center">
+                            <div class="col mr-2">
+                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                    RESERVAS {`${date.toLocaleString('default', { month: 'long' })}/${date.getFullYear()}`}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">{0}</div>
+                            </div>
+                            <div class="col-auto">
+                                <i class="fas fa-hot-tub fa-2x text-gray-300"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <PainelGrafico dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
+        </div>
+        <TabelaFinanceiro dadoAno={dadoAno} estorno={estorno} reservas={reservas} tour={tour} pagamentoreservas={pagamentoreservas} anoSelecionado={anoSelecionado}/>
+        </>)
+}

@@ -36,7 +36,7 @@ export default function ModalEditarCliente(props){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formCliente)
         }
-        fetch(`http://localhost:8800/cliente/${props.id}`, editarCliente).then(response => {
+        fetch(`http://192.168.0.105:8800/cliente/${props.id}`, editarCliente).then(response => {
             console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Cliente"}])

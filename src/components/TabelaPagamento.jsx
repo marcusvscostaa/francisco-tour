@@ -23,7 +23,7 @@ export default function TabalaPagamento(props){
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento})
             };
-            fetch('http://localhost:8800/mudarStatusPagamento', requestOptions)
+            fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
             .then(response => {
                 console.log(response)
               })
@@ -48,7 +48,7 @@ export default function TabalaPagamento(props){
                 <ModalComentario title={'Comentário Pagamento'} id={props.pag.idPagamento} comentario={props.pag.comentario}/>                
             </td>
             <td>
-                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://127.0.0.1:8800/imagem/${props.pag.idPagamento}`}>
+                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://192.168.0.105:8800/imagem/${props.pag.idPagamento}`}>
                     <i className="fas fa-image	"></i>
                     &nbsp; Ver
                 </a>
@@ -60,8 +60,8 @@ export default function TabalaPagamento(props){
                 <i title={statusReserva.status} className={statusReserva.className}></i>
                 </a>
                 <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
-                    <button className="dropdown-item" value="Pago" onClick={handleChange}><i className="fas fa-check-circle text-success"></i> Pago</button>
-                    <button className="dropdown-item" value="Cancelado"  onClick={handleChange}><i className="fas fa-ban text-danger"></i> Cancelado</button>
+                    <button className="dropdown-item" value="Pago" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-check-circle text-success"></i> Pago</button>
+                    <button className="dropdown-item" value="Cancelado"  onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-ban text-danger"></i> Cancelado</button>
                 </div>
                 </div>                    
             </td>

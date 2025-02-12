@@ -22,7 +22,7 @@ export default function TabelaReservas(props) {
     }]}
 
     useEffect( () => {
-        fetch("http://127.0.0.1:8800/reservas", {
+        fetch("http://192.168.0.105:8800/reservas", {
             method: "GET",
         })
             .then((response) => response.json())
@@ -38,7 +38,7 @@ export default function TabelaReservas(props) {
             .catch((error) => console.log(error));
         
         
-        fetch("http://127.0.0.1:8800/tour", {
+        fetch("http://192.168.0.105:8800/tour", {
             method: "GET",
         })
             .then((response) => response.json())
@@ -49,7 +49,7 @@ export default function TabelaReservas(props) {
             })
             .catch((error) => console.log(error));
        
-        fetch("http://127.0.0.1:8800/reservaPagamento", {
+        fetch("http://192.168.0.105:8800/reservaPagamento", {
             method: "GET",
         })
             .then((response) => response.json())

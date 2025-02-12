@@ -35,7 +35,7 @@ export default function ModalEditarReserva(props) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(dadosReserva)
         }
-        fetch(`http://localhost:8800/reserva/${props.idR}`, editReserva).then(response => {
+        fetch(`http://192.168.0.105:8800/reserva/${props.idR}`, editReserva).then(response => {
             console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])

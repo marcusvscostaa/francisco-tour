@@ -19,6 +19,7 @@ export default function RowTabela(props){
     const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
     const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     const [statusReserva, setStatusReserva] = useState('Confirmado')
+    const[disabledButton, setDisabledButton] = useState(false)
     console.log(pagamentoreservas.valorPago)
     const myRef = useRef(null);
     const scriptHtml = `<script type="text/javascript">
@@ -32,9 +33,11 @@ export default function RowTabela(props){
         if(props.reserva.status){          
             if(props.reserva.status === 'Confirmado'){
                 setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
+                setDisabledButton(false)
             }else if(props.reserva.status === 'Pendente'){
                 setStatusReserva({status: 'Pendente', className: "fas fa-exclamation-triangle text-warning"})
             }else if(props.reserva.status === 'Cancelado'){
+                setDisabledButton(true)
                 setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
         }else{
@@ -44,7 +47,7 @@ export default function RowTabela(props){
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
             };
-            fetch('http://localhost:8800/mudarStatus', requestOptions)
+            fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
         .then(response => {
             console.log(response)
           })
@@ -64,16 +67,70 @@ export default function RowTabela(props){
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
         };
-        fetch('http://localhost:8800/mudarStatus', requestOptions)
+        fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
         .then(response => {
             console.log(response)
           })   
         if(e.target.value === 'Confirmado'){
+            setDisabledButton(false)
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
+            dadosTour.map(item => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({status:'Confirmado', idtour: item.idtour})
+                };
+                fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+                .then(response => {
+                    console.log(response)
+                    props.setUpdateCount(true)
+                  })   
+            })
+            pagamentoreservas.map(item => {
+                if(item.id_reserva === props.reserva.idR) {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({status: 'Pago', idPagamento: item.idPagamento})
+                    };
+                    fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
+                    .then(response => {
+                        console.log(response)
+                      })
+                      props.setUpdateCount(true)
+                }
+            })
         }else if(e.target.value === 'Pendente'){
             setStatusReserva({status: e.target.value, className: "fas fa-exclamation-triangle text-warning"})
         }else if(e.target.value === 'Cancelado'){
+            setDisabledButton(true)
             setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
+            dadosTour.map(item => {
+                const requestOptions = {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({status:'Cancelado', idtour: item.idtour})
+                };
+                fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+                .then(response => {
+                    console.log(response)
+                    props.setUpdateCount(true)
+                  })   
+            })
+            pagamentoreservas.map(item => {
+                if(item.id_reserva === props.reserva.idR) {
+                    const requestOptions = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento})
+                    };
+                    fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
+                    .then(response => {
+                        console.log(response)
+                      })
+                      props.setUpdateCount(true)   
+                }
+            })   
         }
     }
 
@@ -107,7 +164,7 @@ export default function RowTabela(props){
                     {valorTotal <= pagamento && <span className="badge badge-pill badge-success">Pago</span>}
                     {pagamento == 0 && valorTotal != 0 && <span className="badge badge-pill badge-danger">Não Pago</span>}
                     </a>
-                    <ModalPagamento id={props.reserva.idR} pagamento={pagamentoreservas} updateCount={props.updateCount} valorTotal={valorTotal} setUpdateCount={props.setUpdateCount}/>
+                    <ModalPagamento id={props.reserva.idR} disabledButton={disabledButton} pagamento={pagamentoreservas} updateCount={props.updateCount} valorTotal={valorTotal} setUpdateCount={props.setUpdateCount}/>
                     </td>
                 <td className="text-left"><a href={`https://api.whatsapp.com/send?phone=${props.reserva.telefone}`} title="Abrir Whatsapp" target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i> {props.reserva.telefone}</a></td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
@@ -137,7 +194,7 @@ export default function RowTabela(props){
                     <ModalDeleteReserva idR = {props.reserva.idR} setUpdateCount={props.setUpdateCount}/>
                 </td>
             </tr>
-                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} dadosTour={dadosTour} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}
+                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} disabledButton={disabledButton} dadosTour={dadosTour} updateCount={props.updateCount} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}
     </Fragment>
     )
 }

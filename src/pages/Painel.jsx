@@ -5,7 +5,8 @@ export default function Painel(){
     return(
     <div id="wrapper">
         <Sidebar 
-        painel="nav-item active" 
+        painel="nav-item active"
+        financeiro="nav-item" 
         agendaReserva="nav-item" 
         reservas="nav-item"  
         reservasShow="collapse"

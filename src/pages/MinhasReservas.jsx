@@ -4,7 +4,8 @@ export default function MinhasReservas(){
     return(
         <div id="wrapper">
         <Sidebar 
-        painel="nav-item" 
+        painel="nav-item"
+        financeiro="nav-item" 
         reservas="nav-item active"  
         agendaReserva="nav-item" 
         reservasShow="collapse show" 

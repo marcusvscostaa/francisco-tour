@@ -10,7 +10,7 @@ export default function ModalDeleteTour(props){
         const requestOps = {
             method: 'DELETE'
         };
-        await fetch(`http://localhost:8800/tour/${props.idTour}`, requestOps)
+        await fetch(`http://192.168.0.105:8800/tour/${props.idTour}`, requestOps)
         .then(response => {
 
             if (!response.ok) {

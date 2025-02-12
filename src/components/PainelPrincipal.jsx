@@ -12,7 +12,7 @@ export default function PainelPrincipal(){
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
-        fetch(`http://127.0.0.1:8800/reservavalormes/${anoSelecionado}`, {
+        fetch(`http://192.168.0.105:8800/reservavalormes/${anoSelecionado}`, {
             method: "GET",
         })
             .then((response) => response.json())
@@ -22,7 +22,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://127.0.0.1:8800/reservavalormesatual`, {
+        fetch(`http://192.168.0.105:8800/reservavalormesatual`, {
             method: "GET",
         })
             .then((response) => response.json())
@@ -32,7 +32,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://127.0.0.1:8800/reservaquantidade/${anoSelecionado}`, {
+        fetch(`http://192.168.0.105:8800/reservaquantidade/${anoSelecionado}`, {
             method: "GET",
         })
             .then((response) => response.json())
@@ -42,7 +42,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://127.0.0.1:8800/reservaquantidadeatual`, {
+        fetch(`http://192.168.0.105:8800/reservaquantidadeatual`, {
             method: "GET",
         })
             .then((response) => response.json())

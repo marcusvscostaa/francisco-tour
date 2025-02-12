@@ -71,7 +71,7 @@ export default  function AddReserva(props){
                     comentario: comentarioReserva
                 })
             }   
-            await fetch('http://localhost:8800/reserva', reqReserva)
+            await fetch('http://192.168.0.105:8800/reserva', reqReserva)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
@@ -95,7 +95,7 @@ export default  function AddReserva(props){
                 body: JSON.stringify(calculoTotal[tour-1])
             };
                 
-            await fetch('http://localhost:8800/tour', requestOps)
+            await fetch('http://192.168.0.105:8800/tour', requestOps)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
@@ -130,7 +130,7 @@ export default  function AddReserva(props){
                     body: formData
                 }
     
-                await fetch('http://localhost:8800/reservaPagamento', reqPagReserva)
+                await fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva)
                 .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])

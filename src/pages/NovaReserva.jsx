@@ -9,7 +9,8 @@ export default function NovaReserva(){
         <>
         <div id="wrapper">
         <Sidebar 
-        painel="nav-item" 
+        painel="nav-item"
+        financeiro="nav-item" 
         agendaReserva="nav-item" 
         reservas="nav-item active"  
         reservasShow="collapse show" 

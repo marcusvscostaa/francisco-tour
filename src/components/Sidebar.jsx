@@ -31,6 +31,12 @@ export  default function Sidebar(props){
                 <i className="fas fa-fw fa-tachometer-alt"></i>
                 <span>Painel</span></a>
         </li>
+        
+        <li className={props.financeiro}>
+            <a className="nav-link" href="/financeiro">
+                <i className="fas fa-money-bill-wave"></i>
+                <span>Financeiro</span></a>
+        </li>
         <li className={props.agendaReserva}>
             <a className="nav-link" href="agendaReservas">
                 <i className="far fa-calendar-alt"></i>

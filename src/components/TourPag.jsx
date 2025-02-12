@@ -16,7 +16,11 @@ export default function TourPag(props){
                 valorPago: props.dados[0].valorPago,
                 comentario: props.dados[0].comentario,
             })
-            setImage(`http://127.0.0.1:8800/imagem/${props.dados[0].idPagamento}`)
+            if(props.type === 'Pagamento'){
+                setImage(`http://192.168.0.105:8800/imagem/${props.dados[0].idPagamento}`)
+            }else{
+                setImage(`http://192.168.0.105:8800/imagemEstorno/${props.dados[0].idPagamento}`)
+            }
             setValorRestante(props.dados[0].valorPago)
         }
     },[])
@@ -60,15 +64,17 @@ export default function TourPag(props){
             method: 'POST',
             body: formData
         }
-        fetch('http://localhost:8800/upload-imagem', reqPagReserva)
+        fetch('http://192.168.0.105:8800/upload-imagem', reqPagReserva)
         .then( response => console.log(response.json()))
     }
-    console.log(nomeArquivo)
     return(
         <div className="col-md-12">
         <div className="card mb-4 border-dark">
           <div className="card-header text-lg">
-              {`${props.title} Pagamento ${props.editPag ? props.dados[0].idPagamento : ''}`} 
+              {`${props.title} ${props.type} ${props.editPag ? props.dados[0].idPagamento : ''}`}
+              <button type="button" onClick={() => props.removerPag(false)} className="close" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
           </div>
           <div className="card-body">
               <form>
@@ -79,7 +85,7 @@ export default function TourPag(props){
                   </div>
                 
                   <div className="col-md-3 mb-3">
-                      <label className="form-label" for="formaPag">Forma de Pagamento</label>
+                      <label className="form-label" for="formaPag">Forma de {props.type}</label>
                       <select className="form-control form-control-sm" value={props.dadosPagForm.formaPagamento} onChange={handleChange} name="formaPagamento" id="formaPag">
                           <option selected>Escolher...</option>
                           <option value="1">One</option>
@@ -90,12 +96,12 @@ export default function TourPag(props){
                   
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
-                      <label for="numeroAdultos" className="form-label">Valor Devido</label>
+                      <label for="numeroAdultos" className="form-label">Valor {props.devido}</label>
                       <input type="number"  value={props.valorTotal.toFixed(2)} className="form-control form-control-sm disabledTextInput" id="numeroAdultos"/>
                       </fieldset>
                   </div>
                   <div className="col-md-2 mb-3">
-                      <label for="valorAdulto" className="form-label">Valor Pago</label>
+                      <label for="valorAdulto" className="form-label">Valor {props.namePago}</label>
                       <input type="number" name="valorPago" value={props.dadosPagForm.valorPago} className="form-control form-control-sm" onChange={handleChange}  id="valorAdulto" required/>
                   </div>
                   
@@ -114,7 +120,7 @@ export default function TourPag(props){
                             <img className="img-thumbnail" src={image}></img>
                   </div>
                   <div className="col-md-6 mb-3">
-                      <label for="validationTextarea">Comentário do Pagamento</label>
+                      <label for="validationTextarea">Comentário do {props.type}</label>
                   <textarea name="comentario" value={props.dadosPagForm.comentario} className="form-control" onChange={handleChange} id="validationTextarea" placeholder="Escreva um comentário..."></textarea>
                   </div>
               </div>

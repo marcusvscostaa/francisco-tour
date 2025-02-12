@@ -16,7 +16,7 @@ export default function ModalAdicionarTour(props){
                 body: JSON.stringify(calculoTotal[0])
             };
                 
-            await fetch('http://localhost:8800/tour', requestOps)
+            await fetch('http://192.168.0.105:8800/tour', requestOps)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])

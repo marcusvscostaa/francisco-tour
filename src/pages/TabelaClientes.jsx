@@ -6,7 +6,8 @@ export default function TabelaCliente(){
         <>
         <div id="wrapper">
         <Sidebar 
-        painel="nav-item" 
+        painel="nav-item"
+        financeiro="nav-item" 
         reservas="nav-item"  
         agendaReserva="nav-item" 
         reservasShow="collapse" 

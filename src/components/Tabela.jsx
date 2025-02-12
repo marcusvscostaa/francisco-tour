@@ -14,7 +14,7 @@ export default function Tabela(props) {
 
     useEffect(() => {
 
-        fetch("http://127.0.0.1:8800/clientes", {
+        fetch("http://192.168.0.105:8800/clientes", {
             method: "GET",
         })
             .then((response) => response.json())
