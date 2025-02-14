@@ -7,7 +7,8 @@ DataTable.use(DT);
 export default function TabelaFinanceiro(props) {
     useEffect(() => {
         console.log(props.dadoAno.dados)
-    })
+        console.log("Update tabela financeiro: " + props.updateCount )
+    },[props.updateCount])
     return (
         <div className="card shadow mb-4">
             <div className="card-header py-3">
@@ -15,7 +16,7 @@ export default function TabelaFinanceiro(props) {
             </div>
             <div className="card-body">
                 <div className="table-responsive">
-                    {props.reservas &&  props.tour && props.pagamentoreservas?
+                    {props.reservas && props.estorno &&  props.tour && props.pagamentoreservas?
                         <DataTable
                             className="table table-sm table-hover mr-0 mt-3 w-100 "
                             cellspacing="0"
@@ -34,9 +35,9 @@ export default function TabelaFinanceiro(props) {
                                 </tr>
                             </thead>
                             <tbody>
-                                {props.reservas && props.reservas.map((item) => {
+                                {props.reservas && props.estorno && props.reservas.map((item) => {
                                     return (
-                                        <TabelaFinanceiroRow dados={item} estorno={props.estorno.filter((estorno) => estorno.id_reserva === item.idR )} tour={props.tour} pagamentoreservas={props.pagamentoreservas}/>
+                                        <TabelaFinanceiroRow updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} dados={item} estorno={props.estorno.filter((estorno) => estorno.id_reserva === item.idR )} tour={props.tour} pagamentoreservas={props.pagamentoreservas}/>
                                     )
                                 })}
                             </tbody>

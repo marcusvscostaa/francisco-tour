@@ -127,7 +127,6 @@ export default function TourPag(props){
               </form>
           </div>
           </div>
-          
       </div>
     )
 }

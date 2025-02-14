@@ -45,7 +45,7 @@ export default function PainelGrafico(props){
     const data= {
         labels: ["Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez"],
         datasets: [{
-          label: "Vendas Confirmadas",      
+          label: props.title1,      
           fill: true,
           lineTension: 0.3,
           backgroundColor: "rgba(65, 201, 97, 0.13)",
@@ -71,7 +71,7 @@ export default function PainelGrafico(props){
                  props.dadoAno.nov, 
                  props.dadoAno.dez],
         },{
-          label: "Vendas Canceladas",      
+          label: props.title2,      
           fill: true,
           lineTension: 0.3,
           backgroundColor: "rgba(223, 78, 78, 0.05)",
@@ -176,7 +176,7 @@ export default function PainelGrafico(props){
     return (
         
 
-        <div class="col-xl-8 col-lg-7">
+        <div class={`col-xl-${props.size} col-lg-7`}>
             <div class="card shadow mb-4">
                 <div
                     class="card-header py-3 d-flex flex-row align-items-center justify-content-between">

@@ -11,7 +11,7 @@ export default function StatusEstorno(props){
                 setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
             }            
         }
-    },[])
+    },[props.updateCount])
     const handleChange = (e)=> {
         const requestOptions = {
             method: 'POST',
@@ -20,6 +20,7 @@ export default function StatusEstorno(props){
         };
         fetch('http://192.168.0.105:8800/mudarStatusEstorno', requestOptions)
         .then(response => {
+            props.setUpdateCount(true)
             console.log(response)
             })   
         if(e.target.value === 'Pago'){

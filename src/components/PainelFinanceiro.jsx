@@ -13,6 +13,8 @@ export default function PainelFinanceiro(){
         const [pagamentoreservas, setPagamentoreservas] = useState(false);
         const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
         const [updateCount, setUpdateCount] = useState(false)
+        const [updateData, setUpdateData] = useState(false);
+
         useEffect(()=>{
             fetch(`http://192.168.0.105:8800/pagamentoreservavalormes/${anoSelecionado}`, {
                 method: "GET",
@@ -75,7 +77,10 @@ export default function PainelFinanceiro(){
                     .catch((error) => console.log(error));
     
             console.log(dadoAno)
-            setUpdateCount(false)
+            setTimeout(() => {setUpdateData(true)
+            }, 1000)
+            setTimeout(() => setUpdateData(false), 1500)  
+            setUpdateCount(false)        
     
         },[updateCount])
         return(
@@ -103,23 +108,7 @@ export default function PainelFinanceiro(){
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                    REEMBOLSOS {anoSelecionado}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-danger shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
-                                    Vendas Canceladas ({anoSelecionado})</div>
+                                    ESTORNOS {anoSelecionado}</div>
                                 <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
                             </div>
                             <div class="col-auto">
@@ -129,26 +118,10 @@ export default function PainelFinanceiro(){
                     </div>
                 </div>
             </div>
-            <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-info shadow h-100 py-2">
-                    <div class="card-body">
-                        <div class="row no-gutters align-items-center">
-                            <div class="col mr-2">
-                                <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
-                                    RESERVAS {`${date.toLocaleString('default', { month: 'long' })}/${date.getFullYear()}`}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">{0}</div>
-                            </div>
-                            <div class="col-auto">
-                                <i class="fas fa-hot-tub fa-2x text-gray-300"></i>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="row">
-            <PainelGrafico dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
+            <PainelGrafico title1={"Faturamento"}  title2={"Estorno"} size={"12"} dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
         </div>
-        <TabelaFinanceiro dadoAno={dadoAno} estorno={estorno} reservas={reservas} tour={tour} pagamentoreservas={pagamentoreservas} anoSelecionado={anoSelecionado}/>
+            <TabelaFinanceiro dadoAno={dadoAno} setUpdateCount={setUpdateCount} updateCount={updateData} estorno={estorno} reservas={reservas} tour={tour} pagamentoreservas={pagamentoreservas} anoSelecionado={anoSelecionado}/>
         </>)
 }

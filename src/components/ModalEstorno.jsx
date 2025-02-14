@@ -6,6 +6,7 @@ import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
 import ModalComentario from "./ModalComentario";
 import StatusEstorno from "./StatusEstorno";
+import ModalDeleteEstorno from "./ModalDeleteEstorno";
 
 DataTable.use(DT);
 const idEstorno =  uid().toString();
@@ -20,8 +21,10 @@ export default function ModalEstorno(props){
     const [showEditPag, setShowEditPag] = useState({status: false})
 
     useEffect(()=>{
-        console.log(props.estorno)
-    },[])
+        console.log("Funciona")       
+        console.log("Update Modal Estorno: " + props.updateCount )
+
+    },[props.updateCount])
     
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -42,7 +45,7 @@ export default function ModalEstorno(props){
             }
             fetch('http://192.168.0.105:8800/estorno', reqEstorno).then(response => {
                 if (!response.ok) {
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
@@ -52,17 +55,62 @@ export default function ModalEstorno(props){
                 return response.json();
                 }).then(data => {
                     if(data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
                         setModalSpinner(true)
                         setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                             setModalSpinner(false)
                             setModalAddEstorno(false)
-                            //props.setUpdateCount(true)
+                            props.setUpdateCount(true)
                         },2000)
                     }
                 })
                 .catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
+                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                    setModalSpinner(false)
+                },2000)})
+    }
+
+    const handleEdit = (e) => {
+        e.preventDefault();
+
+        const formData = new FormData();
+            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
+            if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
+            if(dadosPagForm.valorPago){formData.append("valor", dadosPagForm.valorPago);}
+            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+            formData.append("status", "Pago");
+
+            const reqEstorno = {
+                method: 'PUT',
+                body: formData
+            }
+            fetch(`http://192.168.0.105:8800/estorno/${showEditPag.id}`, reqEstorno).then(response => {
+                if (!response.ok) {
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                    },2000)
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+                }).then(data => {
+                    if(data){
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
+                        setModalSpinner(true)
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                            setModalSpinner(false)
+                            setModalAddEstorno(false)
+                            props.setUpdateCount(true)
+                            setShowEditPag(false)
+                        },2000)
+                    }
+                })
+                .catch(e => {
+                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                     setModalSpinner(false)
@@ -82,6 +130,8 @@ export default function ModalEstorno(props){
                     </div>
                     <div className="modal-body">
                         {props.estorno.length !== 0?
+                        <>
+                        <div className="table-responsive">
                             <table className="table table-sm table-hover mr-0 mt-3 w-100 ">
                                 <thead>
                                 <tr>
@@ -117,11 +167,12 @@ export default function ModalEstorno(props){
                                                 <ModalComentario title={'Comentário Estorno'} id={item.idEstorno} comentario={item.comentario}/>
                                             </td>
                                             <td>
-                                                <StatusEstorno status={item.status} id={item.idEstorno}/>
+                                                <StatusEstorno updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} status={item.status} id={item.idEstorno}/>
                                             </td>
                                             <td>
                                                 <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: item.idEstorno})} disabled={showEditPag.status || addEstorno}><i className="fas fa-edit	"></i></button>
-                                                <button type="button" data-toggle="modal" data-target={`#deletePag${item.idEstorno}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                                <button type="button" data-toggle="modal" data-target={`#deleteEstorno${item.idEstorno}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                                                <ModalDeleteEstorno setUpdateCount={props.setUpdateCount} idEstorno = {item.idEstorno} title ={'Estorno'}/>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -130,11 +181,38 @@ export default function ModalEstorno(props){
 
 
                             </table>
-
+                        </div>
+                        <div  className="row ">
+                        <div className=" border rounded mb-3 ml-auto col-4 mr-3">
+                            <div className=" mb-4">
+                                    <div className="">
+                                        <ul className="list-group list-group-flush">
+                                            <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 pb-0">
+                                                Estorno Total
+                                                <span>R$ {(props.valorTotal).toFixed(2).replace(".", ",")}</span>
+                                            </li>
+                                            <li className="list-group-item d-flex justify-content-between align-items-center px-0">
+                                                Valor Devolvido
+                                                <span>R$ {props.estorno.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0).toFixed(2).replace(".", ",")}</span>
+                                            </li>
+                                                <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
+                                                <div>
+                                                    <strong>Estorno Restante</strong>                                            
+                                                </div>
+                                            <span><strong>R$ {(props.valorTotal - props.estorno.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0)).toFixed(2).replace(".", ",")}</strong></span>
+                                            </li>
+                                        </ul>
+                                </div>
+                            </div>
+                        </div>
+                        </div>
+                        </>
                         : "Não Há Estorno Registrado"}
                         {!addEstorno&&!showEditPag.status &&
                         <div className="d-flex">
-                            <button type="button" className="btn btn-primary btn-sm ml-auto" onClick={() => setModalAddEstorno(true)}>Adicionar Estorno</button>
+                            <button type="button" className="btn btn-primary btn-sm ml-auto" onClick={() => {setModalAddEstorno(true)
+                                setDadosPagForm({id_reserva: props.idR})
+                            }}>Adicionar Estorno</button>
                         </div>}
                         {addEstorno&&
                         <form onSubmit={handleSubmit}>
@@ -155,7 +233,7 @@ export default function ModalEstorno(props){
                             </div>
                         </form>}
                         {showEditPag.status&&
-                        <form>
+                        <form onSubmit={handleEdit}>
                             <TourPag title='Editar'
                             type={'Estorno'}
                             devido={'Estorno'}
@@ -171,7 +249,6 @@ export default function ModalEstorno(props){
                                         comentario: item.comentario,
                                         status: item.status
                                 })
-
                             })}   
                             valorTotal = {props.valorTotal}
                             removerPag ={setShowEditPag}

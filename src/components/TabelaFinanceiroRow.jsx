@@ -8,6 +8,7 @@ export default function TabelaFinanceiroRow(props){
     const pagamentoreservas = (props.pagamentoreservas);
     const dadosTour =(props.tour).filter((tourR) => tourR.status === 'Confirmado').filter((tourR) => tourR.id_reserva === props.dados.idR)
     const valorTotal = dadosTour.reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
+    const calculoEstorno = (props.estorno.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0));
 
     useEffect(()=>{
         if(props.dados.status){          
@@ -21,7 +22,9 @@ export default function TabelaFinanceiroRow(props){
             setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.dados.idR)).reduce((sum, element)=> sum + element.valorPago, 0))
          
          }
-    },[])
+         console.log("Update Row financeiro: " + props.updateCount )
+
+    },[props.updateCount])
 
     return(
         <tr>
@@ -35,11 +38,16 @@ export default function TabelaFinanceiroRow(props){
             <td>{
                 (pagamento - valorTotal) > 0?
                 <a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${props.dados.idR}`}>
-                    <span title='Adicionar Estorno'className="badge badge-pill badge-danger">Não Devolvido</span>
+                    { calculoEstorno === 0 && <span title='Adicionar Estorno'className="badge badge-pill badge-danger">Não Devolvido</span>}
+                    { calculoEstorno < (pagamento -valorTotal) && calculoEstorno > 0 &&<span title='Adicionar Estorno'className="badge badge-pill badge-warning">Incompleto</span>}
+                    { calculoEstorno === (pagamento -valorTotal) && props.estorno.length > 0 &&<span title='Ver Estorno'className="badge badge-pill badge-success">Devolvido</span>}
+                    { calculoEstorno > (pagamento -valorTotal) &&<span title='Ver Estorno'className="badge badge-pill badge-info">Valor Acima</span>}
                 </a>
                 :'Sem Estorno'
-            }</td>
-            <ModalEstorno valorTotal={pagamento - valorTotal} estorno={props.estorno} idR={props.dados.idR} />
+                
+            }<ModalEstorno valorTotal={pagamento - valorTotal} updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} estorno={props.estorno} idR={props.dados.idR} />
+
+            </td>
         </tr>
     )
 }
