@@ -18,6 +18,7 @@ export default function ModalPagamento(props){
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
     const [statusReserva, setStatusReserva] = useState('Pago')
+    const [options, setOptions] = useState("");
 
     const scriptHtml = `<script type="text/javascript">
      { $(document).ready(() => {
@@ -26,6 +27,19 @@ export default function ModalPagamento(props){
         }
     </script>`
     useEffect(()=>{
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
         console.log(dadosPag)
         console.log(props.pagamento)
     },[props.updateCount])
@@ -198,13 +212,15 @@ export default function ModalPagamento(props){
                     :<p>Não há dados de pagamento</p> }
                     {!showAddPag && !(showEditPag.status) && 
                         <div className="d-flex" >
-                            <button className="ml-auto btn btn-primary" onClick={() => setShowAddPag(true)}>
+                            <button className="ml-auto btn btn-primary" onClick={() => {setShowAddPag(true) 
+                                setDadosPagForm({id_reserva: props.id})}}>
                                 Adicionar Pagamento
                             </button>
                         </div>}
                     {showAddPag&& 
                     <form onSubmit={handleSubmit}>
                         <TourPag title='Adicionar'
+                        options={options}
                         namePago={'Pago'} 
                         removerPag={setShowAddPag} 
                         type={"Pagamento"} 
@@ -225,6 +241,7 @@ export default function ModalPagamento(props){
                         <TourPag 
                             title='Editar'
                             namePago={'Pago'} 
+                            options={options}
                             removerPag={setShowEditPag} 
                             type={"Pagamento"} 
                             devido={'Devido'} 

@@ -19,6 +19,7 @@ export default function Formulario(props) {
     const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
+    const [options, setOptions] = useState("");
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: idReserva});
     const [calculoTotal, setcalculoTotal] = useState([
         { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
@@ -31,7 +32,19 @@ export default function Formulario(props) {
     const [modalStatus, setModalStatus] = useState([]);
 
     useEffect(() => {
-        console.log(dadosTour)
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
     },[])
     const handleClick = () => {
         if (numberTour.length <= 5) {
@@ -278,30 +291,27 @@ export default function Formulario(props) {
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="zona">Zona</label>
                         <select value={formReserva.zona} className="form-control form-control-sm" name="zona" id="zona" onChange={handleReserva}>
-                            <option selected>Zona...</option>
-                            <option value="Centro">Centro</option>
-                            <option value="Bairro">Bairro</option>
-                            <option value="Sul">Sul</option>
+                            {options&& options.zona.map((item) => {
+                                return <option value={item}>{item}</option>
+                            })}
                         </select>
                     </div>
                     {!(props.addReserva)&&
                     <>
-                    <div className="col-md-3 mb-3">
+                    <div className="col-md-3 mb-3" >
                         <label className="form-label" for="paisOrigem">Pais de Origem</label>
                         <select value={formCliente.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
-                            <option value="" disabled selected>Pais...</option>
-                            <option value="Brasil">Brasil</option>
-                            <option value="Chile">Chile</option>
-                            <option value="Argentina">Argentina</option>
+                            {options&& options.paisOrigem.map((item) => {
+                                    return <option value={item}>{item}</option>
+                                })}
                         </select>
                     </div>
-                    <div className="col-md-3 mb-3">
+                    <div className="col-md-3 mb-3" >
                         <label className="form-label" for="idioma">Idioma</label>
                         <select value={formCliente.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
-                            <option value='' disabled selected>Idioma...</option>
-                            <option value="Português">Português</option>
-                            <option value="Espanhol">Espanhol</option>
-                            <option value="Inglês">Inglês</option>
+                            {options&& options.idioma.map((item) => {
+                                    return <option value={item}>{item}</option>
+                                })}
                         </select>
                     </div></>
                     }
@@ -316,6 +326,7 @@ export default function Formulario(props) {
                             key={index}
                             idReserva ={idReserva}
                             calculoTotal={calculoTotal}
+                            options={options}
                         />);
                     })
 
@@ -358,7 +369,8 @@ export default function Formulario(props) {
                                             type={"Pagamento"} 
                                             devido={'Devido'} 
                                             setDadosPagForm = {setDadosPagForm}
-                                            numbTour="pag" 
+                                            numbTour="pag"
+                                            options={options} 
                                             valorTotal={
                             calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0)} /> : null
                     }

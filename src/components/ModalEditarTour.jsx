@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import ModalAlert from "./ModalAlert";
 import TourForm from "./TourForm";
 
@@ -15,7 +15,25 @@ export default function ModalEditarTour(props){
             numeroCriancas: props.dados.quantidadeCriancas, 
             valorCriancas: props.dados.valorCrianca }]
     );
-    
+    const [options, setOptions] = useState("");
+
+    useEffect(() => {
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
+        console.log(props.dadosReserva);
+    },[])
+
     const handerEdit = (e) => {
         e.preventDefault();
         
@@ -76,6 +94,7 @@ export default function ModalEditarTour(props){
                         <TourForm atualizarValor={setcalculoTotal}
                             numbTour="1"
                             idReserva ='ppp'
+                            options={options}
                             calculoTotal={calculoTotal}/>
                     </div>
                     <div className="modal-footer mb-0">

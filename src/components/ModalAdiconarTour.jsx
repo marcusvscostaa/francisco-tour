@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import TourForm from "./TourForm";
 import ModalAlert from "./ModalAlert";
 
@@ -7,6 +7,23 @@ export default function ModalAdicionarTour(props){
         { id: "1", id_reserva: props.id, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 } ]);
         const [modalStatus, setModalStatus] = useState([]);
         const [modalSpinner, setModalSpinner] = useState(false);
+        const [options, setOptions] = useState("");
+
+        useEffect(()=>{
+            fetch("http://192.168.0.105:8800/opcoesForm", {
+                method: "GET",
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    setOptions(data);
+                    console.log(options)
+                    //console.log(data);
+                })
+                .catch((error) => console.log(error));
+    
+    
+            console.log(options)
+        },[])
 
         const handleSubmit = async (e) => {
             e.preventDefault()
@@ -54,6 +71,7 @@ export default function ModalAdicionarTour(props){
                 <div className="modal-body">
                     <form onSubmit={handleSubmit}>
                         <TourForm
+                            options={options}
                             numbTour={'1'} 
                             atualizarValor={setcalculoTotal}
                             key={'1'}

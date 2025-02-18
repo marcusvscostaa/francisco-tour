@@ -4,6 +4,7 @@ import ModalAlert from "./ModalAlert";
 export default function ModalEditarReserva(props) {
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
+    const [options, setOptions] = useState("");
     const [dadosReserva, setDadosReserva] = useState({
         dataReserva: (props.dadosReserva.dataReserva).substr(0, 10),
         endereco: props.dadosReserva.endereco,
@@ -15,6 +16,19 @@ export default function ModalEditarReserva(props) {
     })
 
     useEffect(() => {
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
         console.log(props.dadosReserva);
     })
 
@@ -103,10 +117,9 @@ export default function ModalEditarReserva(props) {
                             <div className="col-md-3 mb-3">
                                 <label className="form-label" for="zona">Zona</label>
                                 <select value={dadosReserva.zona} onChange={handleChange} className="form-control form-control-sm" name="zona" id="zona" >
-                                    <option selected>Zona...</option>
-                                    <option value="Centro">Centro</option>
-                                    <option value="Bairro">Bairro</option>
-                                    <option value="Sul">Sul</option>
+                                {options&& options.zona.map((item) => {
+                                    return <option value={item}>{item}</option>
+                                })}
                                 </select>
                             </div>
                             <div className="col-md-6 mb-3">

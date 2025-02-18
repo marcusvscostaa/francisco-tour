@@ -14,10 +14,24 @@ export default function ModalEditarCliente(props){
         }    
     );
     const [dadosReserva, setDadosReserva] = useState()
+    const [options, setOptions] = useState("");
 
     useEffect(() => {
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
         console.log(props.dadosReserva);
-    })
+    },[])
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -96,19 +110,17 @@ export default function ModalEditarCliente(props){
                         <div className="col-md-3 mb-3">
                             <label className="form-label" for="paisOrigem">Pais de Origem</label>
                             <select value={formCliente.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
-                                <option value="" disabled selected>Pais...</option>
-                                <option value="Brasil">Brasil</option>
-                                <option value="Chile">Chile</option>
-                                <option value="Argentina">Argentina</option>
+                                {options&& options.paisOrigem.map((item) => {
+                                        return <option value={item}>{item}</option>
+                                    })}
                             </select>
                         </div>
                         <div className="col-md-3 mb-3">
                             <label className="form-label" for="idioma">Idioma</label>
                             <select value={formCliente.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
-                                <option value='' disabled selected>Idioma...</option>
-                                <option value="Português">Português</option>
-                                <option value="Espanhol">Espanhol</option>
-                                <option value="Inglês">Inglês</option>
+                                {options&& options.idioma.map((item) => {
+                                        return <option value={item}>{item}</option>
+                                    })}
                             </select>
                         </div>
                     </form>

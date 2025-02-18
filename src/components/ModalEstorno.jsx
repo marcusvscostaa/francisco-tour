@@ -19,8 +19,23 @@ export default function ModalEstorno(props){
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.idR});
     const [showEditPag, setShowEditPag] = useState({status: false})
+    const [options, setOptions] = useState("");
+
 
     useEffect(()=>{
+        fetch("http://192.168.0.105:8800/opcoesForm", {
+            method: "GET",
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setOptions(data);
+                console.log(options)
+                //console.log(data);
+            })
+            .catch((error) => console.log(error));
+
+
+        console.log(options)
         console.log("Funciona")       
         console.log("Update Modal Estorno: " + props.updateCount )
 
@@ -218,6 +233,7 @@ export default function ModalEstorno(props){
                         <form onSubmit={handleSubmit}>
                             <TourPag title='Adicionar'
                             type={'Estorno'}
+                            options={options}
                             devido={'Estorno'}
                             namePago={'Devolvido'} 
                             valorTotal = {props.valorTotal}
@@ -236,6 +252,7 @@ export default function ModalEstorno(props){
                         <form onSubmit={handleEdit}>
                             <TourPag title='Editar'
                             type={'Estorno'}
+                            options={options}
                             devido={'Estorno'}
                             namePago={'Devolvido'}
                             editPag={showEditPag.status} 

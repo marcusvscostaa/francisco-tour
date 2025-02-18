@@ -10,7 +10,8 @@ export default function Comissoes(){
         reservasShow="collapse show" 
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
-        comissoes="collapse-item active" 
+        comissoes="collapse-item active"
+        configuracoes="collapse-item"  
         tabelaCliente="nav-item"
         nomePagina="Comissões"/>
         </div>

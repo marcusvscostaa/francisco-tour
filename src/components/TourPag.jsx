@@ -87,10 +87,9 @@ export default function TourPag(props){
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="formaPag">Forma de {props.type}</label>
                       <select className="form-control form-control-sm" value={props.dadosPagForm.formaPagamento} onChange={handleChange} name="formaPagamento" id="formaPag">
-                          <option selected>Escolher...</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                            {props.options&& props.options.formaPagamento.map((item) => {
+                                return <option value={item}>{item}</option>
+                            })}
                       </select>
                   </div>
                   

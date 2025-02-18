@@ -12,7 +12,8 @@ export default function Financeiro(){
         reservasShow="collapse" 
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
-        comissoes="collapse-item" 
+        comissoes="collapse-item"
+        configuracoes="collapse-item"  
         tabelaCliente="nav-item"
         nomePagina="Financeiro"
         componente={<PainelFinanceiro />}

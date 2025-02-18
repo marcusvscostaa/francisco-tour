@@ -55,23 +55,7 @@ export  default function Sidebar(props){
                     <a className={props.novaReserva} href="novaReserva"><i className="fas fa-plus-circle"></i><span> &nbsp; Nova Reseva</span></a>
                     <a className={props.minhaReserva} href="minhasReservas"><i className="far fa-file-alt"></i><span> &nbsp; Minhas Resevas</span></a>
                     <a className={props.comissoes} href="comissoes"><i className="fas fa-money-bill-wave"></i><span> &nbsp; Comissões</span></a>
-                    <a className={props.comissoes} href="comissoes"><i className="fa fa-cog	"></i><span> &nbsp; Configurações</span></a>
-                </div>
-            </div>
-        </li>
-        <li className="nav-item">
-            <a className="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTours"
-                aria-expanded="true" aria-controls="collapseTours">
-                <i className="fas fa-map-marked-alt	"></i>
-                <span>Tours</span>
-            </a>
-            <div id="collapseTours" className="collapse" aria-labelledby="headingUtilities"
-                data-parent="#accordionSidebar">
-                <div className="bg-white py-2 collapse-inner rounded">
-                    <h6 className="collapse-header">Opções:</h6>
-                    <a className="collapse-item" href="utilities-color.html"><i className="fas fa-plus-circle"></i><span> &nbsp; Nova Reseva</span></a>
-                    <a className="collapse-item" href="utilities-border.html"><i className="far fa-file-alt"></i><span> &nbsp; Minhas Resevas</span></a>
-                    <a className="collapse-item" href="utilities-animation.html"><i className="fas fa-money-bill-wave"></i><span> &nbsp; Comissões</span></a>
+                    <a className={props.configuracoes} href="configuracoes"><i className="fa fa-cog	"></i><span> &nbsp; Configurações</span></a>
                 </div>
             </div>
         </li>

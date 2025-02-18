@@ -12,7 +12,8 @@ export default function Painel(){
         reservasShow="collapse"
         novaReserva="collapse-item"
         minhaReserva="collapse-item"
-        comissoes="collapse-item" 
+        comissoes="collapse-item"
+        configuracoes="collapse-item"  
         tabelaCliente="nav-item"
         nomePagina="Painel"
         componente={<PainelPrincipal />}/>

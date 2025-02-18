@@ -84,19 +84,17 @@ export default function TourForm(props){
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="destino">Destino</label>
                       <select  value={props.calculoTotal[props.numbTour-1].destino} className="form-control form-control-sm" id="detino" onChange={updateDestino} required>
-                          <option value='' disabled selected>Destino...</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                            {props.options&& props.options.destino.map((item) => {
+                                return <option value={item}>{item}</option>
+                            })}
                       </select>
                   </div>
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="tour" >Tour</label>
                       <select value={props.calculoTotal[props.numbTour-1].tour} className="form-control form-control-sm" id="tour" onChange={updateTour} required>
-                          <option value='' disabled selected>Tour..</option>
-                          <option value="1">One</option>
-                          <option value="2">Two</option>
-                          <option value="3">Three</option>
+                            {props.options&& props.options.tour.map((item) => {
+                                return <option value={item}>{item}</option>
+                            })}
                       </select>
                   </div>
                   <div className="col-md-2 mb-3">

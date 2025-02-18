@@ -11,6 +11,7 @@ import Comissoes from './pages/Comissoes';
 import TabelaCliente from './pages/TabelaClientes';
 import PaginaNaoEncontrada from './pages/PaginaNaoEncontrada';
 import Financeiro from './pages/Financeiro';
+import Configuracoes from './pages/Configuracoes';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <BrowserRouter>
@@ -23,6 +24,7 @@ root.render(
         <Route path="minhasReservas" element={<MinhasReservas />}/>
         <Route path="comissoes" element={<Comissoes />}/>
         <Route path="tabelaCliente" element={<TabelaCliente />}/>
+        <Route path="Configuracoes" element={<Configuracoes />}/>
       </Routes>
     </BrowserRouter>
 );

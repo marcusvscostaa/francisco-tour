@@ -1,6 +1,6 @@
+import ConfiguracoesCard from "../components/ConfiguracoesCard";
 import Sidebar from "../components/Sidebar";
-import TabelaReservas from "../components/TabelaReservas"
-export default function MinhasReservas(){
+export default function Configuracoes(){
     return(
         <div id="wrapper">
         <Sidebar 
@@ -10,13 +10,12 @@ export default function MinhasReservas(){
         agendaReserva="nav-item" 
         reservasShow="collapse show" 
         novaReserva="collapse-item" 
-        minhaReserva="collapse-item active"
-        comissoes="collapse-item"
-        configuracoes="collapse-item"  
+        minhaReserva="collapse-item"
+        comissoes="collapse-item" 
+        configuracoes="collapse-item active" 
         tabelaCliente="nav-item"
-        nomePagina="Minhas Reservas"
-        componente={<TabelaReservas />}/>
-        
+        nomePagina="Configurações"
+        componente={<ConfiguracoesCard />}/>
         </div>
     )
 }
