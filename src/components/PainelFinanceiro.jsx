@@ -18,6 +18,9 @@ export default function PainelFinanceiro(){
         useEffect(()=>{
             fetch(`http://192.168.0.105:8800/pagamentoreservavalormes/${anoSelecionado}`, {
                 method: "GET",
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -28,6 +31,9 @@ export default function PainelFinanceiro(){
                 .catch((error) => console.log(error));
             fetch("http://192.168.0.105:8800/reservas", {
                 method: "GET",
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -42,6 +48,9 @@ export default function PainelFinanceiro(){
                 .catch((error) => console.log(error));
             fetch("http://192.168.0.105:8800/tour", {
                 method: "GET",
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -53,6 +62,9 @@ export default function PainelFinanceiro(){
             
             fetch("http://192.168.0.105:8800/reservaPagamento", {
                 method: "GET",
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -63,6 +75,9 @@ export default function PainelFinanceiro(){
                 .catch((error) => console.log(error));
                 fetch("http://192.168.0.105:8800/estorno", {
                     method: "GET",
+                    headers:{ 
+                        'Content-Type': 'application/json',
+                        "authorization": JSON.parse(localStorage.getItem('user')).token}
                 })
                     .then((response) => response.json())
                     .then((data) => {

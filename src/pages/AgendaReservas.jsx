@@ -2,6 +2,7 @@ import { use, useEffect } from "react";
 import ModalAlert from "../components/ModalAlert";
 import Sidebar from "../components/Sidebar";
 import $ from "jquery";
+import AgendaReserva from "../components/AgendaReserva";
 export default function AgendaReservas(){
 
     return(
@@ -17,7 +18,9 @@ export default function AgendaReservas(){
         comissoes="collapse-item" 
         configuracoes="collapse-item" 
         tabelaCliente="nav-item"
-        nomePagina="Agenda de Reservas"/>
+        usuarios="nav-item"
+        nomePagina="Agenda de Reservas"
+        componente={<AgendaReserva />}/>
         </div>
     )
 }

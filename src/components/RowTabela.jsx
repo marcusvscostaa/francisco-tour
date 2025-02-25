@@ -44,7 +44,9 @@ export default function RowTabela(props){
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
             const requestOptions = {
                 method: 'put',
-                headers: { 'Content-Type': 'application/json' },
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
             };
             fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
@@ -64,7 +66,9 @@ export default function RowTabela(props){
     const handleChange = (e)=> {
         const requestOptions = {
             method: 'put',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
         };
         fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
@@ -77,7 +81,9 @@ export default function RowTabela(props){
             dadosTour.map(item => {
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers:{ 
+                        'Content-Type': 'application/json',
+                        "authorization": JSON.parse(localStorage.getItem('user')).token},
                     body: JSON.stringify({status:'Confirmado', idtour: item.idtour})
                 };
                 fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
@@ -90,7 +96,9 @@ export default function RowTabela(props){
                 if(item.id_reserva === props.reserva.idR) {
                     const requestOptions = {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers:{ 
+                            'Content-Type': 'application/json',
+                            "authorization": JSON.parse(localStorage.getItem('user')).token},
                         body: JSON.stringify({status: 'Pago', idPagamento: item.idPagamento})
                     };
                     fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
@@ -108,7 +116,9 @@ export default function RowTabela(props){
             dadosTour.map(item => {
                 const requestOptions = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers:{ 
+                        'Content-Type': 'application/json',
+                        "authorization": JSON.parse(localStorage.getItem('user')).token},
                     body: JSON.stringify({status:'Cancelado', idtour: item.idtour})
                 };
                 fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
@@ -121,7 +131,9 @@ export default function RowTabela(props){
                 if(item.id_reserva === props.reserva.idR) {
                     const requestOptions = {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
+                        headers:{ 
+                            'Content-Type': 'application/json',
+                            "authorization": JSON.parse(localStorage.getItem('user')).token},
                         body: JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento})
                     };
                     fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)

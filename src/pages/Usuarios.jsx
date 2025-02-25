@@ -1,9 +1,10 @@
+import LogoutModal from "../components/LogoutModal";
+import PainelUsuario from "../components/PainelUsuarios";
 import Sidebar from "../components/Sidebar";
-import Tabela from "../components/Tabela"
-import LogoutModal from "../components/LogoutModal"
-export default function TabelaCliente(){
+
+export default function Usuarios(){
     return(
-        <>
+         <>
         <div id="wrapper">
         <Sidebar 
         painel="nav-item"
@@ -15,10 +16,10 @@ export default function TabelaCliente(){
         minhaReserva="collapse-item"
         comissoes="collapse-item"
         configuracoes="collapse-item"  
-        tabelaCliente="nav-item active"
-        usuarios="nav-item"
-        nomePagina="Tabela de Clientes" 
-        componente={<Tabela/>}/>
+        tabelaCliente="nav-item"
+        usuarios="nav-item active"
+        nomePagina="Usuários" 
+        componente={<PainelUsuario />}/>
         </div>
         <a className="scroll-to-top rounded" href="#page-top">
             <i className="fas fa-angle-up"></i>

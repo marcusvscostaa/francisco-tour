@@ -16,6 +16,9 @@ export default function Tabela(props) {
 
         fetch("http://192.168.0.105:8800/clientes", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {

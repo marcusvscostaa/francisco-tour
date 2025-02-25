@@ -7,7 +7,10 @@ export default function ModalDelete(props){
    
     const handerDelete = async () => {
         const requestOps = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
         await fetch(`http://192.168.0.105:8800/reservaPagamento/${props.idPag}`, requestOps)
         .then(response => {

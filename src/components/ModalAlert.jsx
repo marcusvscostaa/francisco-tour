@@ -16,7 +16,7 @@ export default function ModalAlert(props){
            
             setTimeout(()=>{document.getElementById("modalAlert").click(); 
                 if(props.dados.status){window.location="/minhasReservas"};}, 4000) */
-        })   
+        },[])   
     return (    
     <>  
         <div className="position-fixed bottom-0 right-0 p-3" style={{zIndex: 5, right: 0, bottom: 0}}>

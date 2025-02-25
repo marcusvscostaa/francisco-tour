@@ -12,6 +12,9 @@ export default function ModalDeletarCliete(props) {
     useEffect(async () => {
         await fetch(`http://192.168.0.105:8800/idReservas/${props.id}`, {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         }).then((response) => response.json())
             .then((data) => {
                 if (data.fatal === false) {
@@ -30,7 +33,9 @@ export default function ModalDeletarCliete(props) {
 
         reservas.map(async (dado) => {
             const deletePagReserva = {
-                method: 'DELETE'
+                method: 'DELETE',headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
             await fetch(`http://192.168.0.105:8800/pagreserva/${dado.idR}`, deletePagReserva)
@@ -65,7 +70,10 @@ export default function ModalDeletarCliete(props) {
                 })
 
             const deleteTour = {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
             await fetch(`http://192.168.0.105:8800/reservatour/${dado.idR}`, deleteTour)
@@ -99,7 +107,10 @@ export default function ModalDeletarCliete(props) {
                 })
 
             const deleteReserva = {
-                method: 'DELETE'
+                method: 'DELETE',
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
             await fetch(`http://192.168.0.105:8800/reserva/${dado.idR}`, deleteReserva)
@@ -137,7 +148,10 @@ export default function ModalDeletarCliete(props) {
         })
 
         const deleteCliente = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
 
         await fetch(`http://192.168.0.105:8800/cliente/${props.id}`, deleteCliente)

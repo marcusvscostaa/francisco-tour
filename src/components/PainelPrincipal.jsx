@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import PainelGrafico from "./PainelGrafico";
 import PainelPizza from "./PainelPizza";
+import { parseJSON } from "jquery";
 const date = new Date();
 const currentYear = date.getFullYear();
 
@@ -14,6 +15,9 @@ export default function PainelPrincipal(){
     useEffect(()=>{
         fetch(`http://192.168.0.105:8800/reservavalormes/${anoSelecionado}`, {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -24,6 +28,9 @@ export default function PainelPrincipal(){
             .catch((error) => console.log(error));
         fetch(`http://192.168.0.105:8800/reservavalormesatual`, {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -34,6 +41,9 @@ export default function PainelPrincipal(){
             .catch((error) => console.log(error));
         fetch(`http://192.168.0.105:8800/reservaquantidade/${anoSelecionado}`, {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -44,6 +54,9 @@ export default function PainelPrincipal(){
             .catch((error) => console.log(error));
         fetch(`http://192.168.0.105:8800/reservaquantidadeatual`, {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -53,8 +66,6 @@ export default function PainelPrincipal(){
             })
             .catch((error) => console.log(error));
 
-
-        console.log(dadoAno)
         setUpdateCount(false)
 
     },[updateCount])

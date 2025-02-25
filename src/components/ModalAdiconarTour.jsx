@@ -12,6 +12,9 @@ export default function ModalAdicionarTour(props){
         useEffect(()=>{
             fetch("http://192.168.0.105:8800/opcoesForm", {
                 method: "GET",
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             })
                 .then((response) => response.json())
                 .then((data) => {
@@ -29,7 +32,9 @@ export default function ModalAdicionarTour(props){
             e.preventDefault()
             const requestOps = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: JSON.stringify(calculoTotal[0])
             };
                 

@@ -15,6 +15,7 @@ export default function Painel(){
         comissoes="collapse-item"
         configuracoes="collapse-item"  
         tabelaCliente="nav-item"
+        usuarios="nav-item"
         nomePagina="Painel"
         componente={<PainelPrincipal />}/>
       </div>

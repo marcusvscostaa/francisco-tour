@@ -14,6 +14,7 @@ export default function MinhasReservas(){
         comissoes="collapse-item"
         configuracoes="collapse-item"  
         tabelaCliente="nav-item"
+        usuarios="nav-item"
         nomePagina="Minhas Reservas"
         componente={<TabelaReservas />}/>
         

@@ -20,6 +20,9 @@ export default function ModalEditarTour(props){
     useEffect(() => {
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -39,7 +42,9 @@ export default function ModalEditarTour(props){
         
         const editTour = {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(calculoTotal[0])
         }
         fetch(`http://192.168.0.105:8800/tour/${props.idtour}`, editTour).then(response => {

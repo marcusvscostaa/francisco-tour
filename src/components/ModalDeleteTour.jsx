@@ -8,7 +8,10 @@ export default function ModalDeleteTour(props){
     const handerDelete = async (e) => {
         e.preventDefault();
         const requestOps = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
         await fetch(`http://192.168.0.105:8800/tour/${props.idTour}`, requestOps)
         .then(response => {

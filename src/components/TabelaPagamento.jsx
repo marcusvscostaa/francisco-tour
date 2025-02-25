@@ -20,7 +20,9 @@ export default function TabalaPagamento(props){
         const handleChange = (e)=> {
             const requestOptions = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento})
             };
             fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)

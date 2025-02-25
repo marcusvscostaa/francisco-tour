@@ -5,6 +5,7 @@ import DT from 'datatables.net-dt';
 import RowTabela from "./RowTabela";
 import RowTabelaChild from "./RowTabelaChild";
 
+
 DataTable.use(DT);
 const table = new DT;
 
@@ -24,6 +25,9 @@ export default function TabelaReservas(props) {
     useEffect( () => {
         fetch("http://192.168.0.105:8800/reservas", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -40,6 +44,9 @@ export default function TabelaReservas(props) {
         
         fetch("http://192.168.0.105:8800/tour", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -51,6 +58,9 @@ export default function TabelaReservas(props) {
        
         fetch("http://192.168.0.105:8800/reservaPagamento", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {

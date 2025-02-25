@@ -19,6 +19,7 @@ export default function NovaReserva(){
         comissoes="collapse-item"
         configuracoes="collapse-item"  
         tabelaCliente="nav-item"
+        usuarios="nav-item"
         nomePagina="Nova Reserva" 
         componente={<Formulario idCliente={{status: false}} title="Dados Cliente"/>}/>
         </div>

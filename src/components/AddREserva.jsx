@@ -64,7 +64,9 @@ export default  function AddReserva(props){
                  
             const reqReserva = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json',
+                           "authorization": JSON.parse(localStorage.getItem('user')).token
+                 },
                 body: JSON.stringify({
                     id: idReserva,
                     id_cliente: props.id,
@@ -91,7 +93,9 @@ export default  function AddReserva(props){
             numberTour.map(async (tour) => {        
                 const requestOps = {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 'Content-Type': 'application/json', 
+                            "authorization": JSON.parse(localStorage.getItem('user')).token
+                },
                 body: JSON.stringify(calculoTotal[tour-1])
             };
                 
@@ -127,6 +131,9 @@ export default  function AddReserva(props){
         
                 const reqPagReserva = {
                     method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 
+                                "authorization": JSON.parse(localStorage.getItem('user')).token
+                            },
                     body: formData
                 }
     

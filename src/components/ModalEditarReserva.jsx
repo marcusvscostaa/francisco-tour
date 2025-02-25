@@ -18,6 +18,9 @@ export default function ModalEditarReserva(props) {
     useEffect(() => {
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -30,7 +33,7 @@ export default function ModalEditarReserva(props) {
 
         console.log(options)
         console.log(props.dadosReserva);
-    })
+    },[])
 
     const handleChange = (e) => {
         e.preventDefault();
@@ -46,7 +49,9 @@ export default function ModalEditarReserva(props) {
         
         const editReserva = {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(dadosReserva)
         }
         fetch(`http://192.168.0.105:8800/reserva/${props.idR}`, editReserva).then(response => {

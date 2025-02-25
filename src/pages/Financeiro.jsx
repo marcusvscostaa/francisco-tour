@@ -15,6 +15,7 @@ export default function Financeiro(){
         comissoes="collapse-item"
         configuracoes="collapse-item"  
         tabelaCliente="nav-item"
+        usuarios="nav-item"
         nomePagina="Financeiro"
         componente={<PainelFinanceiro />}
         />

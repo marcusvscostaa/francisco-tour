@@ -59,6 +59,35 @@
   background-color: unset !important;
 }
 
+#calendar {
+  width: 100%;
+  margin: 40px auto;
+}
+
+.sidebar-brand {
+  text-decoration: none;
+  font-size: 1.5rem;
+  font-weight: 800;
+  padding: 1.5rem 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05rem;
+  z-index: 1;
+  color: white;
+
+}
+.sidebar-brand .sidebar-brand-icon i {
+  font-size: 2rem;
+}
+.sidebar .sidebar-brand .sidebar-brand-text {
+  display: none;
+}
+.sidebar .sidebar-brand .sidebar-brand-text {
+  display: inline;
+}
+.positonItems{
+  margin-top: -40px;
+}
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

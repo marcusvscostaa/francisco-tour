@@ -29,6 +29,9 @@ export default function ModalPagamento(props){
     useEffect(()=>{
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -62,6 +65,9 @@ export default function ModalPagamento(props){
 
             const reqPagReserva = {
                 method: 'POST',
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: formData
             }
             fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva).then(response => {
@@ -107,6 +113,9 @@ export default function ModalPagamento(props){
 
             const reqPagReserva = {
                 method: 'PUT',
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: formData
             }
             fetch(`http://192.168.0.105:8800/reservaPagamento/${showEditPag.id}`, reqPagReserva).then(response => {

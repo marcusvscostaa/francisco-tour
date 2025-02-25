@@ -34,6 +34,9 @@ export default function Formulario(props) {
     useEffect(() => {
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -95,7 +98,9 @@ export default function Formulario(props) {
         console.log(formCliente)
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(formCliente)
         };        
 
@@ -134,7 +139,9 @@ export default function Formulario(props) {
         
         const reqReserva = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(formReserva)
         }   
         await fetch('http://192.168.0.105:8800/reserva', reqReserva)
@@ -168,7 +175,9 @@ export default function Formulario(props) {
         numberTour.map(async (tour) => {        
             const requestOps = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(calculoTotal[tour-1])
         };
             
@@ -217,6 +226,9 @@ export default function Formulario(props) {
     
             const reqPagReserva = {
                 method: 'POST',
+                headers:{ 
+                    'Content-Type': 'application/json',
+                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: formData
             }
 

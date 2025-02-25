@@ -8,7 +8,10 @@ export default function(props) {
     
     const handerDelete = async () => {
         const deletePagReserva = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}            
         };
 
         await fetch(`http://192.168.0.105:8800/pagreserva/${props.idR}`, deletePagReserva)
@@ -39,7 +42,10 @@ export default function(props) {
             },2000)})
         
             const deleteTour = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
         await fetch(`http://192.168.0.105:8800/reservatour/${props.idR}`, deleteTour)
@@ -69,7 +75,10 @@ export default function(props) {
             },2000)})
         
         const deleteReserva = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
 
         await fetch(`http://192.168.0.105:8800/reserva/${props.idR}`, deleteReserva)

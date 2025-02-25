@@ -15,6 +15,7 @@ export default function Configuracoes(){
         configuracoes="collapse-item active" 
         tabelaCliente="nav-item"
         nomePagina="Configurações"
+        usuarios="nav-item"
         componente={<ConfiguracoesCard />}/>
         </div>
     )

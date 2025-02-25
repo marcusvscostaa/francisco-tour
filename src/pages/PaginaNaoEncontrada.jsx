@@ -12,7 +12,8 @@ export default function PaginaNaoEncontrada(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item" 
-        configuracoes="collapse-item" 
+        configuracoes="collapse-item"
+        usuarios="nav-item"
         tabelaCliente="nav-item"
         componente={                
             <div class="container-fluid">

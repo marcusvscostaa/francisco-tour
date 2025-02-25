@@ -19,6 +19,9 @@ export default function ModalEditarCliente(props){
     useEffect(() => {
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -47,7 +50,9 @@ export default function ModalEditarCliente(props){
         
         const editarCliente = {
             method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(formCliente)
         }
         fetch(`http://192.168.0.105:8800/cliente/${props.id}`, editarCliente).then(response => {

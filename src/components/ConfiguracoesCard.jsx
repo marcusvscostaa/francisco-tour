@@ -8,6 +8,9 @@ export default function ConfiguracoesCard(){
     useEffect(()=>{
         fetch("http://192.168.0.105:8800/opcoesForm", {
             method: "GET",
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -37,7 +40,9 @@ export default function ConfiguracoesCard(){
         if(item !== null && item !== '') {
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify({typeData: typeData, item: item})
         };
         fetch('http://192.168.0.105:8800/opcoesForm', requestOptions)
@@ -51,7 +56,10 @@ export default function ConfiguracoesCard(){
     }
     const handleDelete = (typeData, item) => {
         const requestOptions = {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
         fetch(`http://192.168.0.105:8800/opcoesForm/${typeData}/${item}`, requestOptions)
         .then(response => {

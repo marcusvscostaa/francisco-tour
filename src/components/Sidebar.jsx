@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react"
 import $ from "jquery"
+import AuthService from '../AuthService';
+
 
 export  default function Sidebar(props){
 
@@ -64,10 +66,15 @@ export  default function Sidebar(props){
                 <i className="fas fa-fw fa-table"></i>
                 <span>Tabela de Clientes</span></a>
         </li>
+        <li className={props.usuarios}>
+            <a className="nav-link" href="usuarios">
+                <i className="fas fa-user-alt"></i>
+                <span>Usuários</span></a>
+        </li>
 
         <hr className="sidebar-divider" />
         <li className="nav-item">
-            <a className="nav-link" href="tables.html">
+            <a className="nav-link" onClick={() =>{ AuthService.logout(); window.location.reload(true);}} href="tables.html">
                 <i className="fas fa-sign-out-alt	"></i>
                 <span>Sair</span></a>
         </li>
@@ -116,7 +123,7 @@ export  default function Sidebar(props){
                             {/* Dropdown - User Information */}
                             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a className="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a className="dropdown-item" onClick={() => {AuthService.logout();window.location.reload(true);}} data-toggle="modal" data-target="#logoutModal">
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Sair
                                 </a>
