@@ -19,7 +19,7 @@ export default function StatusTour(props){
                     "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: JSON.stringify({status: 'Confirmado', idtour: props.id})
             };
-            fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
             .then(response => {
                 console.log(response)
             })   
@@ -34,7 +34,7 @@ export default function StatusTour(props){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify({status: e.target.value, idtour: props.id})
         };
-        fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
         .then(response => {
             console.log(response)
             })   

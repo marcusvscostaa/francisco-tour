@@ -13,7 +13,7 @@ export default function PainelPrincipal(){
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
-        fetch(`http://192.168.0.105:8800/reservavalormes/${anoSelecionado}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reservavalormes/${anoSelecionado}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -26,7 +26,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://192.168.0.105:8800/reservavalormesatual`, {
+        fetch(`h${process.env.REACT_APP_BASE_URL}/reservavalormesatual`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -39,7 +39,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://192.168.0.105:8800/reservaquantidade/${anoSelecionado}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidade/${anoSelecionado}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -52,7 +52,7 @@ export default function PainelPrincipal(){
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://192.168.0.105:8800/reservaquantidadeatual`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',

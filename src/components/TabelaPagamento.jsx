@@ -22,10 +22,10 @@ export default function TabalaPagamento(props){
                 method: 'POST',
                 headers:{ 
                     'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token},
+                    "authorization": JSON.stringify(localStorage.getItem('user')).token},
                 body: JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento})
             };
-            fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
+            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
             .then(response => {
                 console.log(response)
               })
@@ -50,7 +50,7 @@ export default function TabalaPagamento(props){
                 <ModalComentario title={'Comentário Pagamento'} id={props.pag.idPagamento} comentario={props.pag.comentario}/>                
             </td>
             <td>
-                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://192.168.0.105:8800/imagem/${props.pag.idPagamento}`}>
+                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagem/${props.pag.idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`}>
                     <i className="fas fa-image	"></i>
                     &nbsp; Ver
                 </a>

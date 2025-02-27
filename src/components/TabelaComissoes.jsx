@@ -33,7 +33,7 @@ export default function TabelaComissoes(){
 
 
     useEffect(()=>{
-        fetch(`http://192.168.0.105:8800/pagamentoReservaAnual/${anoSelecionado}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoReservaAnual/${anoSelecionado}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export default function TabelaComissoes(){
             })
             .catch((error) => console.log(error));
             
-            fetch(`http://192.168.0.105:8800/pagamentoreservavalormes/${year}`, {
+            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoreservavalormes/${year}`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export default function TabelaComissoes(){
                     //console.log(data);
                 })
                 .catch((error) => console.log(error));
-            fetch(`http://192.168.0.105:8800/pagamentoReservaMensal/${month + 1}/${year}`, {
+            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoReservaMensal/${month + 1}/${year}`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',

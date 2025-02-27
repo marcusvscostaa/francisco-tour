@@ -10,7 +10,7 @@ export default function ModalAdicionarTour(props){
         const [options, setOptions] = useState("");
 
         useEffect(()=>{
-            fetch("http://192.168.0.105:8800/opcoesForm", {
+            fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default function ModalAdicionarTour(props){
                 body: JSON.stringify(calculoTotal[0])
             };
                 
-            await fetch('http://192.168.0.105:8800/tour', requestOps)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/tour`, requestOps)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])

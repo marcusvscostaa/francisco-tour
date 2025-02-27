@@ -4,8 +4,15 @@ import AuthService from '../AuthService';
 
 
 export  default function Sidebar(props){
+    const [useName, setUsername] =  useState('USER')
+    
+    useEffect(()=>{
+        if(localStorage.getItem('user') !== null){
+            setUsername(JSON.parse(localStorage.getItem("user")).user)
+        }
+    },[])
 
-
+    console.log(localStorage.getItem('user'))
     const [toggle, setToggle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
     const sidebarToggle =() =>{
         if(toggle === "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"){
@@ -74,7 +81,7 @@ export  default function Sidebar(props){
 
         <hr className="sidebar-divider" />
         <li className="nav-item">
-            <a className="nav-link" onClick={() =>{ AuthService.logout(); window.location.reload(true);}} href="tables.html">
+            <a className="nav-link" onClick={() =>{ AuthService.logout(); window.location.reload(true);}}>
                 <i className="fas fa-sign-out-alt	"></i>
                 <span>Sair</span></a>
         </li>
@@ -116,7 +123,7 @@ export  default function Sidebar(props){
                         <li className="nav-item dropdown no-arrow">
                             <a className="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span className="mr-2 d-none d-lg-inline text-gray-600 small">Douglas McGee</span>
+                                <span className="mr-2 d-none d-lg-inline text-gray-600 small">{useName}</span>
                                 <img className="img-profile rounded-circle"
                                     src="img/undraw_profile.svg"/>
                             </a>

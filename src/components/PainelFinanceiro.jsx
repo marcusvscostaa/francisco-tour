@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PainelGrafico from "./PainelGrafico";
 import PainelPizza from "./PainelPizza";
 import TabelaFinanceiro from "./TabelaFinanceiro";
+
 const date = new Date();
 const currentYear = date.getFullYear();
 
@@ -16,7 +17,7 @@ export default function PainelFinanceiro(){
         const [updateData, setUpdateData] = useState(false);
 
         useEffect(()=>{
-            fetch(`http://192.168.0.105:8800/pagamentoreservavalormes/${anoSelecionado}`, {
+            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoreservavalormes/${anoSelecionado}`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -29,7 +30,7 @@ export default function PainelFinanceiro(){
                     //console.log(data);
                 })
                 .catch((error) => console.log(error));
-            fetch("http://192.168.0.105:8800/reservas", {
+            fetch(`${process.env.REACT_APP_BASE_URL}/reservas`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -46,7 +47,7 @@ export default function PainelFinanceiro(){
                     //console.log(data);
                 })
                 .catch((error) => console.log(error));
-            fetch("http://192.168.0.105:8800/tour", {
+            fetch(`${process.env.REACT_APP_BASE_URL}/tour`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -60,7 +61,7 @@ export default function PainelFinanceiro(){
                 })
                 .catch((error) => console.log(error));
             
-            fetch("http://192.168.0.105:8800/reservaPagamento", {
+            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento`, {
                 method: "GET",
                 headers:{ 
                     'Content-Type': 'application/json',
@@ -73,7 +74,7 @@ export default function PainelFinanceiro(){
                     //console.log(data);
                 })
                 .catch((error) => console.log(error));
-                fetch("http://192.168.0.105:8800/estorno", {
+                fetch(`${process.env.REACT_APP_BASE_URL}/estorno`, {
                     method: "GET",
                     headers:{ 
                         'Content-Type': 'application/json',

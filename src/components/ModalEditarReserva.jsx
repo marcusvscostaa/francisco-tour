@@ -16,7 +16,7 @@ export default function ModalEditarReserva(props) {
     })
 
     useEffect(() => {
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -54,7 +54,7 @@ export default function ModalEditarReserva(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(dadosReserva)
         }
-        fetch(`http://192.168.0.105:8800/reserva/${props.idR}`, editReserva).then(response => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${props.idR}`, editReserva).then(response => {
             console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])

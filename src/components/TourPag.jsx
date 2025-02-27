@@ -17,9 +17,9 @@ export default function TourPag(props){
                 comentario: props.dados[0].comentario,
             })
             if(props.type === 'Pagamento'){
-                setImage(`http://192.168.0.105:8800/imagem/${props.dados[0].idPagamento}`)
+                setImage(`${process.env.REACT_APP_BASE_URL}/imagem/${props.dados[0].idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`)
             }else{
-                setImage(`http://192.168.0.105:8800/imagemEstorno/${props.dados[0].idPagamento}`)
+                setImage(`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${props.dados[0].idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`)
             }
             setValorRestante(props.dados[0].valorPago)
         }
@@ -64,7 +64,7 @@ export default function TourPag(props){
             method: 'POST',
             body: formData
         }
-        fetch('http://192.168.0.105:8800/upload-imagem', reqPagReserva)
+        fetch(`${process.env.REACT_APP_BASE_URL}/upload-imagem`, reqPagReserva)
         .then( response => console.log(response.json()))
     }
     return(

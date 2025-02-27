@@ -10,7 +10,7 @@ export default function Login(){
     const [remember, setRemember] = useState(localStorage.getItem("myapp-password") !== null?true:false);
 
     useEffect(()=>{
-
+        AuthService.getCurrentUser().then(data => console.log(data));
     },[])
     
     const rememberCheck = (e) => {

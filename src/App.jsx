@@ -16,13 +16,26 @@ import Financeiro from './pages/Financeiro';
 import Configuracoes from './pages/Configuracoes';
 import Login from './pages/Login';
 import AuthService from './AuthService';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Usuarios from './pages/Usuarios';
-const user = AuthService.getCurrentUser()&&AuthService.getCurrentUser().auth;
+import { Navigate  } from "react-router-dom";
+
+//const user = AuthService.getCurrentUser().then(data => {return data});
 function App() {
+  const [user, setUser] = useState('');
   useEffect(() => {
-    console.log(AuthService.getCurrentUser())
-  },[])
+    console.log(process.env.REACT_APP_BASE_URL);
+    AuthService.getCurrentUser().then(data => {
+      if(data === true){
+        setUser(true);
+      }else{
+        setUser(false);
+      }
+    }) 
+    console.log(user)
+  },[localStorage.getItem('user')])
+
+ 
 
   return (
     <Router>

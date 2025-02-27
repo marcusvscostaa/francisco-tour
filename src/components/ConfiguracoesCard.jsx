@@ -6,7 +6,7 @@ export default function ConfiguracoesCard(){
     const [inputOption, setInputOption] = useState({zona: '', paisOrigem: '', idioma:'', destino:'', tour:'', formaPagamento:''})
     const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -45,7 +45,7 @@ export default function ConfiguracoesCard(){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify({typeData: typeData, item: item})
         };
-        fetch('http://192.168.0.105:8800/opcoesForm', requestOptions)
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, requestOptions)
         .then(response => {
             console.log(response)
             setInputOption({zona: '', paisOrigem: '', idioma:'', destino:'', tour:'', formaPagamento:''});
@@ -61,7 +61,7 @@ export default function ConfiguracoesCard(){
                 'Content-Type': 'application/json',
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
-        fetch(`http://192.168.0.105:8800/opcoesForm/${typeData}/${item}`, requestOptions)
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm/${typeData}/${item}`, requestOptions)
         .then(response => {
             console.log(response)
           })

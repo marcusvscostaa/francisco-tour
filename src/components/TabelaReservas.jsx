@@ -23,7 +23,7 @@ export default function TabelaReservas(props) {
     }]}
 
     useEffect( () => {
-        fetch("http://192.168.0.105:8800/reservas", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reservas`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function TabelaReservas(props) {
             .catch((error) => console.log(error));
         
         
-        fetch("http://192.168.0.105:8800/tour", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/tour`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -56,7 +56,7 @@ export default function TabelaReservas(props) {
             })
             .catch((error) => console.log(error));
        
-        fetch("http://192.168.0.105:8800/reservaPagamento", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',

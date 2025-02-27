@@ -14,7 +14,7 @@ export default function(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token}            
         };
 
-        await fetch(`http://192.168.0.105:8800/pagreserva/${props.idR}`, deletePagReserva)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${props.idR}`, deletePagReserva)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Pagamento"}])
@@ -48,7 +48,7 @@ export default function(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
-        await fetch(`http://192.168.0.105:8800/reservatour/${props.idR}`, deleteTour)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/reservatour/${props.idR}`, deleteTour)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
@@ -81,7 +81,7 @@ export default function(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
 
-        await fetch(`http://192.168.0.105:8800/reserva/${props.idR}`, deleteReserva)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${props.idR}`, deleteReserva)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Reserva"}])

@@ -17,7 +17,7 @@ export default function ModalEditarCliente(props){
     const [options, setOptions] = useState("");
 
     useEffect(() => {
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -55,7 +55,7 @@ export default function ModalEditarCliente(props){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(formCliente)
         }
-        fetch(`http://192.168.0.105:8800/cliente/${props.id}`, editarCliente).then(response => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, editarCliente).then(response => {
             console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Cliente"}])

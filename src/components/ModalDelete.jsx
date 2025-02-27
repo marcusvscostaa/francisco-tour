@@ -12,7 +12,7 @@ export default function ModalDelete(props){
                 'Content-Type': 'application/json',
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
-        await fetch(`http://192.168.0.105:8800/reservaPagamento/${props.idPag}`, requestOps)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${props.idPag}`, requestOps)
         .then(response => {
             if(response.status === 200) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso Excluir Pagamento" , titulo: "Pagamento"}])

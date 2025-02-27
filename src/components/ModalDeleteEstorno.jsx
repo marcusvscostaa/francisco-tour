@@ -12,7 +12,7 @@ export default function ModalDeleteEstorno(props){
                 'Content-Type': 'application/json',
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
         };
-        await fetch(`http://192.168.0.105:8800/estorno/${props.idEstorno}`, requestOps)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${props.idEstorno}`, requestOps)
         .then(response => {
             if(response.status === 200) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso Excluir Estorno" , titulo: "Estorno"}])

@@ -10,7 +10,7 @@ export default function ModalComprovanre(props) {
                     </button>
                 </div>
                 <div className="modal-body">
-                    <img className="img-thumbnail" src={`http://192.168.0.105:8800/imagem/${props.idPagamento}`}/>
+                    <img className="img-thumbnail" src={`${process.env.REACT_APP_BASE_URL}/imagem/${props.idPagamento}`}/>
                 </div>
             </div>
         </div>

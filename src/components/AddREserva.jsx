@@ -73,7 +73,7 @@ export default  function AddReserva(props){
                     comentario: comentarioReserva
                 })
             }   
-            await fetch('http://192.168.0.105:8800/reserva', reqReserva)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/reserva`, reqReserva)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
@@ -99,7 +99,7 @@ export default  function AddReserva(props){
                 body: JSON.stringify(calculoTotal[tour-1])
             };
                 
-            await fetch('http://192.168.0.105:8800/tour', requestOps)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/tour`, requestOps)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
@@ -131,13 +131,10 @@ export default  function AddReserva(props){
         
                 const reqPagReserva = {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 
-                                "authorization": JSON.parse(localStorage.getItem('user')).token
-                            },
                     body: formData
                 }
     
-                await fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva)
+                await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${JSON.parse(localStorage.getItem('user')).token}`, reqPagReserva)
                 .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])

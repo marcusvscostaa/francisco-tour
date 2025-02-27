@@ -23,7 +23,7 @@ export default function PainelUsuario(){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(dataForm)
         };
-        fetch('http://192.168.0.105:8800/signup', requestOps)
+        fetch(`${process.env.REACT_APP_BASE_URL}/signup`, requestOps)
         .then(response => response.json()) // recebe a resposta e transforma em json 
         .then(data => { 
         console.log('dados recebidos')

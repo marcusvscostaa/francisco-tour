@@ -32,7 +32,7 @@ export default function Formulario(props) {
     const [modalStatus, setModalStatus] = useState([]);
 
     useEffect(() => {
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -105,7 +105,7 @@ export default function Formulario(props) {
         };        
 
         if((!props.addReserva)){
-            await fetch('http://192.168.0.105:8800/cliente', requestOptions)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/cliente`, requestOptions)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
@@ -144,7 +144,7 @@ export default function Formulario(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(formReserva)
         }   
-        await fetch('http://192.168.0.105:8800/reserva', reqReserva)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/reserva`, reqReserva)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
@@ -181,7 +181,7 @@ export default function Formulario(props) {
             body: JSON.stringify(calculoTotal[tour-1])
         };
             
-        await fetch('http://192.168.0.105:8800/tour', requestOps)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/tour`, requestOps)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
@@ -226,13 +226,10 @@ export default function Formulario(props) {
     
             const reqPagReserva = {
                 method: 'POST',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: formData
             }
 
-            await fetch('http://192.168.0.105:8800/reservaPagamento', reqPagReserva)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${JSON.parse(localStorage.getItem('user')).token}`, reqPagReserva)
             .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])

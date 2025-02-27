@@ -23,7 +23,7 @@ export default function ModalEstorno(props){
 
 
     useEffect(()=>{
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -59,12 +59,9 @@ export default function ModalEstorno(props){
 
             const reqEstorno = {
                 method: 'POST',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: formData
             }
-            fetch('http://192.168.0.105:8800/estorno', reqEstorno).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${JSON.parse(localStorage.getItem('user')).token}`, reqEstorno).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
@@ -107,11 +104,8 @@ export default function ModalEstorno(props){
             const reqEstorno = {
                 method: 'PUT',
                 body: formData,
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token}
             }
-            fetch(`http://192.168.0.105:8800/estorno/${showEditPag.id}`, reqEstorno).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${showEditPag.id}/${JSON.parse(localStorage.getItem('user')).token}`, reqEstorno).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
@@ -178,7 +172,7 @@ export default function ModalEstorno(props){
                                             <td>{item.formaEstorno}</td>
                                             <td>R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
                                             <td>
-                                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`http://192.168.0.105:8800/imagemEstorno/${item.idEstorno}`}>
+                                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${item.idEstorno}/${JSON.parse(localStorage.getItem('user')).token}`}>
                                                     <i className="fas fa-image	"></i>
                                                     &nbsp; Ver
                                                 </a>

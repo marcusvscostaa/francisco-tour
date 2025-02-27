@@ -19,7 +19,7 @@ export default function AgendaReserva() {
         let monthlastdate = new Date(year, month, 0).getDate();
         let lit = "";
 
-        fetch("http://192.168.0.105:8800/tiposTours", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/tiposTours`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -31,7 +31,7 @@ export default function AgendaReserva() {
                 //console.log(data);
             })
             .catch((error) => console.log(error));
-        fetch(`http://192.168.0.105:8800/tourPorMes/${(month + 1)}/${year}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/tourPorMes/${(month + 1)}/${year}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -42,7 +42,7 @@ export default function AgendaReserva() {
                 setTourPorMes(data);
                 //console.log(data);
             })
-        fetch(`http://192.168.0.105:8800/dataDiferentes/${(month + 1)}/${year}`, {
+        fetch(`${process.env.REACT_APP_BASE_URL}/dataDiferentes/${(month + 1)}/${year}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',

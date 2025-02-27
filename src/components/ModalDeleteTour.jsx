@@ -13,7 +13,7 @@ export default function ModalDeleteTour(props){
                 'Content-Type': 'application/json',
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
-        await fetch(`http://192.168.0.105:8800/tour/${props.idTour}`, requestOps)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idTour}`, requestOps)
         .then(response => {
 
             if (!response.ok) {

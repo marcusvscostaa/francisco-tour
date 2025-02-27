@@ -20,7 +20,7 @@ export default function StatusEstorno(props){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify({status: e.target.value, idEstorno: props.id})
         };
-        fetch('http://192.168.0.105:8800/mudarStatusEstorno', requestOptions)
+        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusEstorno`, requestOptions)
         .then(response => {
             props.setUpdateCount(true)
             console.log(response)

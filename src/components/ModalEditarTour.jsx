@@ -18,7 +18,7 @@ export default function ModalEditarTour(props){
     const [options, setOptions] = useState("");
 
     useEffect(() => {
-        fetch("http://192.168.0.105:8800/opcoesForm", {
+        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -47,7 +47,7 @@ export default function ModalEditarTour(props){
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
             body: JSON.stringify(calculoTotal[0])
         }
-        fetch(`http://192.168.0.105:8800/tour/${props.idtour}`, editTour).then(response => {
+        fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idtour}`, editTour).then(response => {
             console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])

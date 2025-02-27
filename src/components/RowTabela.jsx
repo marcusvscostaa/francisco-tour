@@ -49,7 +49,7 @@ export default function RowTabela(props){
                     "authorization": JSON.parse(localStorage.getItem('user')).token},
                 body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
             };
-            fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
+            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
         .then(response => {
             console.log(response)
           })
@@ -69,9 +69,9 @@ export default function RowTabela(props){
             headers:{ 
                 'Content-Type': 'application/json',
                 "authorization": JSON.parse(localStorage.getItem('user')).token},
-            body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
+                body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
         };
-        fetch('http://192.168.0.105:8800/mudarStatus', requestOptions)
+        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
         .then(response => {
             console.log(response)
           })   
@@ -86,7 +86,7 @@ export default function RowTabela(props){
                         "authorization": JSON.parse(localStorage.getItem('user')).token},
                     body: JSON.stringify({status:'Confirmado', idtour: item.idtour})
                 };
-                fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+                fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
                 .then(response => {
                     console.log(response)
                     props.setUpdateCount(true)
@@ -101,7 +101,7 @@ export default function RowTabela(props){
                             "authorization": JSON.parse(localStorage.getItem('user')).token},
                         body: JSON.stringify({status: 'Pago', idPagamento: item.idPagamento})
                     };
-                    fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
+                    fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
                     .then(response => {
                         console.log(response)
                       })
@@ -121,7 +121,7 @@ export default function RowTabela(props){
                         "authorization": JSON.parse(localStorage.getItem('user')).token},
                     body: JSON.stringify({status:'Cancelado', idtour: item.idtour})
                 };
-                fetch('http://192.168.0.105:8800/mudarStatusTour', requestOptions)
+                fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
                 .then(response => {
                     console.log(response)
                     props.setUpdateCount(true)
@@ -136,7 +136,7 @@ export default function RowTabela(props){
                             "authorization": JSON.parse(localStorage.getItem('user')).token},
                         body: JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento})
                     };
-                    fetch('http://192.168.0.105:8800/mudarStatusPagamento', requestOptions)
+                    fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
                     .then(response => {
                         console.log(response)
                       })

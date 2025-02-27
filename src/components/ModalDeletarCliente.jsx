@@ -10,7 +10,7 @@ export default function ModalDeletarCliete(props) {
     const [reservas, setReservas] = useState(false)
 
     useEffect(async () => {
-        await fetch(`http://192.168.0.105:8800/idReservas/${props.id}`, {
+        await fetch(`${process.env.REACT_APP_BASE_URL}/idReservas/${props.id}`, {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ export default function ModalDeletarCliete(props) {
                     "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
-            await fetch(`http://192.168.0.105:8800/pagreserva/${dado.idR}`, deletePagReserva)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${dado.idR}`, deletePagReserva)
                 .then(response => {
                     if (!response.ok) {
                         setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento" }])
@@ -76,7 +76,7 @@ export default function ModalDeletarCliete(props) {
                     "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
-            await fetch(`http://192.168.0.105:8800/reservatour/${dado.idR}`, deleteTour)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/reservatour/${dado.idR}`, deleteTour)
                 .then(response => {
                     if (!response.ok) {
                         setModalStatus(prevArray => [...prevArray, { id: 2, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Tour" }])
@@ -113,7 +113,7 @@ export default function ModalDeletarCliete(props) {
                     "authorization": JSON.parse(localStorage.getItem('user')).token}
             };
 
-            await fetch(`http://192.168.0.105:8800/reserva/${dado.idR}`, deleteReserva)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${dado.idR}`, deleteReserva)
                 .then(response => {
                     if (!response.ok) {
                         setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva" }])
@@ -154,7 +154,7 @@ export default function ModalDeletarCliete(props) {
                 "authorization": JSON.parse(localStorage.getItem('user')).token}
         };
 
-        await fetch(`http://192.168.0.105:8800/cliente/${props.id}`, deleteCliente)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, deleteCliente)
             .then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Cliente" }])
