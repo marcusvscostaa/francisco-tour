@@ -19,13 +19,10 @@ export default function ModalAdicionarTour(props){
                 .then((response) => response.json())
                 .then((data) => {
                     setOptions(data);
-                    console.log(options)
-                    //console.log(data);
                 })
                 .catch((error) => console.log(error));
     
     
-            console.log(options)
         },[])
 
         const handleSubmit = async (e) => {

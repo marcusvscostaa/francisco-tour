@@ -36,15 +36,9 @@ export default function ModalPagamento(props){
             .then((response) => response.json())
             .then((data) => {
                 setOptions(data);
-                console.log(options)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
-
-
-        console.log(options)
-        console.log(dadosPag)
-        console.log(props.pagamento)
     },[props.updateCount])
     
 
@@ -106,7 +100,6 @@ export default function ModalPagamento(props){
             if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
             if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-            console.log(dadosPagForm)
 
             const reqPagReserva = {
                 method: 'PUT',
@@ -123,7 +116,6 @@ export default function ModalPagamento(props){
                 }
                 return response.json();
                 }).then(data => {
-                    console.log(data);
                     if(data){
                         setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
                         setModalSpinner(true)

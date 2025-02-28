@@ -42,8 +42,7 @@ export default function TabelaComissoes(){
             .then((response) => response.json())
             .then((data) => {
                 setDadoAtual(data);
-                console.log(dadoAtual)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
             
@@ -56,8 +55,7 @@ export default function TabelaComissoes(){
                 .then((response) => response.json())
                 .then((data) => {
                     setDadoAno(data);
-                    console.log(dadoAno)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
             fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoReservaMensal/${month + 1}/${year}`, {
@@ -69,8 +67,7 @@ export default function TabelaComissoes(){
                 .then((response) => response.json())
                 .then((data) => {
                     setDadoMensal(data);
-                    console.log(dadoMensal)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
 

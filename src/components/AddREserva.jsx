@@ -26,7 +26,6 @@ export default  function AddReserva(props){
         const [modalStatus, setModalStatus] = useState([]);
     
         useEffect(() => {
-            console.log(dadosTour)
         },[])
         const handleClick = () => {
             if (numberTour.length < 5) {
@@ -57,7 +56,6 @@ export default  function AddReserva(props){
         
         const pagCheck = () => {
             setaddPag(!addPag);
-            console.log(numberTour)
         };
         const handleSubmit = async (e) => {
             e.preventDefault();

@@ -15,14 +15,11 @@ export default function ConfiguracoesCard(){
             .then((response) => response.json())
             .then((data) => {
                 setDadosPagForm(data);
-                console.log(dados)
-                //console.log(data);
             })
             .catch((error) => console.log(error));
         
         setUpdateCount(false)
 
-        console.log(dados)
     },[updateCount])
     const handleChange = (e) => {
         const name = e.target.name
@@ -32,11 +29,9 @@ export default function ConfiguracoesCard(){
 
         setInputOption(newData)
 
-        console.log(inputOption)
 
     }
     const handleSubmit = (typeData, item) => {
-        console.log(typeData, item)
         if(item !== null && item !== '') {
         const requestOptions = {
             method: 'POST',
@@ -47,7 +42,6 @@ export default function ConfiguracoesCard(){
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, requestOptions)
         .then(response => {
-            console.log(response)
             setInputOption({zona: '', paisOrigem: '', idioma:'', destino:'', tour:'', formaPagamento:''});
             setUpdateCount(true)
           })
@@ -63,7 +57,6 @@ export default function ConfiguracoesCard(){
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm/${typeData}/${item}`, requestOptions)
         .then(response => {
-            console.log(response)
           })
           setUpdateCount(true)
 

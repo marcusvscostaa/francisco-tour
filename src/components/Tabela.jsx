@@ -23,13 +23,11 @@ export default function Tabela(props) {
             .then((response) => response.json())
             .then((data) => {
                 setClients(data);
-                console.log(clients)
-                //console.log(data);
+             
             })
             .catch((error) => console.log(error));
 
 
-        console.log(clients)
 
         setUpdateCount(false)
 

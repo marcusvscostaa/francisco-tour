@@ -28,7 +28,6 @@ export default function AgendaReserva() {
             .then((response) => response.json())
             .then((data) => {
                 setTiposTours(data);
-                //console.log(data);
             })
             .catch((error) => console.log(error));
         fetch(`${process.env.REACT_APP_BASE_URL}/tourPorMes/${(month + 1)}/${year}`, {
@@ -40,7 +39,6 @@ export default function AgendaReserva() {
             .then((response) => response.json())
             .then((data) => {
                 setTourPorMes(data);
-                //console.log(data);
             })
         fetch(`${process.env.REACT_APP_BASE_URL}/dataDiferentes/${(month + 1)}/${year}`, {
             method: "GET",
@@ -51,7 +49,6 @@ export default function AgendaReserva() {
             .then((response) => response.json())
             .then((data) => {
                 setDataDiferentes(data);
-                //console.log(data);
             })
             .catch((error) => console.log(error));
 

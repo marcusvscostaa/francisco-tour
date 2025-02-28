@@ -26,14 +26,12 @@ export default function ModalEditarCliente(props){
             .then((response) => response.json())
             .then((data) => {
                 setOptions(data);
-                console.log(options)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
 
 
-        console.log(options)
-        console.log(props.dadosReserva);
+
     },[])
 
     const handleChange = (e) => {
@@ -56,7 +54,6 @@ export default function ModalEditarCliente(props){
             body: JSON.stringify(formCliente)
         }
         fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, editarCliente).then(response => {
-            console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Cliente"}])
                 setModalSpinner(true)
@@ -68,7 +65,6 @@ export default function ModalEditarCliente(props){
             return response.json();
             }).then(data => {
                 if(data){
-                    console.log(data);
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Cliente", titulo: "Cliente"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))

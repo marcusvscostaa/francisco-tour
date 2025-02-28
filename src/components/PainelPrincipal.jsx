@@ -22,8 +22,7 @@ export default function PainelPrincipal(){
             .then((response) => response.json())
             .then((data) => {
                 setDadoAno(data);
-                console.log(dadoAno)
-                //console.log(data);
+              
             })
             .catch((error) => console.log(error));
         fetch(`h${process.env.REACT_APP_BASE_URL}/reservavalormesatual`, {
@@ -35,8 +34,6 @@ export default function PainelPrincipal(){
             .then((response) => response.json())
             .then((data) => {
                 setDadoMesAtual(data);
-                console.log(dadoMesAtual)
-                //console.log(data);
             })
             .catch((error) => console.log(error));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidade/${anoSelecionado}`, {
@@ -48,8 +45,7 @@ export default function PainelPrincipal(){
             .then((response) => response.json())
             .then((data) => {
                 setDadoQuantidade(data);
-                console.log(dadoMesAtual)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`, {
@@ -61,8 +57,7 @@ export default function PainelPrincipal(){
             .then((response) => response.json())
             .then((data) => {
                 setQuantidadeAtua(data);
-                console.log(dadoMesAtual)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
 

@@ -26,8 +26,7 @@ export default function PainelFinanceiro(){
                 .then((response) => response.json())
                 .then((data) => {
                     setDadoAno(data);
-                    console.log(dadoAno)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
             fetch(`${process.env.REACT_APP_BASE_URL}/reservas`, {
@@ -43,8 +42,7 @@ export default function PainelFinanceiro(){
                     }else{
                         setReservas(data);
                     }
-                    console.log(reservas)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
             fetch(`${process.env.REACT_APP_BASE_URL}/tour`, {
@@ -56,8 +54,7 @@ export default function PainelFinanceiro(){
                 .then((response) => response.json())
                 .then((data) => {
                     setTour(data);
-                    console.log(tour)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
             
@@ -70,8 +67,7 @@ export default function PainelFinanceiro(){
                 .then((response) => response.json())
                 .then((data) => {
                     setPagamentoreservas(data);
-                    console.log(pagamentoreservas)
-                    //console.log(data);
+
                 })
                 .catch((error) => console.log(error));
                 fetch(`${process.env.REACT_APP_BASE_URL}/estorno`, {
@@ -87,12 +83,10 @@ export default function PainelFinanceiro(){
                         }else{
                             setEstorno(data);
                         }
-                        console.log(estorno)
-                        //console.log(data);
+
                     })
                     .catch((error) => console.log(error));
     
-            console.log(dadoAno)
             setTimeout(() => {setUpdateData(true)
             }, 1000)
             setTimeout(() => setUpdateData(false), 1500)  

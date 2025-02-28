@@ -36,8 +36,7 @@ export default function TabelaReservas(props) {
                 }else{
                     setReservas(data);
                 }
-                console.log(reservas)
-                //console.log(data);
+               
             })
             .catch((error) => console.log(error));
         
@@ -51,8 +50,7 @@ export default function TabelaReservas(props) {
             .then((response) => response.json())
             .then((data) => {
                 setTour(data);
-                console.log(tour)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
        
@@ -65,8 +63,7 @@ export default function TabelaReservas(props) {
             .then((response) => response.json())
             .then((data) => {
                 setPagamentoreservas(data);
-                console.log(pagamentoreservas)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
         
@@ -91,7 +88,7 @@ export default function TabelaReservas(props) {
                             cellspacing="0"
                             width="100%"
                             id="dataTable"
-                            {...console.log(reservas)}
+                            
                         >
                             <thead>
                                 <tr>

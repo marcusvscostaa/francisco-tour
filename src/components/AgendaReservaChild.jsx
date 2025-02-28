@@ -10,7 +10,6 @@ export default function AgendaReservaChild(props){
                 [item.tour]: props.tourPorMes.filter((valor) => valor.tour === item.tour).reduce((sum, dado) => sum + (dado.quantidadeAdultos + dado.quantidadeCriancas),0)
             }))
         })
-        console.log(tourFilter)
 
     },[props.tourPorMes])
     return (

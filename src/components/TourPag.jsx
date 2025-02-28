@@ -40,7 +40,6 @@ export default function TourPag(props){
             const reader = new FileReader();
             reader.onloadend = () => {
               setImage(reader.result);
-              console.log(image)
               props.setImagemUpload(e.target.files[0])
             };
             reader.readAsDataURL(file);
@@ -48,9 +47,7 @@ export default function TourPag(props){
         }else{
             const newFormFields = { ...props.dadosPagForm ,[name]: value}
             props.setDadosPagForm(newFormFields)
-            console.log(props.dadosPagForm.dataPagamento)
         }
-        console.log(props.dadosPagForm)
 
     }
     const handleSubmit = (e) =>{

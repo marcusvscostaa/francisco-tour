@@ -27,14 +27,9 @@ export default function ModalEditarTour(props){
             .then((response) => response.json())
             .then((data) => {
                 setOptions(data);
-                console.log(options)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
-
-
-        console.log(options)
-        console.log(props.dadosReserva);
     },[])
 
     const handerEdit = (e) => {
@@ -48,7 +43,6 @@ export default function ModalEditarTour(props){
             body: JSON.stringify(calculoTotal[0])
         }
         fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idtour}`, editTour).then(response => {
-            console.log(response);  
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])
                 setModalSpinner(true)
@@ -60,7 +54,6 @@ export default function ModalEditarTour(props){
             return response.json();
             }).then(data => {
                 if(data){
-                    console.log(data);
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Tour", titulo: "Tour"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))

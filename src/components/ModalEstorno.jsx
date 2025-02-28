@@ -32,15 +32,9 @@ export default function ModalEstorno(props){
             .then((response) => response.json())
             .then((data) => {
                 setOptions(data);
-                console.log(options)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
-
-
-        console.log(options)
-        console.log("Funciona")       
-        console.log("Update Modal Estorno: " + props.updateCount )
 
     },[props.updateCount])
     

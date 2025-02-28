@@ -6,8 +6,6 @@ import TabelaFinanceiroRow from './TabelaFinanceiroRow';
 DataTable.use(DT);
 export default function TabelaFinanceiro(props) {
     useEffect(() => {
-        console.log(props.dadoAno.dados)
-        console.log("Update tabela financeiro: " + props.updateCount )
     },[props.updateCount])
     return (
         <div className="card shadow mb-4">

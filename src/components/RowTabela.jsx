@@ -20,7 +20,6 @@ export default function RowTabela(props){
     const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     const [statusReserva, setStatusReserva] = useState('Confirmado')
     const[disabledButton, setDisabledButton] = useState(false)
-    console.log(pagamentoreservas.valorPago)
     const myRef = useRef(null);
     const scriptHtml = `<script type="text/javascript">
      { $(document).ready(() => {
@@ -29,7 +28,6 @@ export default function RowTabela(props){
         }
     </script>`
     useEffect(()=>{
-        console.log(props.pagamentoreservas)
         if(props.reserva.status){          
             if(props.reserva.status === 'Confirmado'){
                 setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
@@ -58,8 +56,6 @@ export default function RowTabela(props){
            setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
         
         }
-        console.log(props.tour)
-        console.log(props.reserva.nome, pagamento,  dadosTour)
         setUpdateCount(false)
     },[props.updateCount])
 

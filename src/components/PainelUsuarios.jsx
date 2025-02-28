@@ -10,12 +10,10 @@ export default function PainelUsuario(){
             [name]: value
 
         }))
-        console.log(name, value)
     }
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log(dataForm)
         const requestOps = {
             method: 'POST',
             headers:{ 
@@ -26,7 +24,6 @@ export default function PainelUsuario(){
         fetch(`${process.env.REACT_APP_BASE_URL}/signup`, requestOps)
         .then(response => response.json()) // recebe a resposta e transforma em json 
         .then(data => { 
-        console.log('dados recebidos')
         alert(data.mensagem)
         if(data.status === "sucesso"){
             alert("Funciona")

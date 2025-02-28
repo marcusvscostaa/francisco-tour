@@ -29,7 +29,6 @@ export default function(props) {
             if(data) {
                 setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso Excluir Pagamento" , titulo: "Pagamento"}])
                 setModalSpinner(true)
-                console.log(data)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                     setModalSpinner(false)
                 },2000)

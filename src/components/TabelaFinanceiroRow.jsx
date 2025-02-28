@@ -22,7 +22,6 @@ export default function TabelaFinanceiroRow(props){
             setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.dados.idR)).reduce((sum, element)=> sum + element.valorPago, 0))
          
          }
-         console.log("Update Row financeiro: " + props.updateCount )
 
     },[props.updateCount])
 

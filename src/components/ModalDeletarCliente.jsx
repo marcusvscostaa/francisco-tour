@@ -21,10 +21,8 @@ export default function ModalDeletarCliete(props) {
                     setReservas(false)
                 } else {
                     setReservas(data);
-                    console.log(data)
                 }
-                console.log(reservas)
-                //console.log(data);
+
             })
             .catch((error) => console.log(error));
     }, [])
@@ -54,7 +52,6 @@ export default function ModalDeletarCliete(props) {
                     if (data) {
                         setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: true, message: "Sucesso Excluir Pagamento", titulo: "Pagamento" }])
                         setModalSpinner(true)
-                        console.log(data)
                         setTimeout(() => {
                             setModalStatus(modalStatus.filter((data) => data.id !== 1))
                             setModalSpinner(false)

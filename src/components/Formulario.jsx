@@ -41,13 +41,10 @@ export default function Formulario(props) {
             .then((response) => response.json())
             .then((data) => {
                 setOptions(data);
-                console.log(options)
-                //console.log(data);
             })
             .catch((error) => console.log(error));
 
 
-        console.log(options)
     },[])
     const handleClick = () => {
         if (numberTour.length <= 5) {
@@ -85,17 +82,14 @@ export default function Formulario(props) {
 
         setformReserva(newformReservsa)
 
-        console.log(formReserva)
     }
     
     const pagCheck = () => {
         setaddPag(!addPag);
-        console.log(numberTour)
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
        
-        console.log(formCliente)
         const requestOptions = {
             method: 'POST',
             headers:{ 

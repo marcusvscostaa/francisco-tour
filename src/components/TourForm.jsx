@@ -8,7 +8,6 @@ export default function TourForm(props){
             tour.id === props.numbTour ? { ...tour, id_reserva: props.idReserva } : tour
           );
         props.atualizarValor(dadosAtualizados)
-        console.log(props.calculoTotal)
     },[])
 
     const updateNumAdultos = (e) =>{
@@ -23,7 +22,6 @@ export default function TourForm(props){
         const dadosAtualizados = dados.map((tour) =>
             tour.id === props.numbTour ? { ...tour, valorAdulto: e.target.value}:tour
           );
-        console.log(dados)  
         props.atualizarValor(dadosAtualizados)
     }
     const updateNumCriancas = (e) =>{
@@ -53,7 +51,6 @@ export default function TourForm(props){
             tour.id === props.numbTour ? { ...tour, data: e.target.value } : tour
           );
         props.atualizarValor(dadosAtualizados)
-        console.log(e.target.value)
     }
     const updateDestino = (e) =>{
         const dados =  props.calculoTotal;
@@ -116,9 +113,7 @@ export default function TourForm(props){
               </div>
           </div>
           </div>
-          <p>{props.idReserva}</p>
-          <p>{((props.calculoTotal[props.numbTour - 1].numeroAdultos)*(props.calculoTotal[props.numbTour - 1].valorAdulto))
-            +((props.calculoTotal[props.numbTour - 1].numeroCriancas)*(props.calculoTotal[props.numbTour - 1].valorCriancas))}</p>
+          
       </div>
     )
 }

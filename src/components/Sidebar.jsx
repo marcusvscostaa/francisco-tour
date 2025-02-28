@@ -12,7 +12,6 @@ export  default function Sidebar(props){
         }
     },[])
 
-    console.log(localStorage.getItem('user'))
     const [toggle, setToggle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
     const sidebarToggle =() =>{
         if(toggle === "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"){

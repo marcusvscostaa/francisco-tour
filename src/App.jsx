@@ -24,7 +24,6 @@ import { Navigate  } from "react-router-dom";
 function App() {
   const [user, setUser] = useState('');
   useEffect(() => {
-    console.log(process.env.REACT_APP_BASE_URL);
     AuthService.getCurrentUser().then(data => {
       if(data === true){
         setUser(true);
@@ -32,7 +31,6 @@ function App() {
         setUser(false);
       }
     }) 
-    console.log(user)
   },[localStorage.getItem('user')])
 
  

@@ -10,7 +10,6 @@ export default function Login(){
     const [remember, setRemember] = useState(localStorage.getItem("myapp-password") !== null?true:false);
 
     useEffect(()=>{
-        AuthService.getCurrentUser().then(data => console.log(data));
     },[])
     
     const rememberCheck = (e) => {
@@ -26,7 +25,6 @@ export default function Login(){
     const handleLogin = (e) => {
         e.preventDefault(); 
         AuthService.login(username, password).then((user) => {
-        console.log(user); // You can redirect the user to a protected route here.
         window.location.href = '/';
         });
     };
