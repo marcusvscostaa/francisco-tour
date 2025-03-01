@@ -20,7 +20,8 @@ class AuthService {
   }
 
   async getCurrentUser() {
-    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:21
+    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:{token:'21'}
+    console.log(authorization);
     const response = await fetch(`${process.env.REACT_APP_BASE_URL}/autenticacao/${authorization}`, {
     method: "GET",
     headers:{ 

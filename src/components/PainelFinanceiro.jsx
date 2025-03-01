@@ -103,7 +103,7 @@ export default function PainelFinanceiro(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bolder text-success text-uppercase mb-1">
                                     FATURAMENTO {anoSelecionado}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -119,7 +119,7 @@ export default function PainelFinanceiro(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                     ESTORNOS {anoSelecionado}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-times-circle fa-2x text-gray-300"></i>

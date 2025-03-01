@@ -30,10 +30,10 @@ export default function TabelaFinanceiroRow(props){
             <td className="text-left">{props.dados.idR}</td>
             <td className="text-left">{props.dados.nome}</td>
             <td className="text-left">{props.dados.dataReserva.substr(0, 10).split('-').reverse().join('/')}</td>
-            <td className="text-left">{`R$ ${valorTotal.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}</td>
-            <td class="text-success">{`+${pagamento.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}`}</td>
-            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) < 0&&"text-danger"}`}>{`${(pagamento - valorTotal) < 0?(pagamento - valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 }):'0,00'}`}</td>
-            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) > 0&&"text-danger"}`}>{(pagamento - valorTotal) > 0?(pagamento - valorTotal).toLocaleString('pt-BR', { minimumFractionDigits: 2 }):'0,00'}</td>
+            <td className="text-left">{`R$ ${valorTotal.toFixed(2).replace(".", ",")}`}</td>
+            <td class="text-success">{`+${pagamento.toFixed(2).replace(".", ",")}`}</td>
+            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) < 0&&"text-danger"}`}>{`${(pagamento - valorTotal) < 0?(pagamento - valorTotal).toFixed(2).replace(".", ","):'0,00'}`}</td>
+            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) > 0&&"text-danger"}`}>{(pagamento - valorTotal) > 0?(pagamento - valorTotal).toFixed(2).replace(".", ","):'0,00'}</td>
             <td>{
                 (pagamento - valorTotal) > 0?
                 <a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${props.dados.idR}`}>

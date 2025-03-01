@@ -164,7 +164,7 @@ export default function ModalEstorno(props){
                                             <td>{item.idEstorno}</td>
                                             <td>{item.data.substr(0, 10).split('-').reverse().join('/')}</td>
                                             <td>{item.formaEstorno}</td>
-                                            <td>R$ {item.valor.toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</td>
+                                            <td>R$ {item.valor.toFixed(2).replace(".", ",")}</td>
                                             <td>
                                                 <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${item.idEstorno}/${JSON.parse(localStorage.getItem('user')).token}`}>
                                                     <i className="fas fa-image	"></i>
