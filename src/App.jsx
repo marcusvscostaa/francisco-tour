@@ -26,6 +26,7 @@ function App() {
   useEffect(() => {
     //console.log(AuthService.getCurrentUser());
       AuthService.getCurrentUser().then(data => {
+        localStorage.setItem('teste','local Storage');
         if(data === true){
           setUser(true);
         }else{
