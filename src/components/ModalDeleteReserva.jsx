@@ -11,7 +11,7 @@ export default function(props) {
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}            
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}            
         };
 
         await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${props.idR}`, deletePagReserva)
@@ -44,7 +44,7 @@ export default function(props) {
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
             };
 
         await fetch(`${process.env.REACT_APP_BASE_URL}/reservatour/${props.idR}`, deleteTour)
@@ -77,7 +77,7 @@ export default function(props) {
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         };
 
         await fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${props.idR}`, deleteReserva)

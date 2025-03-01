@@ -11,7 +11,7 @@ export default function ModalDeleteTour(props){
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         };
         await fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idTour}`, requestOps)
         .then(response => {

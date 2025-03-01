@@ -44,7 +44,7 @@ export default function RowTabela(props){
                 method: 'put',
                 headers:{ 
                     'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token},
+                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                 body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
             };
             fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
@@ -64,7 +64,7 @@ export default function RowTabela(props){
             method: 'put',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                 body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
@@ -79,7 +79,7 @@ export default function RowTabela(props){
                     method: 'POST',
                     headers:{ 
                         'Content-Type': 'application/json',
-                        "authorization": JSON.parse(localStorage.getItem('user')).token},
+                        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                     body: JSON.stringify({status:'Confirmado', idtour: item.idtour})
                 };
                 fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
@@ -94,7 +94,7 @@ export default function RowTabela(props){
                         method: 'POST',
                         headers:{ 
                             'Content-Type': 'application/json',
-                            "authorization": JSON.parse(localStorage.getItem('user')).token},
+                            "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                         body: JSON.stringify({status: 'Pago', idPagamento: item.idPagamento})
                     };
                     fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
@@ -114,7 +114,7 @@ export default function RowTabela(props){
                     method: 'POST',
                     headers:{ 
                         'Content-Type': 'application/json',
-                        "authorization": JSON.parse(localStorage.getItem('user')).token},
+                        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                     body: JSON.stringify({status:'Cancelado', idtour: item.idtour})
                 };
                 fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
@@ -129,7 +129,7 @@ export default function RowTabela(props){
                         method: 'POST',
                         headers:{ 
                             'Content-Type': 'application/json',
-                            "authorization": JSON.parse(localStorage.getItem('user')).token},
+                            "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
                         body: JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento})
                     };
                     fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)

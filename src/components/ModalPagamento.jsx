@@ -31,7 +31,7 @@ export default function ModalPagamento(props){
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -61,7 +61,7 @@ export default function ModalPagamento(props){
                 method: 'POST',
                 body: formData
             }
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${JSON.parse(localStorage.getItem('user')).token}`, reqPagReserva).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                     setModalSpinner(true)
@@ -105,7 +105,7 @@ export default function ModalPagamento(props){
                 method: 'PUT',
                 body: formData
             }
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${showEditPag.id}/${JSON.parse(localStorage.getItem('user')).token}`, reqPagReserva).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${showEditPag.id}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                     setModalSpinner(true)

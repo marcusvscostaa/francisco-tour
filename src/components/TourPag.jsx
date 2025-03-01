@@ -17,9 +17,9 @@ export default function TourPag(props){
                 comentario: props.dados[0].comentario,
             })
             if(props.type === 'Pagamento'){
-                setImage(`${process.env.REACT_APP_BASE_URL}/imagem/${props.dados[0].idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`)
+                setImage(`${process.env.REACT_APP_BASE_URL}/imagem/${props.dados[0].idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`)
             }else{
-                setImage(`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${props.dados[0].idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`)
+                setImage(`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${props.dados[0].idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`)
             }
             setValorRestante(props.dados[0].valorPago)
         }

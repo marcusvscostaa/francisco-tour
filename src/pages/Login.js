@@ -24,8 +24,9 @@ export default function Login(){
 
     const handleLogin = (e) => {
         e.preventDefault(); 
-        AuthService.login(username, password).then((user) => {
-        window.location.href = '/';
+        AuthService.login(username, password).then((response) => {
+            console.log(response);
+         window.location.href = '/';
         });
     };
 

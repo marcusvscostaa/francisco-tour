@@ -22,16 +22,23 @@ import { Navigate  } from "react-router-dom";
 
 //const user = AuthService.getCurrentUser().then(data => {return data});
 function App() {
-  const [user, setUser] = useState('');
+  const [user, setUser] = useState(false);
   useEffect(() => {
-    AuthService.getCurrentUser().then(data => {
-      if(data === true){
-        setUser(true);
+    //console.log(AuthService.getCurrentUser());
+      AuthService.getCurrentUser().then(data => {
+        if(data === true){
+          setUser(true);
+        }else{
+          setUser(false);
+        }
+      })
+      if(AuthService.getCurrentUser() === true){
+        setUser(true)
       }else{
-        setUser(false);
+        setUser(false)
       }
-    }) 
-  },[localStorage.getItem('user')])
+    
+  },[])
 
  
 

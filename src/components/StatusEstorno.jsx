@@ -17,7 +17,7 @@ export default function StatusEstorno(props){
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify({status: e.target.value, idEstorno: props.id})
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusEstorno`, requestOptions)

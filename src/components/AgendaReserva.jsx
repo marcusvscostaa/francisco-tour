@@ -23,7 +23,7 @@ export default function AgendaReserva() {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -34,7 +34,7 @@ export default function AgendaReserva() {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -44,7 +44,7 @@ export default function AgendaReserva() {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {

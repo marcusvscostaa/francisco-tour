@@ -21,7 +21,7 @@ export default function ModalEditarCliente(props){
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -50,7 +50,7 @@ export default function ModalEditarCliente(props){
             method: 'PUT',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify(formCliente)
         }
         fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, editarCliente).then(response => {

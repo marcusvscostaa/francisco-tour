@@ -14,7 +14,7 @@ export default function ModalDeletarCliete(props) {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         }).then((response) => response.json())
             .then((data) => {
                 if (data.fatal === false) {
@@ -33,7 +33,7 @@ export default function ModalDeletarCliete(props) {
             const deletePagReserva = {
                 method: 'DELETE',headers:{ 
                     'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token}
+                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
             };
 
             await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${dado.idR}`, deletePagReserva)
@@ -70,7 +70,7 @@ export default function ModalDeletarCliete(props) {
                 method: 'DELETE',
                 headers:{ 
                     'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token}
+                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
             };
 
             await fetch(`${process.env.REACT_APP_BASE_URL}/reservatour/${dado.idR}`, deleteTour)
@@ -107,7 +107,7 @@ export default function ModalDeletarCliete(props) {
                 method: 'DELETE',
                 headers:{ 
                     'Content-Type': 'application/json',
-                    "authorization": JSON.parse(localStorage.getItem('user')).token}
+                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
             };
 
             await fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${dado.idR}`, deleteReserva)
@@ -148,7 +148,7 @@ export default function ModalDeletarCliete(props) {
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         };
 
         await fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, deleteCliente)

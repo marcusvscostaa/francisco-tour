@@ -36,7 +36,7 @@ export default function Formulario(props) {
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -94,7 +94,7 @@ export default function Formulario(props) {
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify(formCliente)
         };        
 
@@ -135,7 +135,7 @@ export default function Formulario(props) {
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify(formReserva)
         }   
         await fetch(`${process.env.REACT_APP_BASE_URL}/reserva`, reqReserva)
@@ -171,7 +171,7 @@ export default function Formulario(props) {
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify(calculoTotal[tour-1])
         };
             
@@ -223,7 +223,7 @@ export default function Formulario(props) {
                 body: formData
             }
 
-            await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${JSON.parse(localStorage.getItem('user')).token}`, reqPagReserva)
+            await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva)
             .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])

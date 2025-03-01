@@ -18,7 +18,7 @@ export default function PainelUsuario(){
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify(dataForm)
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/signup`, requestOps)

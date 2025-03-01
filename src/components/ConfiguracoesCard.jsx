@@ -10,7 +10,7 @@ export default function ConfiguracoesCard(){
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -37,7 +37,7 @@ export default function ConfiguracoesCard(){
             method: 'POST',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token},
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
             body: JSON.stringify({typeData: typeData, item: item})
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, requestOptions)
@@ -53,7 +53,7 @@ export default function ConfiguracoesCard(){
             method: 'DELETE',
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         };
         fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm/${typeData}/${item}`, requestOptions)
         .then(response => {

@@ -50,7 +50,7 @@ export default function TabalaPagamento(props){
                 <ModalComentario title={'Comentário Pagamento'} id={props.pag.idPagamento} comentario={props.pag.comentario}/>                
             </td>
             <td>
-                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagem/${props.pag.idPagamento}/${JSON.parse(localStorage.getItem('user')).token}`}>
+                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagem/${props.pag.idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`}>
                     <i className="fas fa-image	"></i>
                     &nbsp; Ver
                 </a>

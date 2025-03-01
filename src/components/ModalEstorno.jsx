@@ -27,7 +27,7 @@ export default function ModalEstorno(props){
             method: "GET",
             headers:{ 
                 'Content-Type': 'application/json',
-                "authorization": JSON.parse(localStorage.getItem('user')).token}
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         })
             .then((response) => response.json())
             .then((data) => {
@@ -55,7 +55,7 @@ export default function ModalEstorno(props){
                 method: 'POST',
                 body: formData
             }
-            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${JSON.parse(localStorage.getItem('user')).token}`, reqEstorno).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqEstorno).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
@@ -99,7 +99,7 @@ export default function ModalEstorno(props){
                 method: 'PUT',
                 body: formData,
             }
-            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${showEditPag.id}/${JSON.parse(localStorage.getItem('user')).token}`, reqEstorno).then(response => {
+            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${showEditPag.id}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqEstorno).then(response => {
                 if (!response.ok) {
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
@@ -166,7 +166,7 @@ export default function ModalEstorno(props){
                                             <td>{item.formaEstorno}</td>
                                             <td>R$ {item.valor.toFixed(2).replace(".", ",")}</td>
                                             <td>
-                                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${item.idEstorno}/${JSON.parse(localStorage.getItem('user')).token}`}>
+                                                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${item.idEstorno}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`}>
                                                     <i className="fas fa-image	"></i>
                                                     &nbsp; Ver
                                                 </a>
