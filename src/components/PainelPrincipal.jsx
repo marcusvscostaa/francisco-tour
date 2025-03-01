@@ -14,10 +14,7 @@ export default function PainelPrincipal(){
     const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
         fetch(`${process.env.REACT_APP_BASE_URL}/reservavalormes/${anoSelecionado}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
+            method: "GET"
         })
             .then((response) => response.json())
             .then((data) => {
@@ -26,10 +23,7 @@ export default function PainelPrincipal(){
             })
             .catch((error) => console.log(error.text()));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservavalormesatual`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
+            method: "GET"
         })
             .then((response) => response.json())
             .then((data) => {
@@ -37,10 +31,7 @@ export default function PainelPrincipal(){
             })
             .catch((error) => console.log(error.text()));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidade/${anoSelecionado}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
+            method: "GET"
         })
             .then((response) => response.json())
             .then((data) => {
@@ -49,10 +40,7 @@ export default function PainelPrincipal(){
             })
             .catch((error) => console.log(error.text()));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
+            method: "GET"
         })
             .then((response) => response.json())
             .then((data) => {
