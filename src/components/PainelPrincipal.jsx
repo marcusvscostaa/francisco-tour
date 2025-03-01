@@ -35,7 +35,7 @@ export default function PainelPrincipal(){
             .then((data) => {
                 setDadoMesAtual(data);
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log(error.json()));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidade/${anoSelecionado}`, {
             method: "GET",
             headers:{ 
@@ -47,7 +47,7 @@ export default function PainelPrincipal(){
                 setDadoQuantidade(data);
 
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log(error.json()));
         fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`, {
             method: "GET",
             headers:{ 
@@ -59,7 +59,7 @@ export default function PainelPrincipal(){
                 setQuantidadeAtua(data);
 
             })
-            .catch((error) => console.log(error));
+            .catch((error) => console.log(error).json());
 
         setUpdateCount(false)
 
