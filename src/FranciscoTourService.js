@@ -2,6 +2,7 @@ import axios from "axios";
 
 export async function getDadoAno(anoSelecionado){
     const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/reservavalormes/${anoSelecionado}`);
+    console.log(response);
     return response.data;
 }
 
@@ -18,4 +19,3 @@ export async function getQuantidadeAtua(){
     const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`);
     return response.data;
 }
-console.log("OLÁ");
