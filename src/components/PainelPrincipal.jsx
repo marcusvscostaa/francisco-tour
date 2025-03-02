@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import PainelGrafico from "./PainelGrafico";
 import PainelPizza from "./PainelPizza";
-import { parseJSON } from "jquery";
+import { getDadoAno, getDadoMesAtual, getDadoQuantidade, getQuantidadeAtua } from "../FranciscoTourService";
 const date = new Date();
 const currentYear = date.getFullYear();
 
@@ -13,41 +13,21 @@ export default function PainelPrincipal(){
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [updateCount, setUpdateCount] = useState(false)
     useEffect(()=>{
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservavalormes/${anoSelecionado}`, {
-            method: "GET"
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setDadoAno(data);
-              
-            })
-            .catch((error) => console.log(error.text()));
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservavalormesatual`, {
-            method: "GET"
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setDadoMesAtual(data);
-            })
-            .catch((error) => console.log(error.text()));
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidade/${anoSelecionado}`, {
-            method: "GET"
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setDadoQuantidade(data);
+        getDadoAno(anoSelecionado).then(
+            data => setDadoAno(data)
+        ).catch((error) => console.log(error));
 
-            })
-            .catch((error) => console.log(error.text()));
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`, {
-            method: "GET"
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setQuantidadeAtua(data);
+        getDadoMesAtual().then(
+            data => setDadoMesAtual(data)
+        ).catch((error) => console.log(error));
 
-            })
-            .catch((error) => console.log(error).text());
+        getDadoQuantidade(anoSelecionado).then(
+            data => setDadoQuantidade(data)
+        ).catch((error) => console.log(error));
+        
+        getQuantidadeAtua(anoSelecionado).then(
+            data => setQuantidadeAtua(data)
+        ).catch((error) => console.log(error));
 
         setUpdateCount(false)
 
