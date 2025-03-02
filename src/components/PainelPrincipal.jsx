@@ -15,7 +15,8 @@ export default function PainelPrincipal(){
     
     useEffect(()=>{
         getDadoAno(anoSelecionado).then(
-            data => setDadoAno(data)
+            data => {setDadoAno(data)
+            console.log(data)}
         ).catch((error) => console.log(error));
 
         getDadoMesAtual().then(
