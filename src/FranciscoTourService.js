@@ -18,3 +18,4 @@ export async function getQuantidadeAtua(){
     const response = await axios.get(`${process.env.REACT_APP_BASE_URL}/reservaquantidadeatual`);
     return response.data;
 }
+console.log("OLÁ");
