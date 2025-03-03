@@ -40,14 +40,16 @@ export default function RowTabela(props){
             }            
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            const requestOptions = {
-                method: 'put',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
-            };
-            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
+            
+        const requestOptions = {
+            method: 'put',
+            headers:{ 
+                'Content-Type': 'application/json',
+                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
+            body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
+        };
+    
+        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
         .then(response => {
             console.log(response)
           })
@@ -203,6 +205,6 @@ export default function RowTabela(props){
                 </td>
             </tr>
                 {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} disabledButton={disabledButton} dadosTour={dadosTour} updateCount={props.updateCount} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}
-    </Fragment>
+        </Fragment>
     )
 }

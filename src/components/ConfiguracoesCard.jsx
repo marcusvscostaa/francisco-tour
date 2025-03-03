@@ -1,4 +1,4 @@
-import { useState } from "react";
+/* import { useState } from "react";
 import { useEffect } from "react"
 
 export default function ConfiguracoesCard(){
@@ -214,4 +214,4 @@ export default function ConfiguracoesCard(){
             </div>
         </div>
     )
-}
+} */

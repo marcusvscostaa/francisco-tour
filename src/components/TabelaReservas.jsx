@@ -1,9 +1,9 @@
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../dataTable/dataTables.bootstrap4.min.css";
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
 import RowTabela from "./RowTabela";
-import RowTabelaChild from "./RowTabelaChild";
+import {getReservas, getTours, getPagamentoReservas} from "../FranciscoTourService";
 
 
 DataTable.use(DT);
@@ -15,57 +15,37 @@ export default function TabelaReservas(props) {
     const [updateCount, setUpdateCount] = useState(false);
     const [updateData, setUpdateData] = useState(false);
     const [pagamentoreservas, setPagamentoreservas] = useState(false);
-    const columns =  {"columns": [{
-        className: 'dt-control',
-        orderable: false,
-        data: null,
-        defaultContent: ''
-    }]}
+
 
     useEffect( () => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservas`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                if(data.fatal === false){
-                    setReservas(false)
+        setTimeout(() => {
+            getReservas().then(
+            data => {
+                console.log(data)
+                if(data.fatal || data.code){
+                    setReservas(false);
                 }else{
-                    setReservas(data);
+                    setReservas(data)
+                }          
+            }
+            ).catch((error) => console.log(error));
+        }, "300");
+
+        setTimeout(() => {
+            getTours().then(
+            data => {
+                setTour(data)
                 }
-               
-            })
-            .catch((error) => console.log(error));
-        
-        
-        fetch(`${process.env.REACT_APP_BASE_URL}/tour`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setTour(data);
+            ).catch((error) => console.log(error));
+        }, "600");
 
-            })
-            .catch((error) => console.log(error));
-       
-        fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setPagamentoreservas(data);
-
-            })
-            .catch((error) => console.log(error));
+        setTimeout(() => {
+            getPagamentoReservas().then(
+            data => {
+                setPagamentoreservas(data)
+                }
+            ).catch((error) => console.log(error));
+        }, "900");
         
         setTimeout(() => {setUpdateData(true)
         }, 1000)

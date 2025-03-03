@@ -16,7 +16,7 @@ export default function Configuracoes(){
         tabelaCliente="nav-item"
         nomePagina="Configurações"
         usuarios="nav-item"
-        componente={<ConfiguracoesCard />}/>
+        componente={<h1>Desativado</h1>}/>
         </div>
     )
 }

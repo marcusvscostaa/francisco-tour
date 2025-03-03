@@ -5,6 +5,7 @@ import DT from 'datatables.net-dt';
 import ModalAdiconarReserva from "./ModalAdiconarReserva";
 import ModalDeletarCliete from "./ModalDeletarCliente";
 import ModalEditarCliente from "./ModalEditarCliente";
+import {getClientes} from "../FranciscoTourService";
 
 DataTable.use(DT);
 
@@ -14,20 +15,17 @@ export default function Tabela(props) {
 
     useEffect(() => {
 
-        fetch(`${process.env.REACT_APP_BASE_URL}/clientes`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setClients(data);
-             
-            })
-            .catch((error) => console.log(error));
-
-
+        setTimeout(() => {
+            getClientes().then(
+                data => {
+                    if(data.fatal || data.code){
+                        setClients(false);
+                    }else{
+                        setClients(data)
+                    }    
+                }
+                ).catch((error) => console.log(error));
+            },"300")
 
         setUpdateCount(false)
 

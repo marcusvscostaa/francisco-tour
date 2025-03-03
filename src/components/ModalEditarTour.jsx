@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import ModalAlert from "./ModalAlert";
 import TourForm from "./TourForm";
+import optionForm from "./lista.json"
+
 
 export default function ModalEditarTour(props){
     const [modalStatus, setModalStatus] = useState([]);
@@ -18,18 +20,7 @@ export default function ModalEditarTour(props){
     const [options, setOptions] = useState("");
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setOptions(data);
-
-            })
-            .catch((error) => console.log(error));
+        setOptions(optionForm)
     },[])
 
     const handerEdit = (e) => {

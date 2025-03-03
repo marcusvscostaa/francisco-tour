@@ -1,6 +1,8 @@
 
 import { useEffect, useState} from 'react'
 import AgendaReservaChild from './AgendaReservaChild';
+import { getTiposTours, getTourPorMes, getDataDiferentes } from "../FranciscoTourService";
+
 
 
 export default function AgendaReserva() {
@@ -19,38 +21,31 @@ export default function AgendaReserva() {
         let monthlastdate = new Date(year, month, 0).getDate();
         let lit = "";
 
-        fetch(`${process.env.REACT_APP_BASE_URL}/tiposTours`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setTiposTours(data);
-            })
-            .catch((error) => console.log(error));
-        fetch(`${process.env.REACT_APP_BASE_URL}/tourPorMes/${(month + 1)}/${year}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setTourPorMes(data);
-            })
-        fetch(`${process.env.REACT_APP_BASE_URL}/dataDiferentes/${(month + 1)}/${year}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setDataDiferentes(data);
-            })
-            .catch((error) => console.log(error));
+        setTimeout(() => {
+            getTiposTours().then(
+                data => {
+                    if(data.fatal || data.code){
+                        setTiposTours(false);
+                    }else{
+                        setTiposTours(data)
+                    }
+                }
+            ).catch((error) => console.log(error));
+        }, "300");
+
+        setTimeout(() => {
+            getTourPorMes(month, year).then(
+                data => {setTourPorMes(data)
+                }
+            ).catch((error) => console.log(error));
+        }, "600");
+
+        setTimeout(() => {
+            getDataDiferentes(month, year).then(
+                data => {setDataDiferentes(data)
+                }
+            ).catch((error) => console.log(error));
+        }, "900");
 
     
         for (let i = dayone; i > 0; i--) {
@@ -101,6 +96,8 @@ const months = [
 
 
     return (
+        <>
+        {tiposTours&&tourPorMes&&dataDiferentes?
         <div className="card shadow mb-4">
             <div className="card-body">
                 <div class="calendar-container">
@@ -140,15 +137,17 @@ const months = [
                                         </> 
                                         )
                                      }
-                                })}
-                                  
-                                
-                                
+                                })}                                
                             </li>))}
                         </ul>
                     </div>
                 </div>
             </div>
+        </div>:<div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
         </div>
+        }</>
     )
 }

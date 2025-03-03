@@ -7,6 +7,8 @@ import ModalAlert from "./ModalAlert";
 import ModalComentario from "./ModalComentario";
 import StatusEstorno from "./StatusEstorno";
 import ModalDeleteEstorno from "./ModalDeleteEstorno";
+import optionForm from "./lista.json"
+
 
 DataTable.use(DT);
 const idEstorno =  uid().toString();
@@ -23,19 +25,7 @@ export default function ModalEstorno(props){
 
 
     useEffect(()=>{
-        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setOptions(data);
-
-            })
-            .catch((error) => console.log(error));
-
+        setOptions(optionForm)
     },[props.updateCount])
     
     const handleSubmit = (e) => {

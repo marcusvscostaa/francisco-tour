@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import ModalAlert from "./ModalAlert";
+import optionForm from "./lista.json"
 
 export default function ModalEditarReserva(props) {
     const [modalStatus, setModalStatus] = useState([]);
@@ -16,19 +17,7 @@ export default function ModalEditarReserva(props) {
     })
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setOptions(data);
-
-            })
-            .catch((error) => console.log(error));
-
+        setOptions(optionForm)
     },[])
 
     const handleChange = (e) => {

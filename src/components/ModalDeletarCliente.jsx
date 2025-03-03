@@ -17,7 +17,7 @@ export default function ModalDeletarCliete(props) {
                 "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         }).then((response) => response.json())
             .then((data) => {
-                if (data.fatal === false) {
+                if (data.fatal || data.code) {
                     setReservas(false)
                 } else {
                     setReservas(data);

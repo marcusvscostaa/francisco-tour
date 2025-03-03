@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import TourForm from "./TourForm";
 import ModalAlert from "./ModalAlert";
+import optionForm from "./lista.json"
+
 
 export default function ModalAdicionarTour(props){
         const [calculoTotal, setcalculoTotal] = useState([
@@ -10,19 +12,7 @@ export default function ModalAdicionarTour(props){
         const [options, setOptions] = useState("");
 
         useEffect(()=>{
-            fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setOptions(data);
-                })
-                .catch((error) => console.log(error));
-    
-    
+            setOptions(optionForm)    
         },[])
 
         const handleSubmit = async (e) => {

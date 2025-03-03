@@ -1,0 +1,74 @@
+{
+  "zona": [
+    "Aconcagua",
+    "Bairro",
+    "Belo Horizonte",
+    "Centro",
+    "Chiloé",
+    "Colchagua",
+    "Concepción",
+    "Coquimbo",
+    "Maule",
+    "Rudes",
+    "Santiago",
+    "Sul",
+    "Valdivia"
+  ],
+  "paisOrigem": [
+    "Alemãnha",
+    "Argentina",
+    "Bolívia",
+    "Brasil",
+    "Chile",
+    "Colômbia",
+    "Costa Rica",
+    "El Salvador",
+    "Equador",
+    "Guatemala",
+    "Honduras",
+    "México",
+    "Nicarágua",
+    "Panamá",
+    "Paraguai",
+    "Perú",
+    "Rudes",
+    "Uruguai",
+    "Venezuela"
+  ],
+  "idioma": [
+    "Alberto",
+    "Espanhol",
+    "Inglês",
+    "Japonês",
+    "Mandarim",
+    "Português ",
+    "Rudes",
+    "Tupi-Guarani"
+  ],
+  "destino": [
+    "City Tour",
+    "Valle Nevado Sunset",
+    "Viña del Mar e Valparaíso",
+    "Farellones",
+    "Isla Negra + Undurraga"
+  ],
+  "tour": [
+    "City Tour",
+    "Farellones",
+    "Isla Negra + Undurraga",
+    "Praça 7",
+    "Rudes",
+    "Valle Nevado Sunset",
+    "Viña del Mar e Valparaíso"
+  ],
+  "formaPagamento": [
+    "Boleto",
+    "Cartão de Crédito",
+    "Escambo",
+    "Funciona",
+    "Funciona",
+    "Pix",
+    "Rudes",
+    "Transferência"
+  ]
+}

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
+import {getPagamentoReservaAnual, getPagamentoReservaValorMes, getPagamentoReservaMensal} from "../FranciscoTourService";
 const date = new Date();
 const currentYear = date.getFullYear();
-
 
 DataTable.use(DT);
 export default function TabelaComissoes(){        
@@ -33,48 +33,38 @@ export default function TabelaComissoes(){
 
 
     useEffect(()=>{
-        fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoReservaAnual/${anoSelecionado}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setDadoAtual(data);
-
-            })
-            .catch((error) => console.log(error));
-            
-            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoreservavalormes/${year}`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setDadoAno(data);
-
-                })
-                .catch((error) => console.log(error));
-            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoReservaMensal/${month + 1}/${year}`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setDadoMensal(data);
-
-                })
-                .catch((error) => console.log(error));
+        setTimeout(() => {
+            getPagamentoReservaAnual(anoSelecionado).then(
+                data => {
+                    if(data.fatal || data.code){
+                        setDadoAtual(false);
+                    }else{
+                        setDadoAtual(data)
+                    }    
+                }
+            ).catch((error) => console.log(error));
+        },"300")
+        setTimeout(() => {
+            getPagamentoReservaValorMes(year).then(
+                data => {
+                    setDadoAno(data)
+                }
+            ).catch((error) => console.log(error));
+        },"600")
+        setTimeout(() => {
+            getPagamentoReservaMensal(month, year).then(
+                data => {
+                    setDadoMensal(data)
+                }
+            ).catch((error) => console.log(error));
+        },"900")
 
             setUpdateData(false)
     },[updateData])
     
     return(
+    <>
+    {dadoAno&&dadoAtual&&dadoMensal?
     <>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
@@ -158,6 +148,11 @@ export default function TabelaComissoes(){
                 </table>}
             </div> 
         </div>
+        </>: <div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div>}
     </>
     )
 }

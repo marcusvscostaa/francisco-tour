@@ -3,6 +3,7 @@ import TourForm from "./TourForm";
 import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
+import optionForm from "./lista.json"
 
 const idReserva = uid().toString();
 const idCliente = uid(16).toString();
@@ -32,19 +33,8 @@ export default function Formulario(props) {
     const [modalStatus, setModalStatus] = useState([]);
 
     useEffect(() => {
-        fetch(`${process.env.REACT_APP_BASE_URL}/opcoesForm`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        })
-            .then((response) => response.json())
-            .then((data) => {
-                setOptions(data);
-            })
-            .catch((error) => console.log(error));
-
-
+        setOptions(optionForm)
+        console.log(optionForm)
     },[])
     const handleClick = () => {
         if (numberTour.length <= 5) {

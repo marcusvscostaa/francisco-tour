@@ -5,37 +5,56 @@ import { getDadoAno, getDadoMesAtual, getDadoQuantidade, getQuantidadeAtua } fro
 const date = new Date();
 const currentYear = date.getFullYear();
 
-export default function PainelPrincipal(){
-    const [dadoAno, setDadoAno] = useState('')
-    const [dadoMesAtual, setDadoMesAtual] = useState('')
-    const [dadoQuantidade, setDadoQuantidade] = useState('')
-    const [dadoQuantidadeAtual, setQuantidadeAtua] = useState('')
+export default function PainelPrincipal() {
+    const [dadoAno, setDadoAno] = useState(false)
+    const [dadoMesAtual, setDadoMesAtual] = useState(false)
+    const [dadoQuantidade, setDadoQuantidade] = useState(false)
+    const [dadoQuantidadeAtual, setQuantidadeAtua] = useState(false)
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [updateCount, setUpdateCount] = useState(false)
-    
-    useEffect(()=>{
-        getDadoAno(anoSelecionado).then(
-            data => {setDadoAno(data)
-            console.log(data)}
-        ).catch((error) => console.log(error));
 
-        getDadoMesAtual().then(
-            data => setDadoMesAtual(data)
-        ).catch((error) => console.log(error));
+    useEffect(() => {
+        setTimeout(() => {
+            getDadoAno(anoSelecionado).then(
+                data => {
+                    if (data.fatal || data.code) {
+                        setDadoAno(false);
+                    } else {
+                        setDadoAno(data)
+                    }
+                }
+            ).catch((error) => console.log(error));
+        }, "300");
 
-        getDadoQuantidade(anoSelecionado).then(
-            data => setDadoQuantidade(data)
-        ).catch((error) => console.log(error));
-        
-        getQuantidadeAtua(anoSelecionado).then(
-            data => setQuantidadeAtua(data)
+        setTimeout(() => {
+            getDadoMesAtual().then(
+                data => {
+                    setDadoMesAtual(data)
+                }
+            ).catch((error) => console.log(error));
+        }, "700");
+
+        setTimeout(() => {
+            getDadoQuantidade(anoSelecionado).then(
+                data => {
+                    setDadoQuantidade(data)
+                }
+            ).catch((error) => console.log(error));
+        }, "1000");
+
+        getQuantidadeAtua().then(
+            data => {
+                setQuantidadeAtua(data)
+            }
         ).catch((error) => console.log(error));
 
         setUpdateCount(false)
 
-    },[updateCount])
+    }, [updateCount])
     
     return(
+    <>
+    {dadoAno&&dadoMesAtual&&dadoQuantidade&&dadoQuantidadeAtual?
     <>
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
@@ -61,7 +80,7 @@ export default function PainelPrincipal(){
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Vendas Confirmadas ({anoSelecionado})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal?.toFixed(2).replace(".", ",")}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotal?.toFixed(2).replace(".", ",")}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -77,7 +96,7 @@ export default function PainelPrincipal(){
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                 Vendas Canceladas ({anoSelecionado})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado?.toFixed(2).replace(".", ",")}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.cancelado?.toFixed(2).replace(".", ",")}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-times-circle fa-2x text-gray-300"></i>
@@ -107,6 +126,13 @@ export default function PainelPrincipal(){
         <PainelGrafico title1={"Vendas Confirmadas"}  title2={"Vendas Canceladas"} size={"8"} dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
         <PainelPizza dadoQuantidade={dadoQuantidade} dadoQuantidadeAtual={dadoQuantidadeAtual}  anoSelecionado={anoSelecionado}/>
     </div>
-    </>
+    </>:<div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div>
+}
+</>
+   
     )
 }

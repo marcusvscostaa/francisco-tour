@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import PainelGrafico from "./PainelGrafico";
 import PainelPizza from "./PainelPizza";
 import TabelaFinanceiro from "./TabelaFinanceiro";
+import {getPagamentoReservaValorMes, getReservas, getTours, getPagamentoReservas, getEstorno} from "../FranciscoTourService";
 
 const date = new Date();
 const currentYear = date.getFullYear();
@@ -17,76 +18,49 @@ export default function PainelFinanceiro(){
         const [updateData, setUpdateData] = useState(false);
 
         useEffect(()=>{
-            fetch(`${process.env.REACT_APP_BASE_URL}/pagamentoreservavalormes/${anoSelecionado}`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setDadoAno(data);
-
-                })
-                .catch((error) => console.log(error));
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservas`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    if(data.fatal === false){
-                        setReservas(false)
+            getPagamentoReservaValorMes(anoSelecionado).then(
+                data => {
+                    if(data.fatal || data.code){
+                        setDadoAno(false);
                     }else{
-                        setReservas(data);
+                        setDadoAno(data)
+                    }    
+                }
+            ).catch((error) => console.log(error));
+
+            setTimeout(() => {
+                getReservas().then(
+                data => {
+                    setReservas(data)
                     }
+                ).catch((error) => console.log(error));
+            }, "300");
 
-                })
-                .catch((error) => console.log(error));
-            fetch(`${process.env.REACT_APP_BASE_URL}/tour`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setTour(data);
-
-                })
-                .catch((error) => console.log(error));
+            setTimeout(() => {
+                getTours().then(
+                data => {
+                    setTour(data)
+                    }
+                ).catch((error) => console.log(error));
+            }, "600");
             
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento`, {
-                method: "GET",
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            })
-                .then((response) => response.json())
-                .then((data) => {
-                    setPagamentoreservas(data);
+            setTimeout(() => {
+                getPagamentoReservas().then(
+                data => {
+                    setPagamentoreservas(data)
+                    }
+                ).catch((error) => console.log(error));
+            }, "900");
+            
+            setTimeout(() => {
+                getEstorno().then(
+                data => {
+                    setEstorno(data)
+                    }
+                ).catch((error) => console.log(error));
+            }, "1200");
+            
 
-                })
-                .catch((error) => console.log(error));
-                fetch(`${process.env.REACT_APP_BASE_URL}/estorno`, {
-                    method: "GET",
-                    headers:{ 
-                        'Content-Type': 'application/json',
-                        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-                })
-                    .then((response) => response.json())
-                    .then((data) => {
-                        if(data.fatal === false){
-                            setEstorno(false)
-                        }else{
-                            setEstorno(data);
-                        }
-
-                    })
-                    .catch((error) => console.log(error));
-    
             setTimeout(() => {setUpdateData(true)
             }, 1000)
             setTimeout(() => setUpdateData(false), 1500)  
@@ -94,6 +68,8 @@ export default function PainelFinanceiro(){
     
         },[updateCount])
         return(
+        <>
+        {dadoAno&&reservas&&tour&&pagamentoreservas&&estorno?
         <>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
@@ -103,7 +79,7 @@ export default function PainelFinanceiro(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bolder text-success text-uppercase mb-1">
                                     FATURAMENTO {anoSelecionado}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.valorTotal.toFixed(2).replace(".", ",")}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotal.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -119,7 +95,7 @@ export default function PainelFinanceiro(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                     ESTORNOS {anoSelecionado}</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno&&dadoAno.cancelado.toFixed(2).replace(".", ",")}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.cancelado.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-times-circle fa-2x text-gray-300"></i>
@@ -133,5 +109,10 @@ export default function PainelFinanceiro(){
             <PainelGrafico title1={"Faturamento"}  title2={"Estorno"} size={"12"} dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
         </div>
             <TabelaFinanceiro dadoAno={dadoAno} setUpdateCount={setUpdateCount} updateCount={updateData} estorno={estorno} reservas={reservas} tour={tour} pagamentoreservas={pagamentoreservas} anoSelecionado={anoSelecionado}/>
+        </>:<div className="d-flex justify-content-center">
+            <div className="spinner-border" role="status">
+                <span className="sr-only">Loading...</span>
+            </div>
+        </div>}
         </>)
 }
