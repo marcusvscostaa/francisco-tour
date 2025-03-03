@@ -4,6 +4,13 @@ import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 const idReserva = uid().toString();
 const idCliente = uid(16).toString();
@@ -16,7 +23,7 @@ export default function Formulario(props) {
     const [addTour, setaddTour] = useState(2);
     const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
-    const [formReserva, setformReserva] = useState({id: idReserva});
+    const [formReserva, setformReserva] = useState({id: idReserva, status: 'Confirmado'});
     const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
@@ -34,7 +41,6 @@ export default function Formulario(props) {
 
     useEffect(() => {
         setOptions(optionForm)
-        console.log(optionForm)
     },[])
     const handleClick = () => {
         if (numberTour.length <= 5) {
@@ -77,128 +83,88 @@ export default function Formulario(props) {
     const pagCheck = () => {
         setaddPag(!addPag);
     };
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-       
-        const requestOptions = {
-            method: 'POST',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(formCliente)
-        };        
+    const handleSubmit = (e) => {
+        e.preventDefault();     
 
         if((!props.addReserva)){
-            await fetch(`${process.env.REACT_APP_BASE_URL}/cliente`, requestOptions)
+            instance.post('/cliente', JSON.stringify(formCliente))
             .then(response => {
-                if (!response.ok) {
+                console.log(response)
+                if (response.data){
+                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
+                        setModalSpinner(false)
+                    },2000)
+                }else{
                     setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                         setModalSpinner(false)
                     },2000)
                     throw new Error('Network response was not ok');
-                }
-                return response.json();
-              }).then(data => {
-                if(data) {
-                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
-                        setModalSpinner(false)
-                    },2000)
-                }
-              }
-                
-              ).catch(e => {
+                }})
+                .catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
                     setModalSpinner(false)
-                },2000)})
-     
+                },2000)})   
         }
 
-        
-        
-        const reqReserva = {
-            method: 'POST',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(formReserva)
-        }   
-        await fetch(`${process.env.REACT_APP_BASE_URL}/reserva`, reqReserva)
-        .then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
+        setTimeout(()=>{
+            instance.post('/reserva', JSON.stringify(formReserva))
+            .then(response => {
+                console.log(response)
+                if (response.data){
+                    setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
                     setModalSpinner(false)
-                },2000)
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-          }).then(data => {
-            if(data) {
-                setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                    setModalSpinner(false)
-                },2000)
-            }
-          }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                setModalSpinner(false)
-            },2000)})
- 
-  
-           
-        numberTour.map(async (tour) => {        
-            const requestOps = {
-            method: 'POST',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(calculoTotal[tour-1])
-        };
-            
-        await fetch(`${process.env.REACT_APP_BASE_URL}/tour`, requestOps)
-        .then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                    setModalSpinner(false) 
-                },2000)
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-          }).then(data =>{
-            if(data) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                    setModalSpinner(false) 
-                    window.location.replace("/minhasReservas");
-                },2000)
-            }
-          }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                setModalSpinner(false) 
-            },2000)})
-    
-            
-        })
+                },2000) 
+                }else{
+                    setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
+                        setModalSpinner(false)
+                    },2000)
+                    throw new Error('Network response was not ok');
+                }})
+                .catch(e => {
+                    setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
+                        setModalSpinner(false)
+                    },2000)})
+        },'300')
+          
+        setTimeout(() => {
+            numberTour.map((tour)=>{            
+                setTimeout(()=>{          
+                    instance.post('/tour', JSON.stringify(calculoTotal[tour-1]))
+                    .then((response) => {
+                        console.log(response)
+                        if (response.data) {
+                            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
+                            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                                window.location.replace("/minhasReservas");
+                            },3000)
+                        }else{
+                            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
+                            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
+                            throw new Error('Network response was not ok');
+                        }
+                    }).catch(e => {
+                        setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
+                },'300')
+            })
+        },'600') 
                
         
         if(addPag){
             const formData = new FormData();
-            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
             if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
             if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
@@ -206,38 +172,23 @@ export default function Formulario(props) {
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
             if(idPagamento){formData.append("idPagamento", idPagamento);}
             formData.append("status", "Pago");
-        
-    
-            const reqPagReserva = {
-                method: 'POST',
-                body: formData
-            }
 
-            await fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva)
-            .then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-            }).then(data => {
-                if(data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)
-                }
-            }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                setModalSpinner(false)
-            },2000)})
+            setTimeout(() =>{
+                instance.post('/reservaPagamento', formData)
+                .then(response => {
+                    console.log(response)
+                    if (response.data){
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)
+                    }else{
+                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)
+                        throw new Error('Network response was not ok');
+                    }})
+                .catch(e => {
+                    setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)})
+            }, '900')
         }
         
 

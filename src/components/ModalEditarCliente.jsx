@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 
 export default function ModalEditarCliente(props){
@@ -33,41 +40,27 @@ export default function ModalEditarCliente(props){
 
     const handerEdit = (e) => {
         e.preventDefault();
-        
-        const editarCliente = {
-            method: 'PUT',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(formCliente)
-        }
-        fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, editarCliente).then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Cliente"}])
+
+        instance.put(`/cliente/${props.id}`, JSON.stringify(formCliente))
+        .then((response) => {
+            console.log(response)
+            if (response.data) {
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente" , titulo: "Cliente"}])
                 setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                                setModalSpinner(false)
+                                props.setUpdateCount(true)
+                                document.getElementById(`CloseEditarCliente${props.id}`).click()
+                },3000)
+            }else{
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
                 throw new Error('Network response was not ok');
             }
-            return response.json();
-            }).then(data => {
-                if(data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Cliente", titulo: "Cliente"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        props.setUpdateCount(true)
-                        document.getElementById(`CloseEditarCliente${props.id}`).click()
-                    },2000)
-                }
-            })
-            .catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Cliente: " + e, titulo: "Cliente"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                setModalSpinner(false)
-            },2000)})
+        }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
+        
         }
     return(
     <div className="modal fade" tabindex="-1" id={`clienteEditar${props.id}`} data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel"

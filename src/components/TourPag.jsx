@@ -110,7 +110,7 @@ export default function TourPag(props){
                   <div className="col-md-3 mb-3">
                       <label for="valorCriancas"  className="form-label">Comprovante</label>
                             <div className="custom-file mb-2">
-                                <input type="file" name="comprovante" className="custom-file-input form-control-sm" id="customFile" onChange={handleChange} />
+                                <input type="file" name="comprovante" className="custom-file-input form-control-sm" id="customFile" onChange={handleChange} disabled/>
                                 <label className="custom-file-label col-form-label-sm" for="customFile">{nomeArquivo !== "Escolher Arquivo"?(nomeArquivo.name):nomeArquivo}</label>
                             </div>
                             <img className="img-thumbnail" src={image}></img>

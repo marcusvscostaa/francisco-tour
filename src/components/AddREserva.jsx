@@ -86,7 +86,8 @@ export default  function AddReserva(props){
         setTimeout(() => {
             numberTour.map((tour)=>{            
                 setTimeout(()=>{               
-                    axios.post('/tour',calculoTotal[tour-1]).then((response) => {
+                    axios.post('/tour',calculoTotal[tour-1])
+                    .then((response) => {
                         if (response.ok) {
                             setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
                             setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},10000)

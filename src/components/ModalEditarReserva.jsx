@@ -1,6 +1,13 @@
 import { useEffect, useState } from "react";
 import ModalAlert from "./ModalAlert";
-import optionForm from "./lista.json"
+import optionForm from "./lista.json";
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 export default function ModalEditarReserva(props) {
     const [modalStatus, setModalStatus] = useState([]);
@@ -31,43 +38,26 @@ export default function ModalEditarReserva(props) {
 
     const handerEdit = (e) => {
         e.preventDefault();
-        
-        const editReserva = {
-            method: 'PUT',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(dadosReserva)
-        }
-        fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${props.idR}`, editReserva).then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])
+
+        instance.put(`/reserva/${props.idR}`, JSON.stringify(dadosReserva))
+        .then((response) => {
+            console.log(response)
+            if (response.data) {
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva" , titulo: "Reserva"}])
                 setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                                setModalSpinner(false)
+                                props.setUpdateCount(true)
+                                document.getElementById(`CloseEditarTour${props.idR}`).click()
+                },3000)
+            }else{
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Reserva"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
                 throw new Error('Network response was not ok');
             }
-            return response.json();
-            }).then(data => {
-                if(data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Tour", titulo: "Tour"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        props.setUpdateCount(true)
-                        document.getElementById(`CloseEditarTour${props.idR}`).click()
-                    },2000)
-                }
-            })
-            .catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Tour: " + e, titulo: "Tour"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                setModalSpinner(false)
-            },2000)})
-
-
+        }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e , titulo: "Reserva"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
 
     }
 

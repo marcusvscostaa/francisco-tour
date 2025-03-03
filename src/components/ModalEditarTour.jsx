@@ -2,6 +2,14 @@ import { useState, useEffect } from "react";
 import ModalAlert from "./ModalAlert";
 import TourForm from "./TourForm";
 import optionForm from "./lista.json"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
+
 
 
 export default function ModalEditarTour(props){
@@ -25,43 +33,25 @@ export default function ModalEditarTour(props){
 
     const handerEdit = (e) => {
         e.preventDefault();
-        
-        const editTour = {
-            method: 'PUT',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify(calculoTotal[0])
-        }
-        fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idtour}`, editTour).then(response => {
-            if (!response.ok) {
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com API", titulo: "Tour"}])
+        instance.put(`/tour/${props.idtour}`, JSON.stringify(calculoTotal[0]))
+        .then((response) => {
+            console.log(response)
+            if (response.data) {
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
                 setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
+                                setModalSpinner(false)
+                                props.setUpdateCount(true)
+                                document.getElementById(`CloseEditarTour${props.idtour}`).click()
+                },3000)
+            }else{
+                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
                 throw new Error('Network response was not ok');
             }
-            return response.json();
-            }).then(data => {
-                if(data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Tour", titulo: "Tour"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        props.setUpdateCount(true)
-                        document.getElementById(`CloseEditarTour${props.idtour}`).click()
-                    },2000)
-                }
-            })
-            .catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Tour: " + e, titulo: "Tour"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                setModalSpinner(false)
-            },2000)})
-
-
+        }).catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
 
     }
 
