@@ -13,6 +13,8 @@ export default function AgendaReserva() {
     const [tiposTours, setTiposTours] = useState([]);
     const [tourPorMes, setTourPorMes] = useState([]);
     const [dataDiferentes, setDataDiferentes] = useState('');
+    const [width, setWidth] = useState(window.innerWidth);
+
     useEffect(() => {
         let arr = []
         let dayone = new Date(year, month, 1).getDay();
@@ -73,27 +75,29 @@ export default function AgendaReserva() {
             
 
         },2000)
-
+        
+        const handleResize = () => setWidth(window.innerWidth);
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
 
 
     }, [month, year])
 
 
-const months = [
-   'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro'
-];
-
+    const months = [
+    'Janeiro',
+        'Fevereiro',
+        'Março',
+        'Abril',
+        'Maio',
+        'Junho',
+        'Julho',
+        'Agosto',
+        'Setembro',
+        'Outubro',
+        'Novembro',
+        'Dezembro'
+    ];
 
     return (
         <>
@@ -109,6 +113,7 @@ const months = [
                         </div>
                     </header>
                     <div class="calendar-body">
+                    {width> 481&&
                         <ul class="calendar-weekdays">
                             <li>Dom</li>
                             <li>Seg</li>
@@ -118,10 +123,11 @@ const months = [
                             <li>Sex</li>
                             <li>Sab</li>
                         </ul>
-                        <ul class="calendar-dates">
-                            {dateList.map(date => (<li className='mb-1 border h-100'>
+                    }
+                    {width> 481?
+                        <ul class="calendar-dates">                    
+                            {dateList.map(date => (<li className={`mb-1 border h-100`}>
                                 <div className='bg-dark text-white font-weight-bold'>{date}</div>
-
                                 {dataDiferentes&& dataDiferentes.map(datas => {
                                      if(datas.data.substr(8,2) == date){
                                         return(
@@ -139,7 +145,27 @@ const months = [
                                      }
                                 })}                                
                             </li>))}
+
+
+                        </ul>:<ul>
+                       { dataDiferentes.map(datas => {
+                                return(
+                                <li className='mb-1 border h-100'>
+                                <div className='bg-dark text-white font-weight-bold'>{datas.data.substr(8,2)}</div>
+                                <div className='bg-info text-white border font-weight-bold d-flex m-0'>
+                                    <div className="w-25 border-right"><p className="m-0">QTD. </p></div>
+                                    <div className="w-75"><p className="m-0 text-center">TOUR</p></div>
+                                </div>                                                                                                                      
+                                <AgendaReservaChild tiposTours={tiposTours} tourPorMes={tourPorMes.filter((item) => item.data.substr(8,2) == datas.data.substr(8,2))} date={datas.data.substr(8,2)} />                                                                                                                                                                                                                             
+                                <div className='bg-info text-white border font-weight-bold d-flex m-0'>
+                                    <div className=""><p className="m-0">TOTAL  {tourPorMes&&tourPorMes.filter((item) => item.data.substr(8,2) == datas.data.substr(8,2)).reduce((sum, item) => sum + (item.quantidadeAdultos + item.quantidadeCriancas),0)}</p></div>
+                                </div> 
+                                </li> 
+                                )
+                            })}
                         </ul>
+                        
+                        }
                     </div>
                 </div>
             </div>
