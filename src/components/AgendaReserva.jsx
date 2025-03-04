@@ -13,6 +13,7 @@ export default function AgendaReserva() {
     const [tiposTours, setTiposTours] = useState([]);
     const [tourPorMes, setTourPorMes] = useState([]);
     const [dataDiferentes, setDataDiferentes] = useState('');
+    const [arrdataDiferentes, setArrDataDiferentes] = useState([]);
     const [width, setWidth] = useState(window.innerWidth);
 
     useEffect(() => {
@@ -44,7 +45,13 @@ export default function AgendaReserva() {
 
         setTimeout(() => {
             getDataDiferentes(month, year).then(
-                data => {setDataDiferentes(data)
+                data => {
+                    setDataDiferentes(data)
+                    let arr = []
+                    data.map(data => {
+                        arr.push(data.data.substr(8,2))
+                    })
+                    setArrDataDiferentes(arr.sort())
                 }
             ).catch((error) => console.log(error));
         }, "900");
@@ -148,17 +155,17 @@ export default function AgendaReserva() {
 
 
                         </ul>:<ul>
-                       { dataDiferentes.map(datas => {
+                       { arrdataDiferentes.map(datas => {
                                 return(
                                 <li className='mb-1 border h-100'>
-                                <div className='bg-dark text-white font-weight-bold'>{datas.data.substr(8,2)}</div>
+                                <div className='bg-dark text-white font-weight-bold'>{datas}</div>
                                 <div className='bg-info text-white border font-weight-bold d-flex m-0'>
                                     <div className="w-25 border-right"><p className="m-0">QTD. </p></div>
                                     <div className="w-75"><p className="m-0 text-center">TOUR</p></div>
                                 </div>                                                                                                                      
-                                <AgendaReservaChild tiposTours={tiposTours} tourPorMes={tourPorMes.filter((item) => item.data.substr(8,2) == datas.data.substr(8,2))} date={datas.data.substr(8,2)} />                                                                                                                                                                                                                             
+                                <AgendaReservaChild tiposTours={tiposTours} tourPorMes={tourPorMes.filter((item) => item.data.substr(8,2) == datas)} date={datas} />                                                                                                                                                                                                                             
                                 <div className='bg-info text-white border font-weight-bold d-flex m-0'>
-                                    <div className=""><p className="m-0">TOTAL  {tourPorMes&&tourPorMes.filter((item) => item.data.substr(8,2) == datas.data.substr(8,2)).reduce((sum, item) => sum + (item.quantidadeAdultos + item.quantidadeCriancas),0)}</p></div>
+                                    <div className=""><p className="m-0">TOTAL  {tourPorMes&&tourPorMes.filter((item) => item.data.substr(8,2) == datas).reduce((sum, item) => sum + (item.quantidadeAdultos + item.quantidadeCriancas),0)}</p></div>
                                 </div> 
                                 </li> 
                                 )
