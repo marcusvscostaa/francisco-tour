@@ -50,20 +50,6 @@ export default function TourPag(props){
         }
 
     }
-    const handleSubmit = (e) =>{
-        e.preventDefault();
-        const formData = new FormData();
-        formData.append("comprovante", nomeArquivo);
-        formData.append("id_reserva", props.idReserva);
-
-
-        const reqPagReserva = {
-            method: 'POST',
-            body: formData
-        }
-        fetch(`${process.env.REACT_APP_BASE_URL}/upload-imagem`, reqPagReserva)
-        .then( response => console.log(response.json()))
-    }
     return(
         <div className="col-md-12">
         <div className="card mb-4 border-dark">

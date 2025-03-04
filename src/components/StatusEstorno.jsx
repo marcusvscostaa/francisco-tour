@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 export default function StatusEstorno(props){
     const [statusReserva, setStatusReserva] = useState('Pago')
@@ -13,18 +20,11 @@ export default function StatusEstorno(props){
         }
     },[props.updateCount])
     const handleChange = (e)=> {
-        const requestOptions = {
-            method: 'POST',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify({status: e.target.value, idEstorno: props.id})
-        };
-        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusEstorno`, requestOptions)
-        .then(response => {
-            props.setUpdateCount(true)
-            console.log(response)
-            })   
+        e.preventDefault();
+        instance.post('/mudarStatusEstorno', JSON.stringify({status: e.target.value, idEstorno: props.id}))
+        .catch(err => console.error(err))
+        props.setUpdateCount(true)
+
         if(e.target.value === 'Pago'){
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
         }else if(e.target.value === 'Cancelado'){

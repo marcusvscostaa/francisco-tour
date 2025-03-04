@@ -1,13 +1,16 @@
 import { Fragment, useEffect, useState, useRef } from "react";
-import DT from 'datatables.net-dt';
 import RowTabelaChild from "./RowTabelaChild";
-import $ from "jquery";
-import ReactDOM from 'react-dom';
-import ModalAlert from "./ModalAlert";
 import ModalPagamento from "./ModalPagamento";
 import ModalComentario from "./ModalComentario";
 import ModalDeleteReserva from "./ModalDeleteReserva";
 import ModalEditarReserva from "./ModalEditarReserva";
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+        }
+});
 
 
 
@@ -20,13 +23,7 @@ export default function RowTabela(props){
     const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     const [statusReserva, setStatusReserva] = useState('Confirmado')
     const[disabledButton, setDisabledButton] = useState(false)
-    const myRef = useRef(null);
-    const scriptHtml = `<script type="text/javascript">
-     { $(document).ready(() => {
-        $('[data-toggle="popover"]').popover();
-      })
-        }
-    </script>`
+
     useEffect(()=>{
         if(props.reserva.status){          
             if(props.reserva.status === 'Confirmado'){
@@ -41,18 +38,9 @@ export default function RowTabela(props){
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
             
-        const requestOptions = {
-            method: 'put',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify({status: 'Confirmado', idR: props.reserva.idR})
-        };
-    
-        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
-        .then(response => {
-            console.log(response)
-          })
+            instance.put('/mudarStatus', JSON.stringify({status: 'Confirmado', idR: props.reserva.idR}))
+            .catch(err => {console.log(err)})
+
         }
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
@@ -62,48 +50,21 @@ export default function RowTabela(props){
     },[props.updateCount])
 
     const handleChange = (e)=> {
-        const requestOptions = {
-            method: 'put',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                body: JSON.stringify({status: e.target.value, idR: props.reserva.idR})
-        };
-        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatus`, requestOptions)
-        .then(response => {
-            console.log(response)
-          })   
+        instance.put('/mudarStatus', JSON.stringify({status: e.target.value, idR: props.reserva.idR}))
+        .catch(err => {console.log(err)})
+   
         if(e.target.value === 'Confirmado'){
             setDisabledButton(false)
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
             dadosTour.map(item => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers:{ 
-                        'Content-Type': 'application/json',
-                        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                    body: JSON.stringify({status:'Confirmado', idtour: item.idtour})
-                };
-                fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
-                .then(response => {
-                    console.log(response)
-                    props.setUpdateCount(true)
-                  })   
+                instance.post('/mudarStatusTour', JSON.stringify({status:'Confirmado', idtour: item.idtour}))
+                .catch(err => {console.log(err)})  
             })
             pagamentoreservas.map(item => {
                 if(item.id_reserva === props.reserva.idR) {
-                    const requestOptions = {
-                        method: 'POST',
-                        headers:{ 
-                            'Content-Type': 'application/json',
-                            "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                        body: JSON.stringify({status: 'Pago', idPagamento: item.idPagamento})
-                    };
-                    fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
-                    .then(response => {
-                        console.log(response)
-                      })
-                      props.setUpdateCount(true)
+                    instance.post('/mudarStatusPagamento', JSON.stringify({status: 'Pago', idPagamento: item.idPagamento}))
+                    .catch(err => {console.log(err)})  
+                    props.setUpdateCount(true)
                 }
             })
         }else if(e.target.value === 'Pendente'){
@@ -112,33 +73,15 @@ export default function RowTabela(props){
             setDisabledButton(true)
             setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
             dadosTour.map(item => {
-                const requestOptions = {
-                    method: 'POST',
-                    headers:{ 
-                        'Content-Type': 'application/json',
-                        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                    body: JSON.stringify({status:'Cancelado', idtour: item.idtour})
-                };
-                fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
-                .then(response => {
-                    console.log(response)
-                    props.setUpdateCount(true)
-                  })   
+                instance.post('/mudarStatusTour', JSON.stringify({status:'Cancelado', idtour: item.idtour}))
+                .catch(err => {console.log(err)})  
+                props.setUpdateCount(true)
             })
             pagamentoreservas.map(item => {
                 if(item.id_reserva === props.reserva.idR) {
-                    const requestOptions = {
-                        method: 'POST',
-                        headers:{ 
-                            'Content-Type': 'application/json',
-                            "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                        body: JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento})
-                    };
-                    fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
-                    .then(response => {
-                        console.log(response)
-                      })
-                      props.setUpdateCount(true)   
+                    instance.post('/mudarStatusPagamento', JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento}))
+                    .catch(err => {console.log(err)}) 
+                    props.setUpdateCount(true)   
                 }
             })   
         }

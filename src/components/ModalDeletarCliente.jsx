@@ -1,12 +1,17 @@
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import ModalAlert from "./ModalAlert"
 import { useState } from "react";
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 export default function ModalDeletarCliete(props) {
-    const [statusReserva, setStatusReserva] = useState('Confirmado')
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
-    const [idReserva, setIdReserva] = useState('')
     const [reservas, setReservas] = useState(false)
 
     useEffect(async () => {
@@ -17,6 +22,7 @@ export default function ModalDeletarCliete(props) {
                 "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         }).then((response) => response.json())
             .then((data) => {
+                console.log(data);
                 if (data.fatal || data.code) {
                     setReservas(false)
                 } else {

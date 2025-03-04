@@ -1,13 +1,17 @@
-import { use, useEffect, useState } from "react"
-import ReactDOM from 'react-dom';
+import { useEffect, useState } from "react"
 import TourPag from "./TourPag"
 import { uid } from 'uid/secure';
-import ModalComprovanre from "./ModalComprovante";
 import ModalAlert from "./ModalAlert";
 import ModalDelete from "./ModalDelete";
-import ModalComentario from "./ModalComentario";
 import TabalaPagamento from "./TabelaPagamento";
 import optionForm from "./lista.json"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 const idPagamento = uid().toString();
 
@@ -19,16 +23,8 @@ export default function ModalPagamento(props){
     const dadosPag = props.pagamento.filter((item) => item.id_reserva === props.id);
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
-    const [statusReserva, setStatusReserva] = useState('Pago')
     const [options, setOptions] = useState("");
     
-
-    const scriptHtml = `<script type="text/javascript">
-     { $(document).ready(() => {
-        $('[data-toggle="popover"]').popover();
-      })
-        }
-    </script>`
     useEffect(()=>{
         setOptions(optionForm)
     },[props.updateCount])
@@ -38,7 +34,7 @@ export default function ModalPagamento(props){
         e.preventDefault();
 
         const formData = new FormData();
-            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            /*if(imagemUpload){formData.append("comprovante", imagemUpload)}*/
             if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
             if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
@@ -47,84 +43,70 @@ export default function ModalPagamento(props){
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
             if(idPagamento){formData.append("idPagamento", idPagamento);}
             formData.append("status", "Pago");
-        
 
-            const reqPagReserva = {
-                method: 'POST',
-                body: formData
-            }
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva).then(response => {
-                if (!response.ok) {
+            instance.post('/reservaPagamento', formData)
+            .then(response => {
+                if (response.data){
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                        setShowAddPag(false)
+                        setDadosPagForm({id_reserva: props.id})
+                        props.setUpdateCount(true)
+                    },2000)
+                }else{
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
                     },2000)
-                    throw new Error('Network response was not ok');
                 }
-                return response.json();
-                }).then(data => {
-                    if(data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-                        setModalSpinner(true)
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                            setModalSpinner(false)
-                            setShowAddPag(false)
-                            setDadosPagForm({id_reserva: props.id})
-                            props.setUpdateCount(true)
-                        },2000)
-                    }
-                })
-                .catch(e => {
+            }).catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                     setModalSpinner(false)
-                },2000)})
+            },2000)})
+            
     }
 
 
     const handerEdit = (e) => {
         e.preventDefault();
         const formData = new FormData();
-            if(imagemUpload){formData.append("comprovante", imagemUpload)}
-            if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
-            if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
-            if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
-            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+        //if(imagemUpload){formData.append("comprovante", imagemUpload)}
+        if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+        if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+        if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+        if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
 
-            const reqPagReserva = {
-                method: 'PUT',
-                body: formData
+        instance.put(`/reservaPagamento/${showEditPag.id}`, formData)
+        .then(response => {
+            if(response.data){
+                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                    setModalSpinner(false)
+                    props.setUpdateCount(true)
+                    setShowEditPag({status: false})
+                    setImagemUpload(false)   
+                },2000)
+            }else{
+                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
+                setModalSpinner(true)
+                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                    setModalSpinner(false)
+                },2000)
             }
-            fetch(`${process.env.REACT_APP_BASE_URL}/reservaPagamento/${showEditPag.id}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqPagReserva).then(response => {
-                if (!response.ok) {
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-                }).then(data => {
-                    if(data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
-                        setModalSpinner(true)
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                            setModalSpinner(false)
-                            props.setUpdateCount(true)
-                            setShowEditPag({status: false})
-                            setImagemUpload(false)   
-                        },2000)
-                    }
-                })
-                .catch(e => {
-                    setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)})
+        })
+        .catch(e => {
+            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
+            setModalSpinner(true)
+            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                setModalSpinner(false)
+            },2000)
+        })
 
     }
 

@@ -1,4 +1,11 @@
 import { useState, useEffect } from "react"
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 export default function StatusTour(props){
     const [statusReserva, setStatusReserva] = useState('Confirmado')
@@ -12,32 +19,15 @@ export default function StatusTour(props){
             }            
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            const requestOptions = {
-                method: 'POST',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-                body: JSON.stringify({status: 'Confirmado', idtour: props.id})
-            };
-            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
-            .then(response => {
-                console.log(response)
-            })   
+            instance.post('/mudarStatusTour', JSON.stringify({status: 'Confirmado', idtour: props.id}))
+            .catch(err => console.error(err))   
         }    
     },[props.updateCount])
 
     const handleChange = (e)=> {
-        const requestOptions = {
-            method: 'POST',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'},
-            body: JSON.stringify({status: e.target.value, idtour: props.id})
-        };
-        fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusTour`, requestOptions)
-        .then(response => {
-            console.log(response)
-            })   
+        instance.post('/mudarStatusTour', JSON.stringify({status: e.target.value, idtour: props.id}))
+        .catch(err => console.error(err))  
+        
         if(e.target.value === 'Confirmado'){
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
             props.setUpdateCount(true)

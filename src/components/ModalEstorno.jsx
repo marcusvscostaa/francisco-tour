@@ -39,7 +39,7 @@ export default function ModalEstorno(props){
         e.preventDefault();
 
         const formData = new FormData();
-            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
             if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
             if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
@@ -48,82 +48,67 @@ export default function ModalEstorno(props){
             if(idEstorno){formData.append("idEstorno", idEstorno);}
             formData.append("status", "Pago");
 
-            const reqEstorno = {
-                method: 'POST',
-                body: formData
-            }
-            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqEstorno).then(response => {
-                if (!response.ok) {
+            instance.post('/estorno', formData)
+            .then(response => {
+                if(response.data){
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                        setModalAddEstorno(false)
+                        props.setUpdateCount(true)
+                    },2000)
+                }else{
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
                     },2000)
-                    throw new Error('Network response was not ok');
                 }
-                return response.json();
-                }).then(data => {
-                    if(data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
-                        setModalSpinner(true)
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                            setModalSpinner(false)
-                            setModalAddEstorno(false)
-                            props.setUpdateCount(true)
-                        },2000)
-                    }
-                })
-                .catch(e => {
+            }).catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                     setModalSpinner(false)
                 },2000)})
+
     }
 
     const handleEdit = (e) => {
         e.preventDefault();
 
         const formData = new FormData();
-            if(imagemUpload){formData.append("comprovante", imagemUpload)}
+            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
             if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
             if(dadosPagForm.valorPago){formData.append("valor", dadosPagForm.valorPago);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
             formData.append("status", "Pago");
 
-            const reqEstorno = {
-                method: 'PUT',
-                body: formData,
-            }
-            fetch(`${process.env.REACT_APP_BASE_URL}/estorno/${showEditPag.id}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`, reqEstorno).then(response => {
-                if (!response.ok) {
+            instance.put(`/estorno/${showEditPag.id}`, formData)
+            .then(response => {
+                if(response.data){
+                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
+                    setModalSpinner(true)
+                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
+                        setModalSpinner(false)
+                        setModalAddEstorno(false)
+                        props.setUpdateCount(true)
+                        setShowEditPag(false)
+                    },2000)
+                }else{
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
                     setModalSpinner(true)
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                         setModalSpinner(false)
                     },2000)
-                    throw new Error('Network response was not ok');
                 }
-                return response.json();
-                }).then(data => {
-                    if(data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
-                        setModalSpinner(true)
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                            setModalSpinner(false)
-                            setModalAddEstorno(false)
-                            props.setUpdateCount(true)
-                            setShowEditPag(false)
-                        },2000)
-                    }
-                })
-                .catch(e => {
+            }).catch(e => {
                 setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
                 setModalSpinner(true)
                 setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
                     setModalSpinner(false)
-                },2000)})
+                },2000)})           
     }
 
     return (

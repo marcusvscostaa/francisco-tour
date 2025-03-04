@@ -1,10 +1,15 @@
 import { useState, useEffect } from "react"
-import ModalDelete from "./ModalDelete";
 import ModalComentario from "./ModalComentario";
+import axios from "axios";
+const instance = axios.create({
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        'Content-Type': 'application/json'
+      }
+  });
 
 export default function TabalaPagamento(props){
-    const [statusReserva, setStatusReserva] = useState('Pago')
-    const [showEditPag, setShowEditPag] = useState({status: false})
+    const [statusReserva, setStatusReserva] = useState('')
 
 
     useEffect(()=>{
@@ -17,26 +22,20 @@ export default function TabalaPagamento(props){
         }   
     },[props.updateCount])
 
-        const handleChange = (e)=> {
-            const requestOptions = {
-                method: 'POST',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": JSON.stringify(localStorage.getItem('user')).token},
-                body: JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento})
-            };
-            fetch(`${process.env.REACT_APP_BASE_URL}/mudarStatusPagamento`, requestOptions)
-            .then(response => {
-                console.log(response)
-              })
-              props.setUpdateCount(true)   
-            if(e.target.value === 'Pago'){
-                setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-               
-            }else if(e.target.value === 'Cancelado'){
-                setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-            }
+    const handleChange = (e)=> {
+        e.preventDefault();
+
+        instance.post('/mudarStatusPagamento', JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento}))
+        .catch(err => console.error(err))
+        props.setUpdateCount(true)
+
+        if(e.target.value === 'Pago'){
+            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
+            
+        }else if(e.target.value === 'Cancelado'){
+            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
         }
+    }
     return(
         <>
             <td>{props.pag.idPagamento}</td>
