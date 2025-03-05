@@ -58,6 +58,11 @@ export async function getReservas(){
     return response.data;
 }
 
+export async function getReservaFind(id){
+    const response = await instance.get(`/idReservas/${id}`);
+    return response.data;
+}
+
 export async function getPagamentoReservas(){
     const response = await instance.get(`/reservaPagamento`);
     return response.data;

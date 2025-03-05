@@ -56,14 +56,13 @@ export  default function Sidebar(props){
                 <i className="fas fa-hot-tub"></i>
                 <span>Reservas</span>
             </a>
-            <div id="collapseReservas" className={props.reservasShow} aria-labelledby="headingUtilities"
+            <div id="collapseReservas" className={props.reservasShow} style={{zIndex:2000}} aria-labelledby="headingUtilities"
                 data-parent="#accordionSidebar">
                 <div className="bg-white py-2 collapse-inner rounded">
                     <h6 className="collapse-header">Opções:</h6>
                     <a className={props.novaReserva} href="novaReserva"><i className="fas fa-plus-circle"></i><span> &nbsp; Nova Reseva</span></a>
                     <a className={props.minhaReserva} href="minhasReservas"><i className="far fa-file-alt"></i><span> &nbsp; Minhas Resevas</span></a>
                     <a className={props.comissoes} href="comissoes"><i className="fas fa-money-bill-wave"></i><span> &nbsp; Comissões</span></a>
-                    <a className={props.configuracoes} href="configuracoes"><i className="fa fa-cog	"></i><span> &nbsp; Configurações</span></a>
                 </div>
             </div>
         </li>

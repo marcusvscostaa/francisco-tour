@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import ModalAlert from "./ModalAlert"
 import { useState } from "react";
+import {getReservaFind} from "../FranciscoTourService";
 import axios from "axios";
+import { data } from "jquery";
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
       }
   });
 
@@ -15,92 +18,65 @@ export default function ModalDeletarCliete(props) {
     const [reservas, setReservas] = useState(false)
 
     useEffect(async () => {
-        await fetch(`${process.env.REACT_APP_BASE_URL}/idReservas/${props.id}`, {
-            method: "GET",
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        }).then((response) => response.json())
-            .then((data) => {
-                console.log(data);
-                if (data.fatal || data.code) {
-                    setReservas(false)
-                } else {
-                    setReservas(data);
-                }
-
-            })
-            .catch((error) => console.log(error));
+        getReservaFind(props.id).then((data) => {
+            if (data.fatal || data.code) {
+                setReservas(false)
+            } else {
+                setReservas(data);
+            }
+        })
     }, [])
 
     const handerDelete = async () => {
 
         reservas.map(async (dado) => {
-            const deletePagReserva = {
-                method: 'DELETE',headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            };
-
-            await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${dado.idR}`, deletePagReserva)
-                .then(response => {
-                    if (!response.ok) {
-                        setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento" }])
-                        setModalSpinner(true)
-                        setTimeout(() => {
-                            setModalStatus(modalStatus.filter((data) => data.id !== 1))
-                            setModalSpinner(false)
-                        }, 2000)
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                }).then(data => {
-                    if (data) {
-                        setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: true, message: "Sucesso Excluir Pagamento", titulo: "Pagamento" }])
-                        setModalSpinner(true)
-                        setTimeout(() => {
-                            setModalStatus(modalStatus.filter((data) => data.id !== 1))
-                            setModalSpinner(false)
-                        }, 2000)
-                    }
-                }).catch(e => {
-                    setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: false, message: "Erro ao Excluir Pagamento: " + e, titulo: "Pagamento" }])
+            instance.delete(`/pagreserva/${dado.idR}`)
+            .then((response) => {
+                if(response.data){
+                    setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: true, message: "Sucesso Excluir Pagamento", titulo: "Pagamento" }])
                     setModalSpinner(true)
                     setTimeout(() => {
                         setModalStatus(modalStatus.filter((data) => data.id !== 1))
                         setModalSpinner(false)
                     }, 2000)
-                })
+                }else{
+                    setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento" }])
+                    setModalSpinner(true)
+                    setTimeout(() => {
+                        setModalStatus(modalStatus.filter((data) => data.id !== 1))
+                        setModalSpinner(false)
+                    }, 2000)
+                }
+            })
+            .catch(e => {
+                setModalStatus(prevArray => [...prevArray, { id: 1, mostrar: true, status: false, message: "Erro ao Excluir Pagamento: " + e, titulo: "Pagamento" }])
+                setModalSpinner(true)
+                setTimeout(() => {
+                    setModalStatus(modalStatus.filter((data) => data.id !== 1))
+                    setModalSpinner(false)
+                }, 2000)
+            })
 
-            const deleteTour = {
-                method: 'DELETE',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            };
-
-            await fetch(`${process.env.REACT_APP_BASE_URL}/reservatour/${dado.idR}`, deleteTour)
-                .then(response => {
-                    if (!response.ok) {
-                        setModalStatus(prevArray => [...prevArray, { id: 2, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Tour" }])
-                        setModalSpinner(true)
-                        setTimeout(() => {
-                            setModalStatus(modalStatus.filter((data) => data.id !== 2))
-                            setModalSpinner(false)
-                        }, 2000)
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                }).then(data => {
-                    if (data) {
+            setTimeout(() => {
+                instance.delete(`/reservatour/${dado.idR}`)
+                .then((response) => {
+                    if(response.data){
                         setModalStatus(prevArray => [...prevArray, { id: 2, mostrar: true, status: true, message: "Sucesso Excluir Tour", titulo: "Tour" }])
                         setModalSpinner(true)
                         setTimeout(() => {
                             setModalStatus(modalStatus.filter((data) => data.id !== 2))
                             setModalSpinner(false)
                         }, 2000)
+                    }else{
+                        setModalStatus(prevArray => [...prevArray, { id: 2, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Tour" }])
+                        setModalSpinner(true)
+                        setTimeout(() => {
+                            setModalStatus(modalStatus.filter((data) => data.id !== 2))
+                            setModalSpinner(false)
+                        }, 2000)
                     }
-                }).catch(e => {
+                })
+                .catch(e => {
                     setModalStatus(prevArray => [...prevArray, { id: 2, mostrar: true, status: false, message: "Erro ao Excluir Tour: " + e, titulo: "Tour" }])
                     setModalSpinner(true)
                     setTimeout(() => {
@@ -108,28 +84,12 @@ export default function ModalDeletarCliete(props) {
                         setModalSpinner(false)
                     }, 2000)
                 })
+            },'300')
 
-            const deleteReserva = {
-                method: 'DELETE',
-                headers:{ 
-                    'Content-Type': 'application/json',
-                    "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-            };
-
-            await fetch(`${process.env.REACT_APP_BASE_URL}/reserva/${dado.idR}`, deleteReserva)
-                .then(response => {
-                    if (!response.ok) {
-                        setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva" }])
-                        setModalSpinner(true)
-                        setTimeout(() => {
-                            setModalStatus(modalStatus.filter((data) => data.id !== 3))
-                            setModalSpinner(false)
-                        }, 2000)
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                }).then(data => {
-                    if (data) {
+            setTimeout(() => {
+                instance.delete(`/reserva/${dado.idR}`)
+                .then((response) => {
+                    if(response.data){
                         setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: true, message: "Sucesso Excluir Reserva", titulo: "Reserva" }])
                         setModalSpinner(true)
                         setTimeout(() => {
@@ -139,8 +99,16 @@ export default function ModalDeletarCliete(props) {
                             props.setUpdateCount(true)
                             document.getElementById(`reservaDelete${props.idR}`).click()
                         }, 2000)
+                    }else{
+                        setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva" }])
+                        setModalSpinner(true)
+                        setTimeout(() => {
+                            setModalStatus(modalStatus.filter((data) => data.id !== 3))
+                            setModalSpinner(false)
+                        }, 2000)
                     }
-                }).catch(e => {
+                })
+                .catch(e => {
                     setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro ao Excluir Reserva: " + e, titulo: "Reserva" }])
                     setModalSpinner(true)
                     setTimeout(() => {
@@ -148,29 +116,14 @@ export default function ModalDeletarCliete(props) {
                         setModalSpinner(false)
                     }, 2000)
                 })
+            },'600')
+         
         })
-
-        const deleteCliente = {
-            method: 'DELETE',
-            headers:{ 
-                'Content-Type': 'application/json',
-                "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
-        };
-
-        await fetch(`${process.env.REACT_APP_BASE_URL}/cliente/${props.id}`, deleteCliente)
-            .then(response => {
-                if (!response.ok) {
-                    setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Cliente" }])
-                    setModalSpinner(true)
-                    setTimeout(() => {
-                        setModalStatus(modalStatus.filter((data) => data.id !== 3))
-                        setModalSpinner(false)
-                    }, 2000)
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            }).then(data => {
-                if (data) {
+        
+        setTimeout(() => {
+            instance.delete(`/cliente/${props.id}`)
+            .then((response) => {
+                if(response.data){
                     setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: true, message: "Sucesso Excluir Cliente", titulo: "Cliente" }])
                     setModalSpinner(true)
                     setTimeout(() => {
@@ -180,8 +133,16 @@ export default function ModalDeletarCliete(props) {
                         props.setUpdateCount(true)
                         document.getElementById(`clienteDelete${props.id}`).click()
                     }, 2000)
+                }else{
+                    setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Cliente" }])
+                    setModalSpinner(true)
+                    setTimeout(() => {
+                        setModalStatus(modalStatus.filter((data) => data.id !== 3))
+                        setModalSpinner(false)
+                    }, 2000)
                 }
-            }).catch(e => {
+            })
+            .catch(e => {
                 setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: "Erro ao Excluir Cliente: " + e, titulo: "Cliente" }])
                 setModalSpinner(true)
                 setTimeout(() => {
@@ -189,6 +150,8 @@ export default function ModalDeletarCliete(props) {
                     setModalSpinner(false)
                 }, 2000)
             })
+        },'900')
+
     }
 
     return (
