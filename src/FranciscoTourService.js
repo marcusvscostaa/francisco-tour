@@ -1,6 +1,9 @@
 import axios from "axios";
 const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL
+    baseURL: process.env.REACT_APP_BASE_URL,
+    headers: {
+        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+      }
   });
 
 //gets

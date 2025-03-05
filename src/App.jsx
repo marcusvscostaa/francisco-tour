@@ -22,12 +22,12 @@ import { Navigate  } from "react-router-dom";
 
 //const user = AuthService.getCurrentUser().then(data => {return data});
 function App() {
-  const [user, setUser] = useState(true);
+  const [user, setUser] = useState(false);
   localStorage.setItem('teste','local Storage');
 
   useEffect(() => {
-    //console.log(AuthService.getCurrentUser());
-      /* AuthService.getCurrentUser().then(data => {
+    console.log(AuthService.getCurrentUser());
+      AuthService.getCurrentUser().then(data => {
         if(data === true){
           setUser(true);
         }else{
@@ -38,13 +38,15 @@ function App() {
         setUser(true)
       }else{
         setUser(false)
-      } */
+      }
     
   },[])
 
  
 
   return (
+    <>
+    {user?
     <Router>
         <Routes>
           <Route path='*' element={user ?<PaginaNaoEncontrada/>:<Login />} />
@@ -59,8 +61,8 @@ function App() {
           <Route path="usuarios" element={user ? <Usuarios/> :<Login/>}/>
         </Routes>
     </Router>
-
-
+    :<Login />}
+    </>
   );
 }
 
