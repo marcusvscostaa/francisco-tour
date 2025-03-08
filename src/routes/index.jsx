@@ -1,5 +1,4 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-
 import { PrivateRoute } from "./PrivateRoutes";
 import NovaReserva from '../pages/NovaReserva';
 import AgendaReservas from '../pages/AgendaReservas';
@@ -15,7 +14,7 @@ import Usuarios from '../pages/Usuarios';
 import { useEffect } from "react";
 
 
-export const AppRouter = () => {
+export const AppRouter = (props) => {
   useEffect(() => {
     console.log("Funciona");
   },[])
@@ -24,31 +23,31 @@ export const AppRouter = () => {
       <Routes>
         <Route path="/login" element={<Login />} />
 
-        <Route path="/" element={<PrivateRoute />}>
+        <Route path="/" element={<PrivateRoute user={props.user} />}>
           <Route path="/" element={<Painel />} />
         </Route>
-        <Route path='*' element={<PrivateRoute />}>
+        <Route path='*' element={<PrivateRoute user={props.user} />}>
         j
         </Route>
-        <Route path="/financeiro" element={<PrivateRoute />} >
+        <Route path="/financeiro" element={<PrivateRoute user={props.user} />} >
             <Route path="/financeiro" element={<Financeiro />} />
         </Route>
-        <Route path="/novaReserva" element={<PrivateRoute />}>
+        <Route path="/novaReserva" element={<PrivateRoute user={props.user}/>}>
             <Route path="/novaReserva" element={<NovaReserva />}/>
         </Route>
-        <Route path="/agendaReservas" element={<PrivateRoute />}>
+        <Route path="/agendaReservas" element={<PrivateRoute user={props.user}/>}>
             <Route path="/agendaReservas" element={<AgendaReservas />}/>
         </Route>
-        <Route path="/minhasReservas" element={<PrivateRoute />}>
+        <Route path="/minhasReservas" element={<PrivateRoute user={props.user} />}>
             <Route path="/minhasReservas" element={<MinhasReservas />}/>
         </Route>
-        <Route path="/comissoes" element={<PrivateRoute />}>
+        <Route path="/comissoes" element={<PrivateRoute user={props.user} />}>
             <Route path="/comissoes" element={<Comissoes />}/>
         </Route>
-        <Route path="/tabelaCliente" element={<PrivateRoute />}>
+        <Route path="/tabelaCliente" element={<PrivateRoute user={props.user} />}>
             <Route path="/tabelaCliente" element={<TabelaCliente />}/>
         </Route>
-        <Route path="/usuarios" element={<PrivateRoute />}>
+        <Route path="/usuarios" element={<PrivateRoute user={props.user} />}>
             <Route path="/usuarios" element={<Usuarios />}/>
         </Route>
       </Routes>
