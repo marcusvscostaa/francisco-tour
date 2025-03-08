@@ -17,7 +17,7 @@ export default function ModalDeletarCliete(props) {
     const [modalSpinner, setModalSpinner] = useState(false);
     const [reservas, setReservas] = useState(false)
 
-    useEffect(async () => {
+    useEffect(() => {
         getReservaFind(props.id).then((data) => {
             if (data.fatal || data.code) {
                 setReservas(false)

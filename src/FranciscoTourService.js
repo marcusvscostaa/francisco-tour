@@ -12,6 +12,13 @@ export async function getClientes(){
     return response.data;
 }
 
+export async function getCurrentUser(){
+    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+      const response = await instance.get(`/autenticacao/${authorization}`) 
+      return response.data
+      
+    }
+
 export async function getDadoAno(anoSelecionado){
     const response = await instance.get(`/reservavalormes/${anoSelecionado}`);
     return response.data;

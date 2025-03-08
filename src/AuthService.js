@@ -19,15 +19,7 @@ class AuthService {
     localStorage.removeItem('user');
   }
 
-  getCurrentUser() {
-    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-    console.log(authorization);
-    return axios.get(`${process.env.REACT_APP_BASE_URL}/autenticacao/${authorization}`).then(
-      (response) => {
-        console.log(response.data);
-        return response.data;
-      }
-    ).catch((erro) => console.log(erro))
+
 /*     const data = response.data
     console.log(data);
     if(data === true){
@@ -35,8 +27,6 @@ class AuthService {
     }else{
       return false;
     } */
-
-  }
 }
 
 export default new AuthService();
