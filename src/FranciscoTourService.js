@@ -13,53 +13,54 @@ export async function getClientes(){
 }
 
 export async function getCurrentUser(){
-    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      const response = await instance.get(`/autenticacao/${authorization}`) 
-      return response.data
+    const data = {"funciona": "funciona"}
+   /*  const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+      const response = await instance.get(`/autenticacao/${authorization}`)  */
+      return data
       
     }
 
 export async function getDadoAno(anoSelecionado){
-    const response = await instance.get(`/reservavalormes/${anoSelecionado}`);
+    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`);
     return response.data;
 }
 
 export async function getDadoMesAtual(){
-    const response = await instance.get(`/reservavalormesatual`);
+    const response = await instance.get(`/reservas/valorMesAtual`);
     return response.data;
 }
 
 export async function getDadoQuantidade(anoSelecionado){
-    const response = await instance.get(`/reservaquantidade/${anoSelecionado}`);
+    const response = await instance.get(`/reservas/quantidade/${anoSelecionado}`);
     return response.data;
 }
 
 export async function getDataDiferentes(month, year){
-    const response = await instance.get(`/dataDiferentes/${(month + 1)}/${year}`);
+    const response = await instance.get(`/tours/datasDiferentes/${(month + 1)}/${year}`);
     return response.data;
 }
 
 export async function getEstorno(){
-    const response = await instance.get(`/estorno`);
+    const response = await instance.get(`/estornos`);
     return response.data;
 }
 
 export async function getPagamentoReservaAnual(anoSelecionado){
-    const response = await instance.get(`/pagamentoReservaAnual/${anoSelecionado}`);
+    const response = await instance.get(`/pagamentos/Anual/${anoSelecionado}`);
     return response.data;
 }
 export async function getPagamentoReservaMensal(month, year){
-    const response = await instance.get(`/pagamentoReservaMensal/${month + 1}/${year}`);
+    const response = await instance.get(`/pagamentos/Mensal/${month + 1}/${year}`);
     return response.data;
 }
 
 export async function getPagamentoReservaValorMes(anoSelecionado){
-    const response = await instance.get(`/pagamentoreservavalormes/${anoSelecionado}`);
+    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`);
     return response.data;
 }
 
 export async function getQuantidadeAtua(){
-    const response = await instance.get(`/reservaquantidadeatual`);
+    const response = await instance.get(`/reservas/quantidadeAtual`);
     return response.data;
 }
 
@@ -69,27 +70,27 @@ export async function getReservas(){
 }
 
 export async function getReservaFind(id){
-    const response = await instance.get(`/idReservas/${id}`);
+    const response = await instance.get(`/reservas/cliente/${id}`);
     return response.data;
 }
 
 export async function getPagamentoReservas(){
-    const response = await instance.get(`/reservaPagamento`);
+    const response = await instance.get(`/pagamentos`);
     return response.data;
 }
 
 export async function getTours(){
-    const response = await instance.get(`/tour`);
+    const response = await instance.get(`/tours`);
     return response.data;
 }
 
 export async function getTourPorMes(month, year){
-    const response = await instance.get(`/tourPorMes/${(month + 1)}/${year}`);
+    const response = await instance.get(`/tours/PorMes/${(month + 1)}/${year}`);
     return response.data;
 }
 
 export async function getTiposTours(){
-    const response = await instance.get(`/tiposTours`);
+    const response = await instance.get(`/tours/tiposTours`);
     return response.data;
 }
 

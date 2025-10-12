@@ -31,7 +31,8 @@ function App(){
   return (
     <>
       
-      {localStorage.getItem('user')?<AppRouter user={user} />:<Login />}
+      {/*localStorage.getItem('user')?<AppRouter user={user} />:<Login />*/}
+      <AppRouter user={user} />
     </>
   );
 }

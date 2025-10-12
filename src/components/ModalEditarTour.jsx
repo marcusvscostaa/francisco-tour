@@ -73,7 +73,7 @@ export default function ModalEditarTour(props){
                     <div className="modal-body">
                         <TourForm atualizarValor={setcalculoTotal}
                             numbTour="1"
-                            idReserva ='ppp'
+                            id_reserva ='ppp'
                             options={options}
                             calculoTotal={calculoTotal}/>
                     </div>

@@ -20,13 +20,13 @@ export default function StatusTour(props){
             }            
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            instance.post('/mudarStatusTour', JSON.stringify({status: 'Confirmado', idtour: props.id}))
+            instance.post('/tours/status', JSON.stringify({status: 'Confirmado', idtour: props.id}))
             .catch(err => console.error(err))   
         }    
     },[props.updateCount])
 
     const handleChange = (e)=> {
-        instance.post('/mudarStatusTour', JSON.stringify({status: e.target.value, idtour: props.id}))
+        instance.post('/tours/status', JSON.stringify({status: e.target.value, idtour: props.id}))
         .catch(err => console.error(err))  
         
         if(e.target.value === 'Confirmado'){

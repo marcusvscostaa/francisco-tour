@@ -45,7 +45,7 @@ export default function ModalPagamento(props){
             if(idPagamento){formData.append("idPagamento", idPagamento);}
             formData.append("status", "Pago");
 
-            instance.post('/reservaPagamento', formData)
+            instance.post('/pagamento', formData)
             .then(response => {
                 if (response.data){
                     setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
@@ -82,7 +82,7 @@ export default function ModalPagamento(props){
         if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
         if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
 
-        instance.put(`/reservaPagamento/${showEditPag.id}`, formData)
+        instance.put(`/pagamento/${showEditPag.id}`, formData)
         .then(response => {
             if(response.data){
                 setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])

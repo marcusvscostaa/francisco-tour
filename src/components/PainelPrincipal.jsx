@@ -21,6 +21,7 @@ export default function PainelPrincipal() {
                         setDadoAno(false);
                     } else {
                         setDadoAno(data)
+                        console.log(data)   
                     }
                 }
             ).catch((error) => console.log(error));
@@ -30,6 +31,7 @@ export default function PainelPrincipal() {
             getDadoMesAtual().then(
                 data => {
                     setDadoMesAtual(data)
+                    console.log(data) 
                 }
             ).catch((error) => console.log(error));
         }, "700");
@@ -38,6 +40,8 @@ export default function PainelPrincipal() {
             getDadoQuantidade(anoSelecionado).then(
                 data => {
                     setDadoQuantidade(data)
+                    console.log(data)   
+
                 }
             ).catch((error) => console.log(error));
         }, "1000");
@@ -45,6 +49,7 @@ export default function PainelPrincipal() {
         getQuantidadeAtua().then(
             data => {
                 setQuantidadeAtua(data)
+                console.log(data)
             }
         ).catch((error) => console.log(error));
 

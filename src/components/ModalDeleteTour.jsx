@@ -13,7 +13,7 @@ export default function ModalDeleteTour(props){
                 'Content-Type': 'application/json',
                 "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}
         };
-        await fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idTour}`, requestOps)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/tour/${props.idtour}`, requestOps)
         .then(response => {
 
             if (!response.ok) {
@@ -32,7 +32,7 @@ export default function ModalDeleteTour(props){
                     setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
                     setModalSpinner(false)
                     props.setUpdateCount(true)
-                    document.getElementById(`tourDelete${props.idTour}`).click()
+                    document.getElementById(`tourDelete${props.idtour}`).click()
                 },2000)
             }
           }).catch(e => {
@@ -45,7 +45,7 @@ export default function ModalDeleteTour(props){
     }
 
     return(
-        <div className="modal fade" tabindex="-1" id={`tourDelete${props.idTour}`}>
+        <div className="modal fade" tabindex="-1" id={`tourDelete${props.idtour}`}>
             <ModalAlert dados={modalStatus} />
             
             <div className="modal-dialog modal-dialog-centered ">

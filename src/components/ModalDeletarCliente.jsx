@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useRef, useCallback} from "react";
 import ModalAlert from "./ModalAlert"
 import { useState } from "react";
 import {getReservaFind} from "../FranciscoTourService";
 import axios from "axios";
-import { data } from "jquery";
+import $ from "jquery";
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
@@ -13,19 +13,31 @@ const instance = axios.create({
   });
 
 export default function ModalDeletarCliete(props) {
+
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
-    const [reservas, setReservas] = useState(false)
+    const [reservas, setReservas] = useState([])
+    const [carregando, setCarregando] = useState(false);
 
     useEffect(() => {
-        getReservaFind(props.id).then((data) => {
-            if (data.fatal || data.code) {
-                setReservas(false)
-            } else {
-                setReservas(data);
-            }
-        })
-    }, [])
+        if(props.clicado === props.id){
+            getReservaFind(props.id)
+            .then((data) => {
+                if (data.fatal || data.code) {
+                    setReservas([]);
+                } else {
+                    setReservas(data);
+                }
+            })
+            .catch(e => {
+                console.error("Erro ao carregar reservas:", e);
+                setReservas([]);
+            })
+            .finally(() => {
+                setCarregando(false);
+            });
+        }
+    }, [props.clicado, props.id]);
 
     const handerDelete = async () => {
 
@@ -155,7 +167,11 @@ export default function ModalDeletarCliete(props) {
     }
 
     return (
-        <div className="modal fade" tabindex="-1" id={`clienteDelete${props.id}`}>
+        <div className="modal fade" 
+             tabindex="-1" 
+             id={`clienteDelete${props.id}`}          
+
+             >
             <ModalAlert dados={modalStatus} />
 
             <div className="modal-dialog modal-dialog-centered modal-lg">
@@ -171,7 +187,13 @@ export default function ModalDeletarCliete(props) {
                         <p style={{ fontSize: '1.2rem' }} class="font-weight-normal">Todos os dados serão <span class="badge badge-danger text-monospace" >excluídos permanentemente</span>,
                             inclusive <span class="badge badge-danger text-monospace">Reservas, pagamentos e tours</span> relacionados a  {props.dados.nome}.
                             Você realmente deseja excluir os dados do cliente ?</p>
-                        {reservas &&
+                        {carregando ? ( // Mostrar spinner durante o carregamento
+                            <div className="d-flex justify-content-center">
+                                <div className="spinner-border text-primary" role="status">
+                                    <span className="sr-only">Carregando Reservas...</span>
+                                </div>
+                            </div>
+                        ) : reservas && reservas.length > 0 ?(
                             <table className="table table-sm table-bordered ">
                                 <thead>
                                     <tr>
@@ -189,7 +211,7 @@ export default function ModalDeletarCliete(props) {
                                         )
                                     })}
                                 </tbody>
-                            </table>}
+                            </table>):(<p>Sem Reservas</p>)}
                     </div>
                     <div className="modal-footer mb-0">
                         <button type="button" className="btn btn-danger" onClick={handerDelete} ><i className="fa fa-trash"></i> Sim</button>

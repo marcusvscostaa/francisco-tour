@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json"
 import axios from "axios";
+import {getReservaFind} from "../FranciscoTourService";
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
@@ -23,7 +24,7 @@ export default function ModalEditarCliente(props){
             idioma: props.dados.idioma
         }    
     );
-    const [dadosReserva, setDadosReserva] = useState()
+    const [dadosReserva, setDadosReserva] = useState([])
     const [options, setOptions] = useState("");
 
     useEffect(() => {

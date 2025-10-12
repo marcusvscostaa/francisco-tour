@@ -39,7 +39,7 @@ export default function RowTabela(props){
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
             
-            instance.put('/mudarStatus', JSON.stringify({status: 'Confirmado', idR: props.reserva.idR}))
+            instance.put('/reservas/status', JSON.stringify({status: 'Confirmado', idR: props.reserva.idR}))
             .catch(err => {console.log(err)})
 
         }
@@ -51,19 +51,19 @@ export default function RowTabela(props){
     },[props.updateCount])
 
     const handleChange = (e)=> {
-        instance.put('/mudarStatus', JSON.stringify({status: e.target.value, idR: props.reserva.idR}))
+        instance.post('/reservas/status', JSON.stringify({status: e.target.value, idR: props.reserva.idR}))
         .catch(err => {console.log(err)})
    
         if(e.target.value === 'Confirmado'){
             setDisabledButton(false)
             setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
             dadosTour.map(item => {
-                instance.post('/mudarStatusTour', JSON.stringify({status:'Confirmado', idtour: item.idtour}))
+                instance.post('/tours/status', JSON.stringify({status:'Confirmado', idtour: item.idtour}))
                 .catch(err => {console.log(err)})  
             })
             pagamentoreservas.map(item => {
                 if(item.id_reserva === props.reserva.idR) {
-                    instance.post('/mudarStatusPagamento', JSON.stringify({status: 'Pago', idPagamento: item.idPagamento}))
+                    instance.post('/pagamentos/status', JSON.stringify({status: 'Pago', idPagamento: item.idPagamento}))
                     .catch(err => {console.log(err)})  
                     props.setUpdateCount(true)
                 }
@@ -74,13 +74,13 @@ export default function RowTabela(props){
             setDisabledButton(true)
             setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
             dadosTour.map(item => {
-                instance.post('/mudarStatusTour', JSON.stringify({status:'Cancelado', idtour: item.idtour}))
+                instance.post('/tours/status', JSON.stringify({status:'Cancelado', idtour: item.idtour}))
                 .catch(err => {console.log(err)})  
                 props.setUpdateCount(true)
             })
             pagamentoreservas.map(item => {
                 if(item.id_reserva === props.reserva.idR) {
-                    instance.post('/mudarStatusPagamento', JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento}))
+                    instance.post('/pagamentos/status', JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento}))
                     .catch(err => {console.log(err)}) 
                     props.setUpdateCount(true)   
                 }

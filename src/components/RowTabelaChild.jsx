@@ -13,6 +13,7 @@ export default function RowTabelaChild(props){
             <div>
 
             <address>
+                {props.reserva.idR && <> <span className="badge badge-secondary"><i className='fas fa-hot-tub'></i> ID Reserva: </span> {props.reserva.idR}<br/></>}
                 {props.reserva.endereco && <> <span className="badge badge-secondary"><i className='fas fa-map-marker-alt'></i> Endereço: </span> {props.reserva.endereco}<br/></>}
                 {props.reserva.hotel && <> <span className="badge badge-secondary"><i className='fas fa-hotel'></i> Hotel: </span> {props.reserva.hotel}</>}
                 {props.reserva.quarto && <> <span className="badge badge-secondary"><i className='fas fa-bed'></i> Quarto: </span> {props.reserva.quarto}<br/></>}
@@ -55,7 +56,7 @@ export default function RowTabelaChild(props){
                                 <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
                                 <ModalEditarTour dados={dataT} setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
                                 <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>                                
-                                <ModalDeleteTour title="Tour" setUpdateCount={props.setUpdateCount} idTour={dataT.idtour}/>
+                                <ModalDeleteTour title="Tour" setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
                                 </td>
                         </tr>
                     </tbody>

@@ -34,6 +34,7 @@ export default function TabelaReservas(props) {
         setTimeout(() => {
             getTours().then(
             data => {
+                console.log(data)
                 setTour(data)
                 }
             ).catch((error) => console.log(error));

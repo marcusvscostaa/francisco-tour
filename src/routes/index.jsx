@@ -22,12 +22,21 @@ export const AppRouter = (props) => {
     <Router>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/" element={<Painel />} />
+        <Route path="/financeiro" element={<Financeiro />} />
+        <Route path="/novaReserva" element={<NovaReserva />}/>
+        <Route path="/agendaReservas" element={<AgendaReservas />}/>
+        <Route path="/minhasReservas" element={<MinhasReservas />}/>
+        <Route path="/comissoes" element={<Comissoes />}/>
+        <Route path="/tabelaCliente" element={<TabelaCliente />}/>
+        <Route path="/usuarios" element={<Usuarios />}/>
 
-        <Route path="/" element={<PrivateRoute user={props.user} />}>
+
+
+       {/*  <Route path="/" element={<PrivateRoute user={props.user} />}>
           <Route path="/" element={<Painel />} />
         </Route>
         <Route path='*' element={<PrivateRoute user={props.user} />}>
-        j
         </Route>
         <Route path="/financeiro" element={<PrivateRoute user={props.user} />} >
             <Route path="/financeiro" element={<Financeiro />} />
@@ -49,7 +58,7 @@ export const AppRouter = (props) => {
         </Route>
         <Route path="/usuarios" element={<PrivateRoute user={props.user} />}>
             <Route path="/usuarios" element={<Usuarios />}/>
-        </Route>
+        </Route> */}
       </Routes>
     </Router>
   );

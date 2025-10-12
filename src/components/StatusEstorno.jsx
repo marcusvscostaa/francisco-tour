@@ -22,7 +22,7 @@ export default function StatusEstorno(props){
     },[props.updateCount])
     const handleChange = (e)=> {
         e.preventDefault();
-        instance.post('/mudarStatusEstorno', JSON.stringify({status: e.target.value, idEstorno: props.id}))
+        instance.post('/estorno/status', JSON.stringify({status: e.target.value, idEstorno: props.id}))
         .catch(err => console.error(err))
         props.setUpdateCount(true)
 

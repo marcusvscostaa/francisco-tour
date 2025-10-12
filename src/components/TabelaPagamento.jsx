@@ -26,7 +26,7 @@ export default function TabalaPagamento(props){
     const handleChange = (e)=> {
         e.preventDefault();
 
-        instance.post('/mudarStatusPagamento', JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento}))
+        instance.post('/pagamentos/status', JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento}))
         .catch(err => console.error(err))
         props.setUpdateCount(true)
 

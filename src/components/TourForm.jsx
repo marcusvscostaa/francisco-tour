@@ -5,7 +5,7 @@ export default function TourForm(props){
     useEffect(()=>{
         const dados =  props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, id_reserva: props.idReserva } : tour
+            tour.id === props.numbTour ? { ...tour, id_reserva: props.id_reserva } : tour
           );
         props.atualizarValor(dadosAtualizados)
     },[])

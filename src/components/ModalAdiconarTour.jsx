@@ -67,7 +67,7 @@ export default function ModalAdicionarTour(props){
                             numbTour={'1'} 
                             atualizarValor={setcalculoTotal}
                             key={'1'}
-                            idReserva = {props.id}
+                            id_reserva = {props.id}
                             calculoTotal= {calculoTotal} />
                              <div className="col-md-12 d-flex">
                                 <button type="submit" className="ml-auto btn btn-primary" >Salvar Tour</button>

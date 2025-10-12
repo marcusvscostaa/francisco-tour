@@ -9,11 +9,11 @@ const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
     headers: {
         'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+        //"authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
       }
   });
 
-const idReserva = uid().toString();
+const id_reserva = uid().toString();
 const idCliente = uid(16).toString();
 const idPagamento = uid().toString();
 
@@ -24,12 +24,12 @@ export default function Formulario(props) {
     const [addTour, setaddTour] = useState(2);
     const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
-    const [formReserva, setformReserva] = useState({id: idReserva, status: 'Confirmado'});
+    const [formReserva, setformReserva] = useState({id: id_reserva, status: 'Confirmado'});
     const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
     const [options, setOptions] = useState("");
-    const [dadosPagForm, setDadosPagForm] = useState({id_reserva: idReserva});
+    const [dadosPagForm, setDadosPagForm] = useState({id_reserva: id_reserva});
     const [calculoTotal, setcalculoTotal] = useState([
         { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
         { id: "2", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
@@ -114,7 +114,7 @@ export default function Formulario(props) {
         }
 
         setTimeout(()=>{
-            instance.post('/reserva', JSON.stringify(formReserva))
+            instance.post('/reservas', JSON.stringify(formReserva))
             .then(response => {
                 console.log(response)
                 if (response.data){
@@ -175,7 +175,7 @@ export default function Formulario(props) {
             formData.append("status", "Pago");
 
             setTimeout(() =>{
-                instance.post('/reservaPagamento', formData)
+                instance.post('/pagamento', formData)
                 .then(response => {
                     console.log(response)
                     if (response.data){
@@ -269,7 +269,7 @@ export default function Formulario(props) {
                         return (<TourForm numbTour={index.toString()} removerTour={removerTour}
                             atualizarValor={setcalculoTotal}
                             key={index}
-                            idReserva ={idReserva}
+                            id_reserva ={id_reserva}
                             calculoTotal={calculoTotal}
                             options={options}
                         />);
@@ -307,7 +307,7 @@ export default function Formulario(props) {
                     {
                         addPag == true ? <TourPag title='Adicionar' 
                                             dadosPagForm={dadosPagForm} 
-                                            idReserva ={idReserva} 
+                                            id_reserva ={id_reserva} 
                                             setImagemUpload={setImagemUpload}
                                             namePago={'Pago'} 
                                             removerPag={setaddPag} 

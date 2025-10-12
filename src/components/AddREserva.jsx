@@ -6,7 +6,7 @@ import ModalAlert from "./ModalAlert";
 import axios from "axios";
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
-const idReserva = uid().toString();
+const id_reserva = uid().toString();
 const idPagamento = uid().toString();
 
 export default  function AddReserva(props){
@@ -17,7 +17,7 @@ export default  function AddReserva(props){
     const [formFields, setFormFields] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
     const [comentarioReserva, setcomentarioReserva] = useState("");
-    const [dadosPagForm, setDadosPagForm] = useState({id_reserva: idReserva});
+    const [dadosPagForm, setDadosPagForm] = useState({id_reserva: id_reserva});
     const [calculoTotal, setcalculoTotal] = useState([
         { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
         { id: "2", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 },
@@ -65,7 +65,7 @@ export default  function AddReserva(props){
     
         setTimeout(() => {
             axios.post("/reserva",{
-            id: idReserva,
+            id: id_reserva,
             id_cliente: props.id,
             comentario: comentarioReserva})
             .then(response =>{
@@ -114,7 +114,7 @@ export default  function AddReserva(props){
                 if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
                 if(idPagamento){formData.append("idPagamento", idPagamento);}
         
-                axios.post('/reservaPagamento',formData)
+                axios.post('/pagamento',formData)
                 .then(response => {
                     if (response.ok){
                         setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
@@ -163,7 +163,7 @@ export default  function AddReserva(props){
             return (<TourForm numbTour={index.toString()} removerTour={removerTour}
                 atualizarValor={setcalculoTotal}
                 key={index}
-                idReserva ={idReserva}
+                id_reserva ={id_reserva}
                 calculoTotal={calculoTotal}
             />);
         })
@@ -198,7 +198,7 @@ export default  function AddReserva(props){
             </div>
         </div>
         {
-            addPag == true ? <TourPag dadosPagForm={dadosPagForm} idReserva ={idReserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
+            addPag == true ? <TourPag dadosPagForm={dadosPagForm} id_reserva ={id_reserva} setImagemUpload={setImagemUpload} setDadosPagForm = {setDadosPagForm} numbTour="pag" valorTotal={
                 calculoTotal.reduce((sum, item) => sum + ((item.numeroAdultos * item.valorAdulto) + (item.numeroCriancas*item.valorCriancas)),0)} /> : null
         }
         <div className="w-100 d-flex ml-3 mr-3 mb-3">

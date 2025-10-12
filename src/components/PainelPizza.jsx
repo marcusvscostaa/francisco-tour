@@ -62,10 +62,10 @@ export default function PainelPizza(props){
                 </div>
                 <div class="mt-4 text-center small">
                     <span class="mr-2">
-                        <i class="fas fa-circle text-success"></i> Confirmada
+                        <i class="fas fa-circle text-success"></i> {props.dadoQuantidade.confirmadas} Confirmada 
                     </span>
                     <span class="mr-2">
-                        <i class="fas fa-circle text-danger"></i> Cancelada
+                        <i class="fas fa-circle text-danger"></i> {props.dadoQuantidade.canceladas} Cancelada
                     </span>
                 </div>
             </div>
