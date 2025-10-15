@@ -1,6 +1,8 @@
 import PainelPrincipal from "../components/PainelPrincipal"
 import Sidebar from "../components/Sidebar"
 
+
+
 export default function Painel(){
     return(
     <div id="wrapper">
