@@ -2,7 +2,7 @@ import axios from "axios";
 const token = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21';
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {'authorization': token}
+    headers: {Authorization: `Bearer ${token}`}
 
   });
 
@@ -14,8 +14,8 @@ export async function getClientes(){
 
 export async function getCurrentUser(){
     const data = {"funciona": "funciona"}
-   /*  const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      const response = await instance.get(`/autenticacao/${authorization}`)  */
+      const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+      const response = await instance.get(`/autenticacao/${authorization}`) 
       return data
       
     }
@@ -27,6 +27,7 @@ export async function getDadoAno(anoSelecionado){
 
 export async function getDadoMesAtual(){
     const response = await instance.get(`/reservas/valorMesAtual`);
+    console.log(token);
     return response.data;
 }
 

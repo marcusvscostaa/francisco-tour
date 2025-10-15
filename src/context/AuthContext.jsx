@@ -1,31 +1,78 @@
-import { createContext, useEffect, useState } from "react";
-import axios from 'axios';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AuthService from '../AuthService';
 
-export const AuthContext = createContext();
+const AuthContext = createContext();
 
-export const AuthProvider = ({children}) =>{
-    const [user, setUser] = useState(null);
+const fakeLogin = (email, password) => {
+  if (email === "teste@app.com" && password === "123456") {
+    return { token: "fake-jwt-token-12345", user: { nome: "Usuário Teste", email } };
+  }
+  return null; 
+};
 
-    useEffect(() => {       
-           console.log(getCurrentUser());
-    },[])
-    const getCurrentUser = async () =>{
-        const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-            console.log(authorization);
-            return await axios.get(`${process.env.REACT_APP_BASE_URL}/autenticacao/${authorization}`).then(
-            (response) => {
-                console.log(response.data);
-                return response.data               
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null); 
+  const [loading, setLoading] = useState(true); 
+  const navigate = useNavigate();
+
+  useEffect(() => {
+        const loadUserFromStorage = () => {
+            const authData = AuthService.getCurrentUser(); 
+            
+            if (authData && authData.token) {
+                setUser(authData.user); 
             }
-            ).catch((erro) => console.log(erro))
+            
+            setLoading(false); 
+        };
+
+        loadUserFromStorage();
+  }, []);
+
+  const login = async (username, password) => {
+    const result = fakeLogin(username, password);
+
+    try {
+        await AuthService.login(username, password); 
+        
+        const authData = AuthService.getCurrentUser();
+
+        if (authData && authData.token) {
+            setUser(authData.user); 
+            return true;
         }
+        return false; 
+    } catch (error) {
+        console.error("Erro no login do contexto:", error);
+        AuthService.logout(); 
+        setUser(null);
+        return false;
+    }
+  };
+
+    const logout = () => {
+        AuthService.logout();
+        setUser(null); 
+        navigate('/login');
+    };
 
 
-    return(
-        <AuthContext.Provider value={{
-            signed:true
-        }}>
-           {children}
-        </AuthContext.Provider>
-    )
-}
+  const value = {
+    user,
+    isAuthenticated: !!user, 
+    login,
+    logout,
+    loading,
+  };
+
+  return (
+    <AuthContext.Provider value={value}>
+      {!loading && children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  return useContext(AuthContext);
+};
