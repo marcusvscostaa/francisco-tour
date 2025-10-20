@@ -24,6 +24,21 @@ export default function RowTabela(props){
     const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
     const [statusReserva, setStatusReserva] = useState('Confirmado')
     const[disabledButton, setDisabledButton] = useState(false)
+    const dataISO = props.reserva.dataReserva.substr(0, 10); 
+    const dataFormatadaBr = dataISO.split('-').reverse().join('/');
+
+    const nomeCompleto = props.reserva.nome;
+    const partesDoNome = nomeCompleto ? nomeCompleto.trim().split(/\s+/) : []; 
+
+    let nomeExibido = '';
+
+    if (partesDoNome.length === 1) {
+        nomeExibido = partesDoNome[0];
+    } else if (partesDoNome.length > 1) {
+        const primeiroNome = partesDoNome[0];
+        const ultimoSobrenome = partesDoNome[partesDoNome.length - 1]; 
+        nomeExibido = `${primeiroNome} ${ultimoSobrenome}`;
+    }
 
     useEffect(()=>{
         if(props.reserva.status){          
@@ -38,17 +53,13 @@ export default function RowTabela(props){
             }            
         }else{
             setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            
-            instance.put('/reservas/status', JSON.stringify({status: 'Confirmado', idR: props.reserva.idR}))
-            .catch(err => {console.log(err)})
-
         }
         if(pagamentoreservas){
            setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
         
         }
         setUpdateCount(false)
-    },[props.updateCount])
+    },[props.updateCount, props.pagamentoreservas, props.reserva.status])
 
     const handleChange = (e)=> {
         instance.post('/reservas/status', JSON.stringify({status: e.target.value, idR: props.reserva.idR}))
@@ -93,8 +104,8 @@ export default function RowTabela(props){
         <Fragment>
             <tr id={props.reserva.idR}>
             
-                <td><i className="fas fa-user-alt"></i> {props.reserva.nome}</td>
-                <td><i className="fas fa-calendar-alt"></i> {props.reserva.dataReserva.substr(0, 10).split('-').reverse().join('/')}</td>
+                <td><i className="fas fa-user-alt"></i> {nomeExibido}</td>
+                <td data-order={dataISO} className="text-left"><i className="fas fa-calendar-alt"></i> {dataFormatadaBr}</td>
                 
                 <td><a className="cpointer" data-toggle="collapse" data-target={"linha"+props.index}
                 onClick={

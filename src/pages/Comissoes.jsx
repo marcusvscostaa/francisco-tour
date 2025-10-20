@@ -13,7 +13,7 @@ export default function Comissoes(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item active"
-        configuracoes="collapse-item"  
+        configuracoes="nav-item"  
         tabelaCliente="nav-item"
         usuarios="nav-item"
         componente={<TabelaComissoes />}

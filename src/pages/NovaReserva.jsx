@@ -17,7 +17,7 @@ export default function NovaReserva(){
         novaReserva="collapse-item active"
         minhaReserva="collapse-item"
         comissoes="collapse-item"
-        configuracoes="collapse-item"  
+        configuracoes="nav-item"  
         tabelaCliente="nav-item"
         usuarios="nav-item"
         nomePagina="Nova Reserva" 

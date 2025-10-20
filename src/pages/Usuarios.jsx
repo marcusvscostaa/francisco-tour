@@ -15,7 +15,7 @@ export default function Usuarios(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item"
-        configuracoes="collapse-item"  
+        configuracoes="nav-item"  
         tabelaCliente="nav-item"
         usuarios="nav-item active"
         nomePagina="Usuários" 

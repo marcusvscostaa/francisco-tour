@@ -14,7 +14,7 @@ export default function TabelaCliente(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item"
-        configuracoes="collapse-item"  
+        configuracoes="nav-item"  
         tabelaCliente="nav-item active"
         usuarios="nav-item"
         nomePagina="Tabela de Clientes" 

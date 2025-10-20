@@ -76,6 +76,11 @@ export  default function Sidebar(props){
                 <i className="fas fa-user-alt"></i>
                 <span>Usuários</span></a>
         </li>
+        <li className={props.configuracoes}>
+            <a className="nav-link" href="configuracoes">
+                <i className="fa fa-cogs"></i>
+                <span>Configurações</span></a>
+        </li>
 
         <hr className="sidebar-divider" />
         <li className="nav-item">

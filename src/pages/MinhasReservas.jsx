@@ -12,7 +12,7 @@ export default function MinhasReservas(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item active"
         comissoes="collapse-item"
-        configuracoes="collapse-item"  
+        configuracoes="nav-item"  
         tabelaCliente="nav-item"
         usuarios="nav-item"
         nomePagina="Minhas Reservas"

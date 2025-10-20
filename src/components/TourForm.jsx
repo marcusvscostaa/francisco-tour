@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react"
+import {getToursCadastroDestino} from "../FranciscoTourService";
 
 export default function TourForm(props){
+    const [toursPorDestino, setToursPorDestino] = useState([]);
+    const tourData = props.calculoTotal[props.numbTour - 1];
+    const destinoAtual = tourData.destino;
 
     useEffect(()=>{
         const dados =  props.calculoTotal;
@@ -9,6 +13,31 @@ export default function TourForm(props){
           );
         props.atualizarValor(dadosAtualizados)
     },[])
+
+    useEffect(() => {
+        if (destinoAtual) {
+            const fetchTours = async () => {
+                try {
+                    const data = await getToursCadastroDestino(destinoAtual);
+                    setToursPorDestino(data);
+                    console.log(data)
+                    
+                    if(data.length > 0 && tourData.tour) {
+                         updateTour({ target: { value: '' } }); 
+                         updateValorAdultos({ target: { value: 0 } });
+                         updateValorCriancas({ target: { value: 0 } });
+                    }
+                    
+                } catch (error) {
+                    console.error("Erro ao carregar tours por destino:", error);
+                    setToursPorDestino([]);
+                }
+            };
+            fetchTours();
+        } else {
+            setToursPorDestino([]); // Limpa se nenhum destino estiver selecionado
+        }
+    }, [destinoAtual]);
 
     const updateNumAdultos = (e) =>{
         const dados =  props.calculoTotal;
@@ -39,11 +68,27 @@ export default function TourForm(props){
         props.atualizarValor(dadosAtualizados)
     }
     const updateTour = (e) =>{
-        const dados =  props.calculoTotal;
+        const nomeTourSelecionado = e.target.value;
+        
+        const tourSelecionado = toursPorDestino.find(
+            (item) => item.nome_tour === nomeTourSelecionado
+        );
+
+        const novoValorAdulto = tourSelecionado ? tourSelecionado.valor_adulto : 0;
+        const novoValorCrianca = tourSelecionado ? tourSelecionado.valor_crianca : 0;
+
+        const dados = props.calculoTotal;
         const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, tour: e.target.value } : tour
-          );
-        props.atualizarValor(dadosAtualizados)
+            tour.id === props.numbTour
+                ? {
+                    ...tour,
+                    tour: nomeTourSelecionado, 
+                    valorAdulto: novoValorAdulto, 
+                    valorCriancas: novoValorCrianca, 
+                }
+                : tour
+        );
+        props.atualizarValor(dadosAtualizados);
     }
     const updateDataTour = (e) =>{
         const dados =  props.calculoTotal;
@@ -59,9 +104,6 @@ export default function TourForm(props){
           );
         props.atualizarValor(dadosAtualizados)
     }
-
-
-
 
     return(
         <div className="col-md-12">
@@ -80,7 +122,8 @@ export default function TourForm(props){
                   </div>
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="destino">Destino</label>
-                      <select  value={props.calculoTotal[props.numbTour-1].destino} className="form-control form-control-sm" id="detino" onChange={updateDestino} required>
+                      <select  value={destinoAtual} className="form-control form-control-sm" id="detino" onChange={updateDestino} required>
+                            <option value="" disabled>Selecione o Destino</option>  
                             {props.options&& props.options.destino.map((item) => {
                                 return <option value={item}>{item}</option>
                             })}
@@ -89,8 +132,10 @@ export default function TourForm(props){
                   <div className="col-md-3 mb-3">
                       <label className="form-label" for="tour" >Tour</label>
                       <select value={props.calculoTotal[props.numbTour-1].tour} className="form-control form-control-sm" id="tour" onChange={updateTour} required>
-                            {props.options&& props.options.tour.map((item) => {
-                                return <option value={item}>{item}</option>
+                             {!destinoAtual && <option value="" disabled>Selecione um Tour</option>}
+                            {destinoAtual && toursPorDestino.length === 0 && <option disabled>Carregando Tours...</option>}                            
+                            {toursPorDestino&& toursPorDestino.map((item) => {
+                                return <option value={item.nome_tour}>{item.nome_tour}</option>
                             })}
                       </select>
                   </div>

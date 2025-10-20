@@ -15,43 +15,60 @@ export default function TabelaReservas(props) {
     const [updateCount, setUpdateCount] = useState(false);
     const [updateData, setUpdateData] = useState(false);
     const [pagamentoreservas, setPagamentoreservas] = useState(false);
-
-
-    useEffect( () => {
-        setTimeout(() => {
-            getReservas().then(
-            data => {
-                console.log(data)
-                if(data.fatal || data.code){
-                    setReservas(false);
-                }else{
-                    setReservas(data)
-                }          
-            }
-            ).catch((error) => console.log(error));
-        }, "300");
-
-        setTimeout(() => {
-            getTours().then(
-            data => {
-                console.log(data)
-                setTour(data)
-                }
-            ).catch((error) => console.log(error));
-        }, "600");
-
-        setTimeout(() => {
-            getPagamentoReservas().then(
-            data => {
-                setPagamentoreservas(data)
-                }
-            ).catch((error) => console.log(error));
-        }, "900");
+    const dataTableOptions = {
+        // 1. Define a coluna 1 (Data) como a coluna de ordenação padrão (0 = Nome, 1 = Data)
+        order: [[1, 'desc']], 
         
-        setTimeout(() => {setUpdateData(true)
-        }, 1000)
-        setTimeout(() => setUpdateData(false), 1500)  
-        setUpdateCount(false)        
+        // 2. Define o tipo e a capacidade de ordenação de cada coluna (0 a 8)
+        columns: [
+            { orderable: true },    // 0: Nome
+            { orderable: true, type: 'date' }, // 1: Data (CRUCIAL: Define o tipo 'date')
+            { orderable: false },    // 2: Tour/Endereço
+            { orderable: false },    // 3: Pagamento
+            { orderable: false },    // 4: Telefone
+            { orderable: false },    // 5: Valor Total
+            { orderable: false },    // 6: Comentário
+            { orderable: false },    // 7: Status
+            { orderable: false }    // 8: Configurações (Geralmente não é ordenável)
+        ]
+    };
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [dataReservas, dataTours, dataPagamentos] = await Promise.all([
+                    getReservas(),
+                    getTours(),
+                    getPagamentoReservas()
+                ]);
+
+                // Trata as reservas e armazena (usando dataReservas)
+                if (dataReservas.fatal || dataReservas.code) {
+                    setReservas([]);
+                } else {
+                    
+                    // 💡 SOLUÇÃO DE ORDENAÇÃO #1: Ordenar os dados ANTES de salvar no estado
+                    const reservasOrdenadas = dataReservas.sort((a, b) => {
+                        // Assume que a data está no campo 'data' ou 'dataDoTour' na reserva
+                        const dataA = new Date(a.data); 
+                        const dataB = new Date(b.data);
+                        return dataA - dataB; // Ordena do mais antigo para o mais novo
+                    });
+                    
+                    setReservas(reservasOrdenadas);
+                }
+
+                setTour(dataTours);
+                setPagamentoreservas(dataPagamentos);
+
+            } catch (error) {
+                console.error("Erro no carregamento de dados: ", error);
+                // Trate erros
+            }
+        };
+            if (updateCount === false) { 
+            fetchData();
+        }
     }, [updateCount]);
 
 
@@ -65,6 +82,7 @@ export default function TabelaReservas(props) {
                 <div className="table-responsive">
                     {reservas && tour && pagamentoreservas?
                         <DataTable
+                            options={dataTableOptions}
                             className="table table-sm table-hover mr-0 mt-3 w-100 "
                             cellspacing="0"
                             width="100%"
@@ -74,11 +92,11 @@ export default function TabelaReservas(props) {
                             <thead>
                                 <tr>
                                     <th>Nome</th>
-                                    <th>Data</th>
-                                    <th>Tour/Endereço</th>
+                                    <th className="text-left">Data</th>
+                                    <th>Tour</th>
                                     <th>Pagamento</th>
                                     <th className="text-left">Telefone</th>
-                                    <th>Valor Total</th>
+                                    <th>Total</th>
                                     <th>Comentário</th>
                                     <th>Status</th>
                                     <th>Configurações</th>

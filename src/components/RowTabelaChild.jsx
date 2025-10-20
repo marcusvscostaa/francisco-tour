@@ -37,32 +37,32 @@ export default function RowTabelaChild(props){
                             <th>Configurações</th>
                         </tr>
                     </thead>
-                {props.dadosTour.map((dataT) =>
-                    <tbody>                    
-                        <tr>    
-                                <td>{dataT.idtour}</td>
-                                <td>{dataT.destino}</td>
-                                <td>{dataT.tour}</td>
-                                <td>{dataT.data.substr(0, 10).split('-').reverse().join('/')}</td>
-                                <td>{dataT.quantidadeAdultos}</td>
-                                <td>R$: {dataT.valorAdulto.toFixed(2).replace(".", ",")}</td>
-                                <td>{dataT.quantidadeCriancas}</td>
-                                <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
-                                <td>R$: {((dataT.quantidadeAdultos * dataT.valorAdulto) + (dataT.quantidadeCriancas * dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
-                                <td>
-                                    <StatusTour id={dataT.idtour} disabledButton={props.disabledButton} updateCount={props.updateCount} status={dataT.status} setUpdateCount={props.setUpdateCount} />
-                                </td>
-                                <td>
-                                <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
-                                <ModalEditarTour dados={dataT} setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
-                                <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>                                
-                                <ModalDeleteTour title="Tour" setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
-                                </td>
-                        </tr>
+                    <tbody>
+                        {props.dadosTour.map((dataT) =>
+                                <tr>    
+                                        <td>{dataT.idtour}</td>
+                                        <td>{dataT.destino}</td>
+                                        <td>{dataT.tour}</td>
+                                        <td>{dataT.data.substr(0, 10).split('-').reverse().join('/')}</td>
+                                        <td>{dataT.quantidadeAdultos}</td>
+                                        <td>R$: {dataT.valorAdulto.toFixed(2).replace(".", ",")}</td>
+                                        <td>{dataT.quantidadeCriancas}</td>
+                                        <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
+                                        <td>R$: {((dataT.quantidadeAdultos * dataT.valorAdulto) + (dataT.quantidadeCriancas * dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
+                                        <td>
+                                            <StatusTour id={dataT.idtour} disabledButton={props.disabledButton} updateCount={props.updateCount} status={dataT.status} setUpdateCount={props.setUpdateCount} />
+                                        </td>
+                                        <td>
+                                        <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>
+                                        <ModalEditarTour dados={dataT} setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
+                                        <button type="button" title="Deletar" data-toggle="modal" data-target={`#tourDelete${dataT.idtour}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>                                
+                                        <ModalDeleteTour title="Tour" setUpdateCount={props.setUpdateCount} idtour={dataT.idtour}/>
+                                        </td>
+                                </tr>
+                            
+                            )
+                        }
                     </tbody>
-                       
-                    )
-                }
             </table>
             </div>
             <div className='w-100 d-flex'>

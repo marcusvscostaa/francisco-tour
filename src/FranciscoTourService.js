@@ -13,12 +13,11 @@ export async function getClientes(){
 }
 
 export async function getCurrentUser(){
-    const data = {"funciona": "funciona"}
-      const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      const response = await instance.get(`/autenticacao/${authorization}`) 
-      return data
-      
-    }
+    const authorization = localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
+    const response = await instance.get(`/autenticacao/${authorization}`) 
+    return response
+    
+}
 
 export async function getDadoAno(anoSelecionado){
     const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`);
@@ -95,4 +94,27 @@ export async function getTiposTours(){
     return response.data;
 }
 
+export async function getToursCadastro() {
+    const response = await instance.get(`/tourCadastro`);
+    return response.data;
+}
+
+export async function getToursCadastroDestino(destino) {
+    const response = await instance.get(`/tourCadastro/destino/?destino=${destino}`);
+    return response.data;
+}
+
 //sets
+export async function createTourCadastro(tourCadastro) {
+    const response = await instance.post(`/tourCadastro`, tourCadastro);
+    return response.data;
+}
+
+export async function updateTourCadastro(id_tour, tourCadastro) {
+    const response = await instance.put(`/tourCadastro/${id_tour}`, tourCadastro);
+    return response.data;
+}
+
+export async function deleteTourCadastro(id_tour) {
+    await instance.delete(`/tourCadastro/${id_tour}`);
+}

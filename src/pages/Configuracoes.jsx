@@ -1,4 +1,4 @@
-import ConfiguracoesCard from "../components/ConfiguracoesCard";
+import ConfiguracoesCard from "../components/tourCadastro/ConfiguracoesCard";
 import Sidebar from "../components/Sidebar";
 export default function Configuracoes(){
     return(
@@ -6,17 +6,17 @@ export default function Configuracoes(){
         <Sidebar 
         painel="nav-item"
         financeiro="nav-item" 
-        reservas="nav-item active"  
+        reservas="nav-item"  
         agendaReserva="nav-item" 
-        reservasShow="collapse show" 
+        reservasShow="collapse" 
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item" 
-        configuracoes="collapse-item active" 
+        configuracoes="nav-item active" 
         tabelaCliente="nav-item"
         nomePagina="Configurações"
         usuarios="nav-item"
-        componente={<h1>Desativado</h1>}/>
+        componente={<ConfiguracoesCard />}/>
         </div>
     )
 }

@@ -17,7 +17,7 @@ export default function AgendaReservas(){
         novaReserva="collapse-item" 
         minhaReserva="collapse-item"
         comissoes="collapse-item" 
-        configuracoes="collapse-item" 
+        configuracoes="nav-item" 
         tabelaCliente="nav-item"
         usuarios="nav-item"
         nomePagina="Agenda de Reservas"
