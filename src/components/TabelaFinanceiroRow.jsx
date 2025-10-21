@@ -28,12 +28,24 @@ export default function TabelaFinanceiroRow(props){
     return(
         <tr>
             <td className="text-left">{props.dados.idR}</td>
-            <td className="text-left">{props.dados.nome}</td>
-            <td className="text-left">{props.dados.dataReserva.substr(0, 10).split('-').reverse().join('/')}</td>
-            <td className="text-left">{`R$ ${valorTotal&&valorTotal.toFixed(2).replace(".", ",")}`}</td>
-            <td class="text-success">{`+${pagamento&&pagamento.toFixed(2).replace(".", ",")}`}</td>
-            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) < 0&&"text-danger"}`}>{`${(pagamento - valorTotal) < 0?(pagamento - valorTotal).toFixed(2).replace(".", ","):'0,00'}`}</td>
-            <td class={`text-left ${(pagamento - valorTotal) !== 0 && (pagamento - valorTotal) > 0&&"text-danger"}`}>{(pagamento - valorTotal) > 0?(pagamento - valorTotal).toFixed(2).replace(".", ","):'0,00'}</td>
+            <td className="text-left">{nomeExibido}</td>
+            <td data-order={dataISO} className="text-left">{dataFormatadaBr}</td>
+            <td className="text-left">{`R$ ${props.formatarMoeda(valorTotal)}`}</td>
+            <td className="text-left text-success">{`+${props.formatarMoeda(pagamento)}`}</td>
+            <td className={`text-left ${(pagamento - valorTotal) < 0 && "text-danger"}`}>
+                {(pagamento - valorTotal) < 0 
+                    ? `-${props.formatarMoeda(Math.abs(pagamento - valorTotal))}`
+                    : '0,00'
+                }
+            </td>
+            <td className={`text-left ${saldoDevido < 0 && "text-danger"}`}>
+            <td className={`text-left ${saldoDevido > 0 && "text-danger"}`}>
+                {saldoDevido > 0 
+                    ? props.formatarMoeda(saldoDevido)
+                    : '0,00'
+                }
+            </td>
+            </td>        
             <td>{
                 (pagamento - valorTotal) > 0?
                 <a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${props.dados.idR}`}>
