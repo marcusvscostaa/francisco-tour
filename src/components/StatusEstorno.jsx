@@ -1,35 +1,34 @@
 import { useState, useEffect } from "react"
 import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
+import {editStatusEstorno} from "../FranciscoTourService";
+
+const calcularStatusUI = (status) => {
+    if (status === 'Pago') {
+        return { status: 'Pago', className: "fas fa-check-circle text-success" };
+    } else if (status === 'Cancelado') {
+        return { status: 'Cancelado', className: "fas fa-ban text-danger" };
+    }
+    return { status: 'Desconhecido', className: "fas fa-question-circle text-secondary" };
+};
 
 export default function StatusEstorno(props){
-    const [statusReserva, setStatusReserva] = useState('Pago')
+    const [statusReserva, setStatusReserva] = useState(() => calcularStatusUI(props.status));
+    
+    useEffect(() => {
+        setStatusReserva(calcularStatusUI(props.status));
+    }, [props.status]);
 
-    useEffect(()=>{
-        if(props.status){          
-            if(props.status === 'Pago'){
-                setStatusReserva({status: 'Pago', className: "fas fa-check-circle text-success"})
-            }else if(props.status === 'Cancelado'){
-                setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
-            }            
-        }
-    },[props.updateCount])
-    const handleChange = (e)=> {
+    const handleChange = async (e) => {
         e.preventDefault();
-        instance.post('/estorno/status', JSON.stringify({status: e.target.value, idEstorno: props.id}))
-        .catch(err => console.error(err))
-        props.setUpdateCount(true)
+        const novoStatus = e.target.value;
+        
+        try {
+            await editStatusEstorno(props.id, {status: novoStatus});            
+            props.setUpdateCount(true);             
+            setStatusReserva(calcularStatusUI(novoStatus));
 
-        if(e.target.value === 'Pago'){
-            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-        }else if(e.target.value === 'Cancelado'){
-            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
+        } catch (err) {
+            console.error("Erro ao atualizar status do estorno:", err);
         }
     }
     return (

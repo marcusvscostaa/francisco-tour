@@ -105,6 +105,19 @@ export async function getToursCadastroDestino(destino) {
 }
 
 //sets
+export async function createEstorno(estorno){
+    const response = await instance.post(`/estorno`, estorno);
+    return response.data;
+}
+
+export const editEstorno = (id, estorno) => {
+    return instance.put(`/estorno/${id}`, estorno);
+};
+
+export const editStatusEstorno = (id, status) => {
+    return instance.put(`/estorno/status/${id}`, status);
+};
+
 export async function createTourCadastro(tourCadastro) {
     const response = await instance.post(`/tourCadastro`, tourCadastro);
     return response.data;

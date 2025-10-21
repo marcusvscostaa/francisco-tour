@@ -22,22 +22,23 @@ class AuthService {
     }
     validateToken(token) {
         if (!token) {
+            console.warn("Token não encontrado no storage. Não autenticado.");
             return Promise.resolve(false);
         }
 
-        return axios.post(`${process.env.REACT_APP_BASE_URL}/autenticacao/validar`, null, {
+        return axios.get(`${process.env.REACT_APP_BASE_URL}/autenticacao/validar`, {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem('user')}` 
+                Authorization: `Bearer ${token}`
             }
         })
         .then(response => {
-            // O backend retorna 'true' ou o status 200/204
-            // Assumimos que sucesso no status HTTP significa token válido
-            return response.data.auth === true; 
+            return response.data.auth === true || response.status === 200;
         })
         .catch(error => {
-            // Se a API retornar 401 (Não Autorizado) ou qualquer erro, o token é inválido
             console.error("Validação de Token Falhou:", error.response || error);
+            if (error.response && error.response.status === 401) {
+                 this.logout(); 
+            }
             return false;
         });
     }

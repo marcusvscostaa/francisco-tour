@@ -8,14 +8,7 @@ import ModalComentario from "./ModalComentario";
 import StatusEstorno from "./StatusEstorno";
 import ModalDeleteEstorno from "./ModalDeleteEstorno";
 import optionForm from "./lista.json"
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
+import {createEstorno, editEstorno} from "../FranciscoTourService";
 
 
 DataTable.use(DT);
@@ -36,82 +29,76 @@ export default function ModalEstorno(props){
         setOptions(optionForm)
     },[props.updateCount])
     
-    const handleSubmit = (e) => {
+    const handleApiResponse = (response, acao) => {
+        if(response.data){
+            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: `Sucesso ao ${acao} Estorno`, titulo: "Estorno"}]);
+            setModalSpinner(true);
+            setTimeout(()=>{
+                setModalStatus(modalStatus.filter((data)=> data.id !== 4));
+                setModalSpinner(false);
+                setModalAddEstorno(false);
+                setShowEditPag(false); 
+                props.setUpdateCount(true);
+            }, 2000);
+            return true;
+        } else {
+            setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}]);
+            setModalSpinner(true);
+            setTimeout(()=>{
+                setModalStatus(modalStatus.filter((data)=> data.id !== 4));
+                setModalSpinner(false);
+            }, 2000);
+            return false;
+        }
+    }
+
+    const handleSubmit = async (e) => { 
         e.preventDefault();
 
         const formData = new FormData();
-            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
-            if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
+        if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
+        if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
+        if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
+        if(dadosPagForm.valorPago){formData.append("valor", dadosPagForm.valorPago);}
+        if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+        if(idEstorno){formData.append("idEstorno", idEstorno);}
+        formData.append("status", "Pago");
+
+        try {
+            const response = await createEstorno(formData);
+            handleApiResponse(response, "Salvar");
+        } catch (e) {
+            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}]);
+            setModalSpinner(true);
+            setTimeout(()=>{
+                setModalStatus(modalStatus.filter((data)=> data.id !== 4));
+                setModalSpinner(false);
+            }, 2000);
+        }
+    }
+
+    const handleEdit = async (e) => { 
+            e.preventDefault();
+            const estornoId = showEditPag.id; 
+
+            const formData = new FormData();
             if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
             if(dadosPagForm.valorPago){formData.append("valor", dadosPagForm.valorPago);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-            if(idEstorno){formData.append("idEstorno", idEstorno);}
-            formData.append("status", "Pago");
 
-            instance.post('/estorno', formData)
-            .then(response => {
-                if(response.data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        setModalAddEstorno(false)
-                        props.setUpdateCount(true)
-                    },2000)
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)
-                }
-            }).catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)})
-
-    }
-
-    const handleEdit = (e) => {
-        e.preventDefault();
-
-        const formData = new FormData();
-            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
-            if(dadosPagForm.dataPagamento){formData.append("data", dadosPagForm.dataPagamento);}
-            if(dadosPagForm.formaPagamento){formData.append("formaEstorno", dadosPagForm.formaPagamento);}
-            if(dadosPagForm.valorPago){formData.append("valor", dadosPagForm.valorPago);}
-            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-            formData.append("status", "Pago");
-
-            instance.put(`/estorno/${showEditPag.id}`, formData)
-            .then(response => {
-                if(response.data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Estorno", titulo: "Estorno"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        setModalAddEstorno(false)
-                        props.setUpdateCount(true)
-                        setShowEditPag(false)
-                    },2000)
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Estorno"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)
-                }
-            }).catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)})           
-    }
-
+            try {
+                const response = await editEstorno(estornoId, formData);
+                handleApiResponse(response, "Editar");
+            } catch (e) {
+                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Estorno: " + e, titulo: "Estorno"}]);
+                setModalSpinner(true);
+                setTimeout(()=>{
+                    setModalStatus(modalStatus.filter((data)=> data.id !== 4));
+                    setModalSpinner(false);
+                }, 2000);
+            }
+        }
     return (
         <div className="modal fade" data-backdrop="static" data-keyboard="false" tabindex="-1" id={`estorno${props.idR}`}>
             <ModalAlert dados={modalStatus} />

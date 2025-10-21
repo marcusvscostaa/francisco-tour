@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import TourForm from "./TourForm";
 import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
@@ -16,6 +16,20 @@ const instance = axios.create({
 const id_reserva = uid().toString();
 const idCliente = uid(16).toString();
 const idPagamento = uid().toString();
+
+function useDebounce(callback, delay) {
+    const timeoutRef = useRef(null);
+    const debouncedCallback = useCallback((...args) => {
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+        timeoutRef.current = setTimeout(() => {
+            callback(...args);
+        }, delay);
+    }, [callback, delay]);
+
+    return debouncedCallback;
+}
 
 export default function Formulario(props) {
 
@@ -39,6 +53,7 @@ export default function Formulario(props) {
         { id: "6", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' }
     ]);
     const [modalStatus, setModalStatus] = useState([]);
+    const [sugestoesAPI, setSugestoesAPI] = useState([]);
 
     useEffect(() => {
         setOptions(optionForm)
@@ -52,6 +67,33 @@ export default function Formulario(props) {
         }
 
     }
+    
+    const buscarSugestoesAPI = async (termoBusca) => {
+        if (!termoBusca || termoBusca.length < 3) {
+            setSugestoesAPI([]);
+            return;
+        }
+
+        try {
+            const response = await axios.get(`https://nominatim.openstreetmap.org/search`, {
+                params: {
+                    q: termoBusca,
+                    format: 'json',
+                    addressdetails: 1,
+                    limit: 5,
+                    countrycodes: 'cl' // Restringe a busca ao Chile
+                }
+            });
+            
+            const sugestoesFormatadas = response.data.map(item => item.name);
+
+            setSugestoesAPI(sugestoesFormatadas);
+        } catch (error) {
+            console.error("Erro ao buscar sugestões de endereço (Nominatim):", error.response || error);
+            setSugestoesAPI([]);
+        }
+    };
+    const buscarSugestoesDebounced = useDebounce(buscarSugestoesAPI, 500);
  
     const removerTour = (index) => {
         setNumberTour(numberTour => { return numberTour.filter(numberTour => numberTour != index) });
@@ -78,6 +120,10 @@ export default function Formulario(props) {
         const newformReservsa = { ...formReserva,[name]: value, id_cliente: id, status: 'Confirmado', dataReserva: new Date().toISOString().split('T')[0] }
 
         setformReserva(newformReservsa)
+
+        if (name === 'endereco') {
+            buscarSugestoesDebounced(value);
+        }
 
     }
     
@@ -223,7 +269,13 @@ export default function Formulario(props) {
                     }
                     <div className="col-md-5 mb-3">
                         <label for="inputEndereco" className="form-label">Endereço</label>
-                        <input type="text" value={formReserva.endereco} className="form-control form-control-sm" name="endereco" id="inpuEndereco" onChange={handleReserva}  required/>
+                        <input type="text" value={formReserva.endereco} className="form-control form-control-sm" name="endereco" id="inputEndereco" list="sugestoes-api-endereco" onChange={handleReserva}  required/>
+                        <datalist id="sugestoes-api-endereco">
+                            {sugestoesAPI.map((sugestao, index) => (
+                                // A key deve ser única, pode ser o próprio nome se não for muito longo
+                                <option key={index} value={sugestao} /> 
+                            ))}
+                        </datalist>
                     </div>
                     <div className="col-md-2 mb-3">
                         <label for="inputHotel" className="form-label">Hotel</label>

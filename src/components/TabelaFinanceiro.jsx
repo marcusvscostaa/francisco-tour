@@ -4,9 +4,24 @@ import { use, useEffect } from 'react';
 import TabelaFinanceiroRow from './TabelaFinanceiroRow';
 
 DataTable.use(DT);
+
 export default function TabelaFinanceiro(props) {
     useEffect(() => {
     },[props.updateCount])
+    const dataTableOptions = {
+        order: [[2, 'desc']], 
+        
+        columns: [
+            { orderable: false },    
+            { orderable: true  }, // 1: Data (CRUCIAL: Define o tipo 'date')
+            { orderable: true, type: 'date'  },    // 2: Tour/Endereço
+            { orderable: false },    // 3: Pagamento
+            { orderable: false },    // 4: Telefone
+            { orderable: false },    // 5: Valor Total
+            { orderable: false },    // 6: Comentário
+            { orderable: false }  
+        ]
+    };
     return (
         <div className="card shadow mb-4">
             <div className="card-header py-3">
@@ -16,6 +31,7 @@ export default function TabelaFinanceiro(props) {
                 <div className="table-responsive">
                     {props.reservas && props.estorno &&  props.tour && props.pagamentoreservas?
                         <DataTable
+                            options={dataTableOptions}
                             className="table table-sm table-hover mr-0 mt-3 w-100 "
                             cellspacing="0"
                             width="100%"
@@ -35,7 +51,7 @@ export default function TabelaFinanceiro(props) {
                             <tbody>
                                 {props.reservas && props.estorno && props.reservas.map((item) => {
                                     return (
-                                        <TabelaFinanceiroRow updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} dados={item} estorno={props.estorno.filter((estorno) => estorno.id_reserva === item.idR )} tour={props.tour} pagamentoreservas={props.pagamentoreservas}/>
+                                        <TabelaFinanceiroRow updateCount={props.updateCount} setUpdateCount={props.setUpdateCount} dados={item} estorno={props.estorno.filter((estorno) => estorno.id_reserva === item.idR )} tour={props.tour} pagamentoreservas={props.pagamentoreservas} formatarMoeda={props.formatarMoeda}/>
                                     )
                                 })}
                             </tbody>

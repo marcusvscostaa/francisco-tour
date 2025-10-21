@@ -1,49 +1,19 @@
 {
   "zona": [
-    "Aconcagua",
-    "Bairro",
-    "Belo Horizonte",
+    "Providencia", 
     "Centro",
-    "Chiloé",
-    "Colchagua",
-    "Concepción",
-    "Coquimbo",
-    "Maule",
-    "Rudes",
-    "Santiago",
-    "Sul",
-    "Valdivia"
+    "Las Condes"
   ],
   "paisOrigem": [
-    "Alemãnha",
-    "Argentina",
-    "Bolívia",
     "Brasil",
+    "Argentina",
     "Chile",
-    "Colômbia",
-    "Costa Rica",
-    "El Salvador",
-    "Equador",
-    "Guatemala",
-    "Honduras",
-    "México",
-    "Nicarágua",
-    "Panamá",
-    "Paraguai",
-    "Perú",
-    "Rudes",
-    "Uruguai",
-    "Venezuela"
+    "Estados Unidos"
   ],
   "idioma": [
-    "Alberto",
+    "Português",
     "Espanhol",
-    "Inglês",
-    "Japonês",
-    "Mandarim",
-    "Português ",
-    "Rudes",
-    "Tupi-Guarani"
+    "Inglês"
   ],
   "destino": [
     "Atacama",

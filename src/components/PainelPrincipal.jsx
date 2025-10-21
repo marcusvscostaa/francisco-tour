@@ -5,6 +5,18 @@ import { getDadoAno, getDadoMesAtual, getDadoQuantidade, getQuantidadeAtua } fro
 const date = new Date();
 const currentYear = date.getFullYear();
 
+const formatarNumero = (valor) => {
+    const numero = typeof valor === 'number' ? valor : parseFloat(valor);
+    if (isNaN(numero)) {
+        return "0,00";
+    }
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2, // Garante que dois decimais sejam exibidos
+        maximumFractionDigits: 2,
+    }).format(numero);
+};
+
 export default function PainelPrincipal() {
     const [dadoAno, setDadoAno] = useState(false)
     const [dadoMesAtual, setDadoMesAtual] = useState(false)
@@ -14,48 +26,36 @@ export default function PainelPrincipal() {
     const [updateCount, setUpdateCount] = useState(false)
 
     useEffect(() => {
-        setTimeout(() => {
-            getDadoAno(anoSelecionado).then(
-                data => {
-                    if (data.fatal || data.code) {
-                        setDadoAno(false);
-                    } else {
-                        setDadoAno(data)
-                        console.log(data)   
-                    }
-                }
-            ).catch((error) => console.log(error));
-        }, "300");
+        const fetchData = async () => {
+            try {
+                const [dataAno, dataMes, dataQuantidade, dataQuantidadeAtual] = await Promise.all([
+                    getDadoAno(anoSelecionado),
+                    getDadoMesAtual(),
+                    getDadoQuantidade(anoSelecionado),
+                    getQuantidadeAtua(),
+                ]);
 
-        setTimeout(() => {
-            getDadoMesAtual().then(
-                data => {
-                    setDadoMesAtual(data)
-                    console.log(data) 
-                }
-            ).catch((error) => console.log(error));
-        }, "700");
+                setDadoAno(dataAno);
+                setDadoMesAtual(dataMes);
+                setDadoQuantidade(dataQuantidade);
+                setQuantidadeAtua(dataQuantidadeAtual);
 
-        setTimeout(() => {
-            getDadoQuantidade(anoSelecionado).then(
-                data => {
-                    setDadoQuantidade(data)
-                    console.log(data)   
+            } catch (error) {
+                console.error("Erro ao carregar dados do painel:", error);
+                setDadoAno(false); 
+                setDadoMesAtual(false);
+                setDadoQuantidade(false);
+                setQuantidadeAtua(false);
 
-                }
-            ).catch((error) => console.log(error));
-        }, "1000");
-
-        getQuantidadeAtua().then(
-            data => {
-                setQuantidadeAtua(data)
-                console.log(data)
+            } finally {
+                setUpdateCount(false); 
             }
-        ).catch((error) => console.log(error));
+        };
+        fetchData();
 
-        setUpdateCount(false)
+    }, [anoSelecionado])
 
-    }, [updateCount])
+
     
     return(
     <>
@@ -69,7 +69,7 @@ export default function PainelPrincipal() {
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bolder text-primary text-uppercase mb-1">
                                 Vendas {`${date.toLocaleString('default', { month: 'long' })}/${date.getFullYear()}`}</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMesAtual&&dadoMesAtual.vendaMesAtual?.toFixed(2).replace(".", ",")}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {formatarNumero(dadoMesAtual?.vendaMesAtual)}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-calendar fa-2x text-gray-300"></i>
@@ -85,7 +85,7 @@ export default function PainelPrincipal() {
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                 Vendas Confirmadas ({anoSelecionado})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotal?.toFixed(2).replace(".", ",")}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {formatarNumero(dadoAno.valorTotal)}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -101,7 +101,7 @@ export default function PainelPrincipal() {
                         <div class="col mr-2">
                             <div class="text-xs font-weight-bold text-danger text-uppercase mb-1">
                                 Vendas Canceladas ({anoSelecionado})</div>
-                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.cancelado?.toFixed(2).replace(".", ",")}</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">R$ R$ {formatarNumero(dadoAno.cancelado)}</div>
                         </div>
                         <div class="col-auto">
                             <i class="fas fa-times-circle fa-2x text-gray-300"></i>

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom'; 
 import AuthService from '../AuthService';
+import { useAuth } from '../context/AuthContext';
 import '../sb-admin-2.css';
 import '../App.css';
 
@@ -8,7 +9,8 @@ export default function Login() {
     const [username, setUsername] = useState(localStorage.getItem("myapp-username") || "");
     const [password, setPassword] = useState(localStorage.getItem("myapp-password") || "");
     const [remember, setRemember] = useState(!!localStorage.getItem("myapp-password"));
-    const [error, setError] = useState('');
+    const [errorLogin, setErrorLogin] = useState('');
+    const { login, error } = useAuth(); // Acessa 'error' e 'login'
     
     const navigate = useNavigate();
     
@@ -25,7 +27,7 @@ export default function Login() {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        setError(''); 
+        setErrorLogin(''); 
 
         AuthService.login(username, password)
             .then((response) => {
@@ -37,13 +39,23 @@ export default function Login() {
                     localStorage.removeItem('myapp-username');
                     localStorage.removeItem('myapp-password');
                 }
-                console.log("funciona")
                 window.location.reload(); 
                 
             })
             .catch((error) => {
                 console.error("Erro de Login:", error);
-                setError('Falha no login. Verifique suas credenciais.');
+                let errorMessage = "Erro desconhecido. Tente novamente.";
+                if (error.response) {
+                    errorMessage = error.response.data?.message || `Falha no login: ${error.response.statusText}`;
+                } 
+                else if (error.request) {
+                    console.log(error.request);
+                    errorMessage = "O servidor não está respondendo. Verifique sua conexão ou tente mais tarde.";
+                } 
+                else {
+                    errorMessage = `Ocorreu um erro ao configurar a requisição: ${error.message}`;
+                }
+                setErrorLogin(errorMessage);
             });
     };
 
@@ -85,7 +97,7 @@ export default function Login() {
                                             </label>
                                         </div>
                                     </div>
-                                    {error && <div className="text-danger small mb-3">{error}</div>}
+                                    {errorLogin && <div className="text-danger small mb-3">{errorLogin}</div>}
                                     <button type="submit" className="btn btn-primary btn-user btn-block">
                                         Login
                                     </button>
