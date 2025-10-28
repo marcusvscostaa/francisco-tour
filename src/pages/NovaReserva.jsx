@@ -1,6 +1,5 @@
 import Formulario from "../components/Formulario";
 import Sidebar from "../components/Sidebar";
-import ModalAlert from "../components/ModalAlert";
 import LogoutModal from "../components/LogoutModal";
 
 

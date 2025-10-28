@@ -1,4 +1,3 @@
-import AgendaReserva from "../components/AgendaReserva";
 import Sidebar from "../components/Sidebar";
 import TabelaComissoes from "../components/TabelaComissoes";
 export default function Comissoes(){

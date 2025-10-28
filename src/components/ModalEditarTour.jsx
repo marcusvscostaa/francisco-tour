@@ -1,60 +1,83 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState, useCallback } from "react";
 import ModalAlert from "./ModalAlert";
 import TourForm from "./TourForm";
 import optionForm from "./lista.json"
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
-
-
+import { editarTour } from '../FranciscoTourService';
 
 export default function ModalEditarTour(props){
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
-    const [calculoTotal, setcalculoTotal] = useState(
-        [{  id: "1",
-            data:(props.dados.data).substr(0, 10), 
-            destino: props.dados.destino, 
-            tour: props.dados.tour, 
-            numeroAdultos: props.dados.quantidadeAdultos, 
-            valorAdulto: props.dados.valorAdulto, 
-            numeroCriancas: props.dados.quantidadeCriancas, 
-            valorCriancas: props.dados.valorCrianca }]
-    );
-    const [options, setOptions] = useState("");
+    const [options, setOptions] = useState(null);
+
+    const getInitialTourData = (dados) => ({
+        id: '1',
+        data: (dados?.data || '').substr(0, 10),
+        destino: dados?.destino || '',
+        tour: dados?.tour || '',
+        numeroAdultos: dados?.quantidadeAdultos || 0,
+        valorAdulto: dados?.valorAdulto || 0,
+        numeroCriancas: dados?.quantidadeCriancas || 0,
+        valorCriancas: dados?.valorCrianca || 0
+    });
+    const [tourData, setTourData] = useState(() => [getInitialTourData(props.dados)]);
+
+    useEffect(() => {
+        setTourData(() => [getInitialTourData(props.dados)]);
+        console.log(tourData)
+    }, [props.dados]);
 
     useEffect(() => {
         setOptions(optionForm)
-    },[])
+    },[]);
 
-    const handerEdit = (e) => {
+    const handleTourFormUpdate = useCallback((newFormData) => {
+        setTourData(newFormData);
+    }, []);
+
+    const handerEdit = async (e) => {
         e.preventDefault();
-        instance.put(`/tour/${props.idtour}`, JSON.stringify(calculoTotal[0]))
-        .then((response) => {
-            console.log(response)
-            if (response.data) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                                setModalSpinner(false)
-                                props.setUpdateCount(true)
-                                document.getElementById(`CloseEditarTour${props.idtour}`).click()
-                },3000)
-            }else{
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
-                throw new Error('Network response was not ok');
-            }
-        }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
+        setModalSpinner(true);
+        let success = false;
+        
+        try {
 
-    }
+            const tourDataToSend = tourData[0];
+
+            if (!tourDataToSend) {
+                throw new Error('Dados do Tour não encontrados no formulário.');
+            }
+            delete tourDataToSend.id;
+            console.log(tourDataToSend);
+            const response = await editarTour(props.idtour, tourDataToSend);
+
+            if (response.data) {
+                setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: true, message: "Sucesso ao Salvar Tour", titulo: "Tour" }]);
+                success = true;
+            } else {
+                throw new Error('Erro de Conexão com banco de dados');
+            }
+
+        } catch (error) {
+            console.error("Erro na edição do tour:", error);
+            const errorMessage = error.message || "Erro desconhecido ao Salvar Tour";
+            setModalStatus(prevArray => [...prevArray, { id: 3, mostrar: true, status: false, message: errorMessage, titulo: "Tour" }]);
+        } finally {
+            setTimeout(() => {
+                setModalStatus([]);
+                setModalSpinner(false);
+                
+                if (success) {
+                    props.setUpdateCount(prevCount => prevCount + 1); 
+                    
+                    if (window.$) {
+                        window.$(`#editarTour${props.idtour}`).modal('hide');
+                    } else if (document.getElementById(`CloseEditarTour${props.idtour}`)) {
+                         document.getElementById(`CloseEditarTour${props.idtour}`).click();
+                    }
+                }
+            }, 3000);
+        }
+    };
 
     return (
         <div className="modal fade" tabindex="-1" id={`editarTour${props.idtour}`} data-backdrop="static" data-keyboard="false"  role="dialog" aria-labelledby="exampleModalLabel"
@@ -69,16 +92,17 @@ export default function ModalEditarTour(props){
                             <span aria-hidden="true">×</span>
                         </button>
                     </div>
-                    <form>
+                    <form onSubmit={handerEdit}>
                     <div className="modal-body">
-                        <TourForm atualizarValor={setcalculoTotal}
+                        <TourForm 
+                            atualizarValor={setTourData}
                             numbTour="1"
-                            id_reserva ='ppp'
+                            id_reserva ={props.dados?.id_reserva || 'ppp'}
                             options={options}
-                            calculoTotal={calculoTotal}/>
+                            calculoTotal={tourData}/>
                     </div>
                     <div className="modal-footer mb-0">
-                        <button type="button" className="btn btn-warning" onClick={handerEdit} ><i className="fas fa-edit"></i> Editar Tour</button>
+                        <button type="submit" className="btn btn-warning"><i className="fas fa-edit"></i> Editar Tour</button>
                     </div>
                     </form>
                     {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 

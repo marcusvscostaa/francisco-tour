@@ -105,9 +105,29 @@ export async function getToursCadastroDestino(destino) {
 }
 
 //sets
+export async function createCliente(cliente) {
+    const response = await instance.post(`/clientes`, cliente);
+    return response;
+}
+
+export async function createReserva(reserva) {
+    const response = await instance.post(`/reservas`, reserva);
+    return response;
+}
+
+export async function createTour(tour) {
+    const response = await instance.post(`/tour`, tour);
+    return response;
+}
+
+export async function createPagamento(pagamento) {
+    const response = await instance.post(`/pagamento`, pagamento);
+    return response;
+}
+
 export async function createEstorno(estorno){
     const response = await instance.post(`/estorno`, estorno);
-    return response.data;
+    return response;
 }
 
 export const editEstorno = (id, estorno) => {
@@ -120,14 +140,44 @@ export const editStatusEstorno = (id, status) => {
 
 export async function createTourCadastro(tourCadastro) {
     const response = await instance.post(`/tourCadastro`, tourCadastro);
-    return response.data;
+    return response;
 }
 
 export async function updateTourCadastro(id_tour, tourCadastro) {
     const response = await instance.put(`/tourCadastro/${id_tour}`, tourCadastro);
-    return response.data;
+    return response;
 }
 
 export async function deleteTourCadastro(id_tour) {
     await instance.delete(`/tourCadastro/${id_tour}`);
+}
+
+export async function editarStatusReserva(status){
+    const response = await instance.post(`/reservas/status`, status)
+    return response;
+}
+
+export async function editarStatusTours(status){
+    const response = await instance.post(`/tours/status`, status)
+    return response;
+}
+
+export async function editarStatusPagamento(status){
+    const response = await instance.post(`/pagamentos/status`, status)
+    return response;
+}
+
+export async function editarReserva(id, reserva) {
+    const response = await instance.put(`/reserva/${id}`, reserva);
+    return response;
+}
+
+export async function editarTour(id, dados) {
+    const response = await instance.put(`/tour/${id}`, dados);
+    return response;
+}
+
+export async function editarPagamento(id, formData) {
+    const response = await instance.put(`/pagamento/${id}`, formData);
+    return response;
 }

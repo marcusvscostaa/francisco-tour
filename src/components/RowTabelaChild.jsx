@@ -7,6 +7,11 @@ import StatusTour from './StatusTour';
 
 export default function RowTabelaChild(props){
     const [statusReserva, setStatusReserva] = useState('Confirmado')
+    const sortedTours = [...props.dadosTour].sort((a, b) => {
+        const dateA = new Date(a.data.substr(0, 10));
+        const dateB = new Date(b.data.substr(0, 10));
+        return dateB - dateA; 
+    });
     
     return ReactDOM.createPortal(
             <td colSpan="9" className="bg-dark text-white" >
@@ -38,7 +43,7 @@ export default function RowTabelaChild(props){
                         </tr>
                     </thead>
                     <tbody>
-                        {props.dadosTour.map((dataT) =>
+                        {sortedTours.map((dataT) =>
                                 <tr>    
                                         <td>{dataT.idtour}</td>
                                         <td>{dataT.destino}</td>
@@ -50,7 +55,7 @@ export default function RowTabelaChild(props){
                                         <td>R$: {dataT.valorCrianca.toFixed(2).replace(".", ",")}</td>
                                         <td>R$: {((dataT.quantidadeAdultos * dataT.valorAdulto) + (dataT.quantidadeCriancas * dataT.valorCrianca)).toFixed(2).replace(".", ",")}</td>
                                         <td>
-                                            <StatusTour id={dataT.idtour} disabledButton={props.disabledButton} updateCount={props.updateCount} status={dataT.status} setUpdateCount={props.setUpdateCount} />
+                                        <StatusTour id={dataT.idtour} disabledButton={props.disabledButton} updateCount={props.updateCount} status={dataT.status} setUpdateCount={props.setUpdateCount} />
                                         </td>
                                         <td>
                                         <button type="button" title="Editar" data-toggle="modal" data-target={`#editarTour${dataT.idtour}`}  className="btn btn-sm mr-2 btn-warning cpointer"><i className="fas fa-edit"></i></button>

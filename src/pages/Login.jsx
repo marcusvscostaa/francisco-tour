@@ -10,7 +10,7 @@ export default function Login() {
     const [password, setPassword] = useState(localStorage.getItem("myapp-password") || "");
     const [remember, setRemember] = useState(!!localStorage.getItem("myapp-password"));
     const [errorLogin, setErrorLogin] = useState('');
-    const { login, error } = useAuth(); // Acessa 'error' e 'login'
+    const { login, error } = useAuth();
     
     const navigate = useNavigate();
     

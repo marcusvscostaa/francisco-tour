@@ -79,9 +79,7 @@
 .sidebar-brand .sidebar-brand-icon i {
   font-size: 2rem;
 }
-.sidebar .sidebar-brand .sidebar-brand-text {
-  display: none;
-}
+
 .sidebar .sidebar-brand .sidebar-brand-text {
   display: inline;
 }
@@ -95,4 +93,9 @@
   to {
     transform: rotate(360deg);
   }
+}
+@media screen and (max-width: 768px) {
+  .sidebar .sidebar-brand .sidebar-brand-text {
+  display: none;
+}
 }

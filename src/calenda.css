@@ -69,6 +69,10 @@ header .calendar-current-date {
 }
 
 @media screen and (max-width: 480px) {
+    .calendar-container header{
+        display: block;
+        margin-bottom: 16px;
+    }
     .calendar-body ul {
         list-style: none;
         flex-wrap: none;

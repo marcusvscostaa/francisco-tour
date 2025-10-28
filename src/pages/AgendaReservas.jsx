@@ -1,7 +1,4 @@
-import { use, useEffect } from "react";
-import ModalAlert from "../components/ModalAlert";
 import Sidebar from "../components/Sidebar";
-import $ from "jquery";
 import AgendaReserva from "../components/AgendaReserva";
 
 export default function AgendaReservas(){

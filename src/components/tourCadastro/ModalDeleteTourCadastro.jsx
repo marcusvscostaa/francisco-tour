@@ -31,9 +31,7 @@ export default function ModalDeleteTourCadastro(props) {
         setLoading(true);
         setError(null);
 
-        try {
-            //await deleteTourCadastro(props.id_tour);
-            
+        try {            
             setShouldUpdateParent(true);
             
             if (window.jQuery) {

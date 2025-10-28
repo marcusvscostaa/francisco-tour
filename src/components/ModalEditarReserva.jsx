@@ -1,66 +1,81 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json";
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
+import { editarReserva } from '../FranciscoTourService';
 
 export default function ModalEditarReserva(props) {
+    const modalRef = useRef(null);
+    const MODAL_ID = `reservaEditar${props.idR}`;
+
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
-    const [options, setOptions] = useState("");
+    const [options, setOptions] = useState(null);
     const [dadosReserva, setDadosReserva] = useState({
-        dataReserva: (props.dadosReserva.dataReserva).substr(0, 10),
-        endereco: props.dadosReserva.endereco,
-        hotel: props.dadosReserva.hotel,
-        quarto: props.dadosReserva.quarto,
-        zona: props.dadosReserva.zona,
-        comentario: props.dadosReserva.comentario
+        dataReserva: (props.dadosReserva.dataReserva || '').substr(0, 10),
+        endereco: props.dadosReserva.endereco || '',
+        hotel: props.dadosReserva.hotel || '',
+        quarto: props.dadosReserva.quarto || '',
+        zona: props.dadosReserva.zona || '',
+        comentario: props.dadosReserva.comentario || ''
+    });
 
-    })
+    useEffect(() => {
+        setDadosReserva({
+            dataReserva: (props.dadosReserva.dataReserva || '').substr(0, 10),
+            endereco: props.dadosReserva.endereco || '',
+            hotel: props.dadosReserva.hotel || '',
+            quarto: props.dadosReserva.quarto || '',
+            zona: props.dadosReserva.zona || '',
+            comentario: props.dadosReserva.comentario || ''
+        });
+    }, [props.dadosReserva]);
 
     useEffect(() => {
         setOptions(optionForm)
     },[])
 
-    const handleChange = (e) => {
+    const handleChange = useCallback((e) => {
+        const { name, value } = e.target;
+        setDadosReserva(prevDados => ({
+            ...prevDados,
+            [name]: value
+        }));
+    }, []);
+
+    const handerEdit = async (e) => {
         e.preventDefault();
-        const name = e.target.name
-        const value = e.target.value
-
-        const newFormFields = { ...dadosReserva ,[name]: value}
-        setDadosReserva(newFormFields)
-    }
-
-    const handerEdit = (e) => {
-        e.preventDefault();
-
-        instance.put(`/reserva/${props.idR}`, JSON.stringify(dadosReserva))
-        .then((response) => {
-            console.log(response)
+        setModalSpinner(true);
+        let success = false;
+        
+        try {
+            const response = await editarReserva(props.idR, dadosReserva);
             if (response.data) {
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva" , titulo: "Reserva"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                                setModalSpinner(false)
-                                props.setUpdateCount(true)
-                                document.getElementById(`CloseEditarTour${props.idR}`).click()
-                },3000)
-            }else{
-                setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Reserva"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
-                throw new Error('Network response was not ok');
+                setModalStatus(prevArray => [...prevArray, {id: 3, mostrar: true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}]);
+                success = true;
+            } else {
+                throw new Error('Erro de Conexão com banco de dados');
             }
-        }).catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e , titulo: "Reserva"}])
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
 
-    }
+        } catch (error) {
+            console.error("Erro na edição da reserva:", error);
+            const errorMessage = error.message || "Erro desconhecido ao Salvar Reserva";
+            setModalStatus(prevArray => [...prevArray, {id: 3, mostrar: true, status: false, message: errorMessage, titulo: "Reserva"}]);
+        } finally {
+            setTimeout(() => {
+                setModalStatus([]);
+                setModalSpinner(false);
+                
+                if (success) {
+                    props.setUpdateCount(prevCount => prevCount + 1); 
+                    if (window.$ && window.$(`#${MODAL_ID}`)) {
+                        window.$(`#${MODAL_ID}`).modal('hide');
+                    } else if (document.getElementById(MODAL_ID)) {
+                        document.getElementById(MODAL_ID).querySelector('[data-dismiss="modal"]').click();
+                    }
+                }
+            }, 3000);
+        }
+    };
 
     return (
         <div className="modal fade" tabindex="-1" id={`reservaEditar${props.idR}`} data-backdrop="static" data-keyboard="false" role="dialog" aria-labelledby="exampleModalLabel"

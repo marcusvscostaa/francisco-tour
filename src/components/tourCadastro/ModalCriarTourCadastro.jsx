@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { createTourCadastro, updateTourCadastro } from '../../FranciscoTourService.js'; // Função de POST
+import { createTourCadastro, updateTourCadastro } from '../../FranciscoTourService.js';
 import optionForm from "../lista.json"
-import $ from 'jquery';
 
 export default function ModalCriarTourCadastro(props) {
     const [formData, setFormData] = useState({
@@ -16,7 +15,6 @@ export default function ModalCriarTourCadastro(props) {
 
     const isEditing = !!props.tourParaEdicao;
     const modalTitle = isEditing ? "Editar Tour" : "Novo Tour de Cadastro";
-    const submitButtonText = isEditing ? "Salvar Alterações" : "Salvar Cadastro";
     const modalId = isEditing ? `modalEditarTourCadastro-${props.tourParaEdicao.id_tour}` : 'modalCriarTourCadastro';
 
     useEffect(() => {

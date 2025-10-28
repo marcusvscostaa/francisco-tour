@@ -132,8 +132,12 @@ export default function TabelaComissoes(){
                                 </tr>
                             </thead>
                             <tbody>
-                                {dadoMensal&&dadoMensal.filter((item) => item.status === "Pago").map((dado) => {
-                                    return(
+                                {dadoMensal&&dadoMensal.filter((item) => item.status === "Pago").sort((a, b) => {
+                                    const dateA = new Date(a.dataPagamento.substr(0, 10));
+                                    const dateB = new Date(b.dataPagamento.substr(0, 10));
+                                    return dateB - dateA;
+                                }).map((dado) => {
+                                                        return(
                                         <tr className="text-left">
                                             <td>{dado.idPagamento}</td>
                                             <td>{dado.nome}</td>

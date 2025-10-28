@@ -1,105 +1,157 @@
-import { Fragment, useEffect, useState, useRef } from "react";
+import { Fragment, useEffect, useState, useMemo, useCallback } from "react";
 import RowTabelaChild from "./RowTabelaChild";
 import ModalPagamento from "./ModalPagamento";
 import ModalComentario from "./ModalComentario";
 import ModalDeleteReserva from "./ModalDeleteReserva";
 import ModalEditarReserva from "./ModalEditarReserva";
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-        }
-});
+import { 
+    editarStatusReserva, 
+    editarStatusTours, 
+    editarStatusPagamento 
+} from '../FranciscoTourService';
 
-
+const STATUS = {
+    CONFIRMADO: { status: 'Confirmado', className: "fas fa-check-circle text-success", isDisabled: false },
+    CANCELADO: { status: 'Cancelado', className: "fas fa-ban text-danger", isDisabled: true }
+};
 
 export default function RowTabela(props){
+const { 
+        reserva, 
+        tour, 
+        pagamentoreservas, 
+        updateCount: parentUpdateCount, 
+        setUpdateCount: setParentUpdateCount, 
+        index 
+    } = props;
+
     const [collapseTable, setCollapseTable] = useState(false);
-    const [pagamento, setPagamento] = useState(false);
-    const [updateCount, setUpdateCount] = useState(false)
-    const pagamentoreservas = (props.pagamentoreservas);
-    const dadosTour =(props.tour).filter((tourR) => tourR.id_reserva === props.reserva.idR)
-    const valorTotal = dadosTour.filter((tourR) => tourR.status === 'Confirmado').reduce((sum, element)=> sum + (element.quantidadeAdultos*element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 0);
-    const [statusReserva, setStatusReserva] = useState('Confirmado')
-    const[disabledButton, setDisabledButton] = useState(false)
-    const dataISO = props.reserva.dataReserva.substr(0, 10); 
-    const dataFormatadaBr = dataISO.split('-').reverse().join('/');
+    const [valorPago, setValorPago] = useState(0); 
+    const [statusReserva, setStatusReserva] = useState(STATUS.CONFIRMADO);
+    
+    const dadosTour = useMemo(() => 
+        tour.filter((tourR) => tourR.id_reserva === reserva.idR), 
+        [tour, reserva.idR]
+    );
 
-    const nomeCompleto = props.reserva.nome;
-    const partesDoNome = nomeCompleto ? nomeCompleto.trim().split(/\s+/) : []; 
+    const valorTotal = useMemo(() => 
+        dadosTour
+            .filter((tourR) => tourR.status === STATUS.CONFIRMADO.status)
+            .reduce((sum, element) => 
+                sum + (element.quantidadeAdultos * element.valorAdulto) + (element.quantidadeCriancas * element.valorCrianca), 
+                0
+            ),
+        [dadosTour]
+    );
 
-    let nomeExibido = '';
+    const { dataISO, dataFormatadaBr } = useMemo(() => {
+        const dataISO = reserva.dataReserva.substr(0, 10); 
+        return {
+            dataISO,
+            dataFormatadaBr: dataISO.split('-').reverse().join('/'),
+        };
+    }, [reserva.dataReserva]);
 
-    if (partesDoNome.length === 1) {
-        nomeExibido = partesDoNome[0];
-    } else if (partesDoNome.length > 1) {
-        const primeiroNome = partesDoNome[0];
-        const ultimoSobrenome = partesDoNome[partesDoNome.length - 1]; 
-        nomeExibido = `${primeiroNome} ${ultimoSobrenome}`;
-    }
-
-    useEffect(()=>{
-        if(props.reserva.status){          
-            if(props.reserva.status === 'Confirmado'){
-                setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-                setDisabledButton(false)
-            }else if(props.reserva.status === 'Pendente'){
-                setStatusReserva({status: 'Pendente', className: "fas fa-exclamation-triangle text-warning"})
-            }else if(props.reserva.status === 'Cancelado'){
-                setDisabledButton(true)
-                setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
-            }            
-        }else{
-            setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-        }
-        if(pagamentoreservas){
-           setPagamento(pagamentoreservas.filter((item) => (item.id_reserva === props.reserva.idR)).filter((item) => item.status === "Pago").reduce((sum, element)=> sum + element.valorPago, 0))
+    const nomeExibido = useMemo(() => {
+        const nomeCompleto = reserva.nome;
+        const partesDoNome = nomeCompleto ? nomeCompleto.trim().split(/\s+/) : []; 
         
+        if (partesDoNome.length === 1) {
+            return partesDoNome[0];
+        } else if (partesDoNome.length > 1) {
+            const primeiroNome = partesDoNome[0];
+            const ultimoSobrenome = partesDoNome[partesDoNome.length - 1]; 
+            return `${primeiroNome} ${ultimoSobrenome}`;
         }
-        setUpdateCount(false)
-    },[props.updateCount, props.pagamentoreservas, props.reserva.status])
+        return '';
+    }, [reserva.nome]);
 
-    const handleChange = (e)=> {
-        instance.post('/reservas/status', JSON.stringify({status: e.target.value, idR: props.reserva.idR}))
-        .catch(err => {console.log(err)})
-   
-        if(e.target.value === 'Confirmado'){
-            setDisabledButton(false)
-            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-            dadosTour.map(item => {
-                instance.post('/tours/status', JSON.stringify({status:'Confirmado', idtour: item.idtour}))
-                .catch(err => {console.log(err)})  
-            })
-            pagamentoreservas.map(item => {
-                if(item.id_reserva === props.reserva.idR) {
-                    instance.post('/pagamentos/status', JSON.stringify({status: 'Pago', idPagamento: item.idPagamento}))
-                    .catch(err => {console.log(err)})  
-                    props.setUpdateCount(true)
-                }
-            })
-        }else if(e.target.value === 'Pendente'){
-            setStatusReserva({status: e.target.value, className: "fas fa-exclamation-triangle text-warning"})
-        }else if(e.target.value === 'Cancelado'){
-            setDisabledButton(true)
-            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-            dadosTour.map(item => {
-                instance.post('/tours/status', JSON.stringify({status:'Cancelado', idtour: item.idtour}))
-                .catch(err => {console.log(err)})  
-                props.setUpdateCount(true)
-            })
-            pagamentoreservas.map(item => {
-                if(item.id_reserva === props.reserva.idR) {
-                    instance.post('/pagamentos/status', JSON.stringify({status: 'Cancelado', idPagamento: item.idPagamento}))
-                    .catch(err => {console.log(err)}) 
-                    props.setUpdateCount(true)   
-                }
-            })   
+    useEffect(() => {
+        if (!reserva) {
+            return;
         }
+
+        let initialStatus = STATUS.CONFIRMADO;
+        if(reserva.status) { 
+            switch(reserva.status) {
+                case STATUS.CONFIRMADO.status:
+                    initialStatus = STATUS.CONFIRMADO;
+                    break;
+                case STATUS.CANCELADO.status:
+                    initialStatus = STATUS.CANCELADO;
+                    break;
+                default:
+                    break;
+            }
+        }
+        setStatusReserva(initialStatus);
+        if (pagamentoreservas) {
+           const pago = (pagamentoreservas || []) 
+                .filter((item) => item.id_reserva === reserva.idR && item.status === "Pago")
+                .reduce((sum, element) => sum + element.valorPago, 0);
+           setValorPago(pago);
+        }
+        
+    }, [parentUpdateCount, pagamentoreservas, reserva])
+
+    const handleStatusUpdate = useCallback(async (status) => {
+        try {
+        
+            await editarStatusReserva({ status, idR: reserva.idR });
+            
+            const toursToUpdate = dadosTour.map(item => 
+                editarStatusTours({ status: status, idtour: item.idtour })
+            );
+
+            const pagamentosToUpdate = (pagamentoreservas || [])
+                .filter(item => item.id_reserva === reserva.idR)
+                .map(item => {
+                    let pagamentoStatus = item.status; 
+                    if (status === STATUS.CONFIRMADO.status) {
+                        pagamentoStatus = 'Pago'; 
+                    } else if (status === STATUS.CANCELADO.status) {
+                        pagamentoStatus = 'Cancelado'; 
+                    } 
+
+                    return editarStatusPagamento({ 
+                        status: pagamentoStatus, 
+                        idPagamento: item.idPagamento 
+                    });
+                });
+
+            await Promise.all([...toursToUpdate, ...pagamentosToUpdate]);
+
+            const newStatus = STATUS[Object.keys(STATUS).find(key => STATUS[key].status === status)];
+            setStatusReserva(newStatus || STATUS.CONFIRMADO);
+            setParentUpdateCount();
+
+        } catch (err) {
+            console.error(`Erro ao atualizar status para ${status}:`, err);
+        }
+    }, [reserva?.idR, dadosTour, pagamentoreservas, setParentUpdateCount]);
+
+    const handleDropdownChange = (e) => {
+        handleStatusUpdate(e.target.value);
     }
+    
+    const getPagamentoBadge = () => {
+        if (valorTotal <= valorPago) {
+            return <span className="badge badge-pill badge-success">Pago</span>;
+        }
+        if (valorTotal > valorPago && valorPago > 0) {
+            return <span className="badge badge-pill badge-warning">Pendente</span>;
+        }
+        if (valorPago === 0 && valorTotal !== 0) {
+            return <span className="badge badge-pill badge-danger">Não Pago</span>;
+        }
+        return null;
+    };
+    
+    const isButtonDisabled = statusReserva.isDisabled;
 
-
+    const handleCollapseClick = () => {
+        setCollapseTable(prev => !prev);
+    }
     return (
         <Fragment>
             <tr id={props.reserva.idR}>
@@ -125,12 +177,16 @@ export default function RowTabela(props){
                         {/* collapseTable && <RowTabelaChild dadosTour={dadosTour} collapseTable={collapseTable} idcollapseTable={idcollapseTable}/> */}    
                 </td>
                 <td><a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#modal${props.reserva.idR}`}>
-                    {valorTotal > pagamento && pagamento > 0 && <span className="badge badge-pill badge-warning">Pendente</span>}
-                    {valorTotal <= pagamento && <span className="badge badge-pill badge-success">Pago</span>}
-                    {pagamento == 0 && valorTotal != 0 && <span className="badge badge-pill badge-danger">Não Pago</span>}
+                        {getPagamentoBadge()}
                     </a>
-                    <ModalPagamento id={props.reserva.idR} disabledButton={disabledButton} pagamento={pagamentoreservas} updateCount={props.updateCount} valorTotal={valorTotal} setUpdateCount={props.setUpdateCount}/>
-                    </td>
+                    <ModalPagamento 
+                        id={reserva.idR} 
+                        disabledButton={isButtonDisabled} 
+                        pagamento={pagamentoreservas} 
+                        updateCount={parentUpdateCount} 
+                        valorTotal={valorTotal} 
+                        setUpdateCount={setParentUpdateCount}
+                    />                    </td>
                 <td className="text-left"><a href={`https://api.whatsapp.com/send?phone=${props.reserva.telefone}`} title="Abrir Whatsapp" target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i> {props.reserva.telefone}</a></td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
                 <td>
@@ -138,7 +194,7 @@ export default function RowTabela(props){
                     <i className="fas fa-comment-alt"></i>
                         &nbsp; Ver
                     </a>
-                    <ModalComentario title={'Comentário Reserva'} id={props.reserva.idR} comentario={props.reserva.comentario}/>
+                    <ModalComentario title={'Comentário Reserva'} id={reserva.idR} comentario={reserva.comentario}/>
                 </td>
                 <td>
                     <div className="dropdown">
@@ -146,20 +202,27 @@ export default function RowTabela(props){
                     <a type="button" data-toggle="dropdown" aria-expanded="false">
                     <i title={statusReserva.status} className={statusReserva.className}></i>
                     </a>
-                    <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
-                        <button className="dropdown-item" value="Confirmado" onClick={handleChange}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
-                        <button className="dropdown-item" value="Cancelado"  onClick={handleChange}><i className="fas fa-ban text-danger"></i> Cancelado</button>
-                    </div>
+                        <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
+                            <button className="dropdown-item" value={STATUS.CONFIRMADO.status} onClick={handleDropdownChange}><i className={STATUS.CONFIRMADO.className}></i> {STATUS.CONFIRMADO.status}</button>
+                            <button className="dropdown-item" value={STATUS.CANCELADO.status} onClick={handleDropdownChange}><i className={STATUS.CANCELADO.className}></i> {STATUS.CANCELADO.status}</button>
+                        </div>
                     </div>                    
                 </td>
                 <td>
                     <button type="button" title="Editar" className="btn btn-sm mr-2 btn-warning" data-toggle='modal' data-target={`#reservaEditar${props.reserva.idR}`}><i className="fas fa-edit"></i></button>
-                    <ModalEditarReserva dadosReserva={props.reserva} setUpdateCount={props.setUpdateCount} idR={props.reserva.idR}/>
+                    <ModalEditarReserva dadosReserva={reserva} setUpdateCount={setParentUpdateCount} idR={reserva.idR}/>        
                     <button type="button" title="Deletar" data-toggle='modal' data-target={`#reservaDelete${props.reserva.idR}`}className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                    <ModalDeleteReserva idR = {props.reserva.idR} setUpdateCount={props.setUpdateCount}/>
+                    <ModalDeleteReserva idR={reserva.idR} setUpdateCount={setParentUpdateCount}/>
                 </td>
             </tr>
-                {collapseTable && <RowTabelaChild idcollapseTable={props.reserva.idR+'x'} disabledButton={disabledButton} dadosTour={dadosTour} updateCount={props.updateCount} reserva={props.reserva} setUpdateCount={props.setUpdateCount}/>}
+                {collapseTable && <RowTabelaChild 
+                    idcollapseTable={reserva.idR + 'x'} 
+                    disabledButton={isButtonDisabled} 
+                    dadosTour={dadosTour} 
+                    updateCount={parentUpdateCount} 
+                    reserva={reserva} 
+                    setUpdateCount={setParentUpdateCount}
+                />}
         </Fragment>
     )
 }

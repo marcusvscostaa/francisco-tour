@@ -1,21 +1,28 @@
-import { useEffect, useState } from "react"
+import { useMemo } from "react"
 
 export default function AgendaReservaChild(props){
-    const [tourFilter, setTourFilter] = useState({})
-    useEffect(()=>{
-        let test = {}
-        props.tiposTours.map((item) => {
-            setTourFilter((prev)=>({
-                ...prev,
-                [item.tour]: props.tourPorMes.filter((valor) => valor.tour === item.tour).reduce((sum, dado) => sum + (dado.quantidadeAdultos + dado.quantidadeCriancas),0)
-            }))
-        })
+    const tourFilter = useMemo(() => {
+            let filterResult = {};
+            
+            const toursAgrupados = props.tourPorMes.reduce((acc, dado) => {
+                const quantidade = dado.quantidadeAdultos + dado.quantidadeCriancas;
+                acc[dado.tour] = (acc[dado.tour] || 0) + quantidade;
+                return acc;
+            }, {});
+            
+            props.tiposTours.forEach((item) => {
+                filterResult[item.tour] = toursAgrupados[item.tour] || 0;
+            });
 
-    },[props.tourPorMes])
+            return filterResult;
+            
+        }, [props.tourPorMes, props.tiposTours]);
     return (
         <div>
         {props.tiposTours.map(tour => {
-            if(tourFilter[tour.tour] !== 0){
+            const quantidade = tourFilter[tour.tour] || 0;
+            if(quantidade > 0){
+                
                 return(
                     <div className='border font-weight-light d-flex m-0'>
                         <div className="w-25 border-right m-auto"><p className="m-0">{tourFilter[tour.tour]} </p></div>

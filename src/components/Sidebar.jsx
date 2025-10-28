@@ -1,25 +1,51 @@
 import { useEffect, useState } from "react"
-import $ from "jquery"
 import AuthService from '../AuthService';
-
 
 export  default function Sidebar(props){
     const [useName, setUsername] =  useState('USER')
+    const [toggle, setToggle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
     
     useEffect(()=>{
-        if(localStorage.getItem('user') !== null){
-            setUsername(JSON.parse(localStorage.getItem("user")).user)
+        const currentUser = AuthService.getCurrentUser();
+        if(currentUser && currentUser.user && currentUser.user.nome){
+            setUsername(currentUser.user.nome);
+        } else if (currentUser && currentUser.user) {
+             setUsername(currentUser.user);
         }
+        const handleResize = () => {
+            const width = window.innerWidth;
+            const sidebarElement = document.getElementById('accordionSidebar');
+
+            if (width < 768) {
+
+            }
+            
+            if (width < 480 && !sidebarElement.classList.contains("toggled")) {
+                document.body.classList.add("sidebar-toggled");
+                sidebarElement.classList.add("toggled");
+            }
+        };
+
+        window.addEventListener("resize", handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     },[])
 
-    const [toggle, setToggle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
-    const sidebarToggle =() =>{
-        if(toggle === "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion"){
-            setToggle("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled")
-        }else{
-            setToggle("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
-        }
+    const sidebarToggle = () => {
+        setToggle(prevToggle => {
+            if (prevToggle.includes("toggled")) {
+                document.body.classList.remove("sidebar-toggled"); 
+                return "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion";
+            } else {
+                document.body.classList.add("sidebar-toggled"); 
+                return "navbar-nav bg-gradient-primary sidebar sidebar-dark accordion toggled";
+            }
+        });
     }
+    
+    const handleLogout = () => {
+        AuthService.logout();
+        window.location.reload(true);
+    };
 
     return(
         <>
@@ -84,7 +110,7 @@ export  default function Sidebar(props){
 
         <hr className="sidebar-divider" />
         <li className="nav-item">
-            <a className="nav-link" onClick={() =>{ AuthService.logout(); window.location.reload(true);}}>
+            <a className="nav-link" onClick={handleLogout}>
                 <i className="fas fa-sign-out-alt	"></i>
                 <span>Sair</span></a>
         </li>
@@ -133,7 +159,7 @@ export  default function Sidebar(props){
                             {/* Dropdown - User Information */}
                             <div className="dropdown-menu dropdown-menu-right shadow animated--grow-in"
                                 aria-labelledby="userDropdown">
-                                <a className="dropdown-item" onClick={() => {AuthService.logout();window.location.reload(true);}} data-toggle="modal" data-target="#logoutModal">
+                                <a className="dropdown-item" onClick={handleLogout} data-toggle="modal" data-target="#logoutModal">
                                     <i className="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Sair
                                 </a>

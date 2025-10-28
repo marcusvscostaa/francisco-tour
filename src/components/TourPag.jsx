@@ -1,12 +1,33 @@
-import { use, useEffect } from "react"
-import { useState } from "react"
+import { useMemo, useEffect, useState } from "react"
+
+const formatarNumero = (valor) => {
+    const numero = typeof valor === 'number' ? valor : parseFloat(valor);
+    if (isNaN(numero)) {
+        return "0,00";
+    }
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2, // Garante que dois decimais sejam exibidos
+        maximumFractionDigits: 2,
+    }).format(numero);
+};
+
+const parseValorInput = (input) => {
+    if (typeof input !== 'string') return input;
+    const cleanInput = input.replace(/\./g, '').replace(',', '.');
+    return parseFloat(cleanInput) || 0;
+};
 
 export default function TourPag(props){
 
-    const [valorRestante, setValorRestante] = useState(props.valorTotal)
     const [nomeArquivo, setNomeArquivo] = useState("Escolher Arquivo")
     const [image, setImage] = useState("")
     const [arquvio, setArqivo] = useState("")
+
+    const valorRestante = useMemo(() => {
+        const valorPago = parseFloat(props.dadosPagForm.valorPago || 0);
+        return props.valorTotal - valorPago;
+    }, [props.valorTotal, props.dadosPagForm.valorPago]);
 
     useEffect(()=>{
         if(props.editPag){
@@ -17,11 +38,10 @@ export default function TourPag(props){
                 comentario: props.dados[0].comentario,
             })
             if(props.type === 'Pagamento'){
-                setImage(`${process.env.REACT_APP_BASE_URL}/imagem/${props.dados[0].idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`)
+                setImage(`${process.env.REACT_APP_BASE_URL}/pagamento/comprovante/${props.idPag}`)
             }else{
                 setImage(`${process.env.REACT_APP_BASE_URL}/imagemEstorno/${props.dados[0].idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`)
             }
-            setValorRestante(props.dados[0].valorPago)
         }
     },[])
     
@@ -30,9 +50,7 @@ export default function TourPag(props){
         const name = e.target.name
         const value = e.target.value
         if(name === "valorPago"){
-            
-            setValorRestante(value)
-            const newFormFields = { ...props.dadosPagForm,valorRestante:(props.valorTotal - valorRestante) ,[name]: value}
+            const newFormFields = { ...props.dadosPagForm ,[name]: value}
             props.setDadosPagForm(newFormFields)
         }else if(name === "comprovante"){
             setNomeArquivo(e.target.files[0])
@@ -79,7 +97,7 @@ export default function TourPag(props){
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
                       <label for="numeroAdultos" className="form-label">Valor {props.devido}</label>
-                      <input type="number"  value={props.valorTotal.toFixed(2)} className="form-control form-control-sm disabledTextInput" id="numeroAdultos"/>
+                      <input type="text"  value={formatarNumero(props.valorTotal)} className="form-control form-control-sm disabledTextInput" id="numeroAdultos"/>
                       </fieldset>
                   </div>
                   <div className="col-md-2 mb-3">
@@ -90,13 +108,13 @@ export default function TourPag(props){
                   <div className="col-md-2 mb-3">
                       <fieldset disabled>
                       <label for="numeroCriancas" className="form-label">Valor Restante</label>
-                      <input type="number" name="valorRestante" className="form-control form-control-sm" onChange={handleChange} value={(props.valorTotal - valorRestante).toFixed(2)} id="numeroCriancas"/>
+                      <input type="text" name="valorRestante" className="form-control form-control-sm" onChange={handleChange} value={formatarNumero(valorRestante)} id="numeroCriancas"/>
                       </fieldset>
                   </div>
                   <div className="col-md-3 mb-3">
                       <label for="valorCriancas"  className="form-label">Comprovante</label>
                             <div className="custom-file mb-2">
-                                <input type="file" name="comprovante" className="custom-file-input form-control-sm" id="customFile" onChange={handleChange} disabled/>
+                                <input type="file" name="comprovante" className="custom-file-input form-control-sm" id="customFile" onChange={handleChange} />
                                 <label className="custom-file-label col-form-label-sm" for="customFile">{nomeArquivo !== "Escolher Arquivo"?(nomeArquivo.name):nomeArquivo}</label>
                             </div>
                             <img className="img-thumbnail" src={image}></img>

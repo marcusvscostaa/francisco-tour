@@ -1,113 +1,117 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, useMemo, useCallback } from "react"
 import TourPag from "./TourPag"
-import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
 import ModalDelete from "./ModalDelete";
 import TabalaPagamento from "./TabelaPagamento";
 import optionForm from "./lista.json"
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
+import {createPagamento, editarPagamento } from "../FranciscoTourService";
 
-const idPagamento = uid().toString();
 
 export default function ModalPagamento(props){
     const [showAddPag, setShowAddPag] = useState(false)
     const [showEditPag, setShowEditPag] = useState({status: false})
     const [imagemUpload, setImagemUpload] = useState(false);
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.id});
-    const dadosPag = props.pagamento.filter((item) => item.id_reserva === props.id);
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
     const [options, setOptions] = useState("");
+
+    const dadosPag = useMemo(() => 
+        (props.pagamento || []).filter((item) => item.id_reserva === props.id),
+        [props.pagamento, props.id]
+    );
+
+    const valorPagoAtual = useMemo(() => 
+        dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) => sum + item.valorPago, 0),
+        [dadosPag]
+    );
+    
+    const valorRestante = useMemo(() => 
+        props.valorTotal - valorPagoAtual,
+        [props.valorTotal, valorPagoAtual]
+    );
+
+    const valorParaFormularioEdicao = useMemo(() => {
+        if (!showEditPag.status) return valorRestante;
+        const pagEditado = dadosPag.find(pag => pag.idPagamento === showEditPag.id);
+        if (!pagEditado) return valorRestante;
+        return props.valorTotal - (valorPagoAtual - pagEditado.valorPago);
+    }, [valorRestante, showEditPag.status, showEditPag.id, dadosPag, valorPagoAtual, props.valorTotal]);
+
+    const sortedPagamentos = [...dadosPag].sort((a, b) => {
+        const dateA = new Date(a.dataPagamento.substr(0, 10));
+        const dateB = new Date(b.dataPagamento.substr(0, 10));
+        return dateB - dateA;
+    });
     
     useEffect(()=>{
         setOptions(optionForm)
     },[props.updateCount])
     
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
+        let success = true; 
 
-        const formData = new FormData();
-            /*if(imagemUpload){formData.append("comprovante", imagemUpload)}*/
+        try{
+            const formData = new FormData();
+            if(imagemUpload){formData.append("imagem", imagemUpload)};
             if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
             if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
             if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
             if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
             if(dadosPagForm.valorRestante){formData.append("valorRestante", dadosPagForm.valorRestante);}
             if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-            if(idPagamento){formData.append("idPagamento", idPagamento);}
-            formData.append("status", "Pago");
 
-            instance.post('/pagamento', formData)
-            .then(response => {
-                if (response.data){
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                        setShowAddPag(false)
-                        setDadosPagForm({id_reserva: props.id})
-                        props.setUpdateCount(true)
-                    },2000)
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                        setModalSpinner(false)
-                    },2000)
-                }
-            }).catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-            },2000)})
+            const pagamentoResponse = await createPagamento(formData);
+            if (!pagamentoResponse.data) throw new Error('Falha ao Salvar Pagamento');
             
-    }
+            setModalStatus(prev => [...prev, {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}]);
 
+        }catch{
+            success = false;
+            const errorMessage = e.message.includes("Falha") ? e.message : `Erro de Conexão/Sistema: ${e.message}`;
+            setModalStatus(prev => [...prev, {id:5, mostrar:true, status: false, message: errorMessage, titulo: "Erro Global"}]);
+            console.error("Erro no fluxo de submissão:", e);
+        }finally {            
+            setTimeout(() => {
+                setModalStatus([]); 
+                props.setUpdateCount(prevCount => prevCount + 1);
+                setShowEditPag({status: false})
+            }, 3000); 
+        }
+    };
 
-    const handerEdit = (e) => {
+    const handerEdit = async (e) => {
         e.preventDefault();
-        const formData = new FormData();
-        //if(imagemUpload){formData.append("comprovante", imagemUpload)}
-        if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
-        if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
-        if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
-        if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+        let success = true; 
 
-        instance.put(`/pagamento/${showEditPag.id}`, formData)
-        .then(response => {
-            if(response.data){
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Editar Pagamento", titulo: "Pagamento"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                    props.setUpdateCount(true)
-                    setShowEditPag({status: false})
-                    setImagemUpload(false)   
-                },2000)
-            }else{
-                setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                    setModalSpinner(false)
-                },2000)
-            }
-        })
-        .catch(e => {
-            setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Editar Pagamento: " + e, titulo: "Pagamento"}])
-            setModalSpinner(true)
-            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))
-                setModalSpinner(false)
-            },2000)
-        })
+        try{
+            const formData = new FormData();
+            if(imagemUpload){formData.append("imagem", imagemUpload)};
+            if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+            if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+            if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+
+            const pagamentoResponse = await editarPagamento(showEditPag.id ,formData);
+            if (!pagamentoResponse.data) throw new Error('Falha ao Salvar Pagamento');
+            
+            setModalStatus(prev => [...prev, {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}]);
+
+        }catch{
+            success = false;
+            const errorMessage = e.message.includes("Falha") ? e.message : `Erro de Conexão/Sistema: ${e.message}`;
+            setModalStatus(prev => [...prev, {id:5, mostrar:true, status: false, message: errorMessage, titulo: "Erro Global"}]);
+            console.error("Erro no fluxo de submissão:", e);
+        }finally {            
+            setTimeout(() => {
+                setModalStatus([]); 
+                props.setUpdateCount(prevCount => prevCount + 1);
+                setShowEditPag({status: false})
+            }, 3000); 
+        }
+
 
     }
 
@@ -141,7 +145,7 @@ export default function ModalPagamento(props){
                         </tr>
                     </thead>
                     <tbody>
-                    {dadosPag&&dadosPag.map( (pag) =>
+                    {dadosPag&&sortedPagamentos.map( (pag) =>
                     <tr>
                         <TabalaPagamento updateCount={props.updateCount} disabledButton={props.disabledButton} setUpdateCount={props.setUpdateCount} pag={pag} />
                         <td>
@@ -195,7 +199,7 @@ export default function ModalPagamento(props){
                         removerPag={setShowAddPag} 
                         type={"Pagamento"} 
                         devido={'Devido'}  
-                        valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0))}
+                        valorTotal = {valorRestante}
                         dadosPagForm={dadosPagForm} 
                         setImagemUpload={setImagemUpload} 
                         setDadosPagForm = {setDadosPagForm}/>
@@ -218,7 +222,7 @@ export default function ModalPagamento(props){
                             editPag={showEditPag.status} 
                             idPag={showEditPag.id} 
                             dados={dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)} 
-                            valorTotal = {(props.valorTotal - dadosPag.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valorPago,0) + dadosPag.filter((pag) => pag.idPagamento === showEditPag.id)[0].valorPago)} 
+                            valorTotal = {valorParaFormularioEdicao} 
                             dadosPagForm={dadosPagForm} 
                             setImagemUpload={setImagemUpload} 
                             setDadosPagForm = {setDadosPagForm}/>

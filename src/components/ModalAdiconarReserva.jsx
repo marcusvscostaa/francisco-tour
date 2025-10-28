@@ -15,7 +15,7 @@ export default function ModalAdiconarReserva(props){
                             </button>
                         </div>
                         <div className="modal-body">
-                            <Formulario title="Dados Reserva" idCliente={{status: true, id: props.id}}addReserva={true} dataClient ={props.dados} />                  
+                            <Formulario title="Dados Reserva" idCliente={{status: true, id: props.id}} addReserva={true} dataClient ={props.dados} />                  
                         </div>
                     </div>
                 </div>

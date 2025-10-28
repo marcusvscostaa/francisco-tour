@@ -1,5 +1,5 @@
 
-import { useEffect, useState} from 'react'
+import { useEffect, useState, useMemo, useCallback } from 'react'
 import AgendaReservaChild from './AgendaReservaChild';
 import { getTiposTours, getTourPorMes, getDataDiferentes } from "../FranciscoTourService";
 
@@ -16,80 +16,48 @@ export default function AgendaReserva() {
     const [arrdataDiferentes, setArrDataDiferentes] = useState([]);
     const [width, setWidth] = useState(window.innerWidth);
 
-    useEffect(() => {
+    const fetchData = useCallback(async () => {
+        try {
+            const [tiposData, toursData, datasDiferentesData] = await Promise.all([
+                getTiposTours(),
+                getTourPorMes(month, year),
+                getDataDiferentes(month, year)
+            ]);
+            
+            setTiposTours(tiposData.fatal || tiposData.code ? false : tiposData);
+
+            setTourPorMes(toursData);
+
+            setDataDiferentes(datasDiferentesData);
+            const arr = datasDiferentesData.map(data => data.data.substr(8, 2)).sort();
+            setArrDataDiferentes(arr);
+
+        } catch (error) {
+            console.error("Erro ao carregar dados da Agenda:", error);
+        }
+    }, [month, year]);
+    
+    const diasDoMes = useMemo(() => {
         let arr = []
         let dayone = new Date(year, month, 1).getDay();
         let lastdate = new Date(year, month + 1, 0).getDate();
-        let dayend = new Date(year, month, lastdate).getDay();
-        let monthlastdate = new Date(year, month, 0).getDate();
-        let lit = "";
-
-        setTimeout(() => {
-            getTiposTours().then(
-                data => {
-                    if(data.fatal || data.code){
-                        setTiposTours(false);
-                    }else{
-                        setTiposTours(data)
-                    }
-                }
-            ).catch((error) => console.log(error));
-        }, "300");
-
-        setTimeout(() => {
-            getTourPorMes(month, year).then(
-                data => {setTourPorMes(data)
-                }
-            ).catch((error) => console.log(error));
-        }, "600");
-
-        setTimeout(() => {
-            getDataDiferentes(month, year).then(
-                data => {
-                    setDataDiferentes(data)
-                    let arr = []
-                    data.map(data => {
-                        arr.push(data.data.substr(8,2))
-                    })
-                    setArrDataDiferentes(arr.sort())
-                }
-            ).catch((error) => console.log(error));
-        }, "900");
-
-    
-        for (let i = dayone; i > 0; i--) {
-                arr.push('')
+        for (let i = 0; i < dayone; i++) {
+            arr.push('');
         }
-    
         for (let i = 1; i <= lastdate; i++) {
-            arr.push(i)
-    
-            let isToday = i === date.getDate()
-                && month === new Date().getMonth()
-                && year === new Date().getFullYear()
-                ? "active"
-                : "";
-            lit += `<li class="${isToday}">${i}</li>`;
+            arr.push(i);
         }
-    
-        for (let i = dayend; i < 6; i++) {
-            lit += `<li class="inactive">${i - dayend + 1}</li>`
-            arr.push('')
-        }
-    
-        setDateList(()=> arr)
-        setTimeout(()=> {
-            
+        return arr;
+    }, [month, year]);
 
-        },2000)
-        
+    useEffect(() => {
+        fetchData();
+        setDateList(diasDoMes);
         const handleResize = () => setWidth(window.innerWidth);
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-
-
-    }, [month, year])
-
+        
+    }, [month, year, fetchData, diasDoMes]);
 
     const months = [
     'Janeiro',

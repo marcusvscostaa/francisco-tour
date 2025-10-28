@@ -1,42 +1,37 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react";
 import ModalComentario from "./ModalComentario";
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
+import { editarStatusPagamento } from '../FranciscoTourService';
 
 export default function TabalaPagamento(props){
-    const [statusReserva, setStatusReserva] = useState('')
-
+    const getInitialPagStatus = (status) => {
+        if (status === 'Pago') return { status: 'Pago', className: "fas fa-check-circle text-success" };
+        if (status === 'Cancelado') return { status: 'Cancelado', className: "fas fa-ban text-danger" };
+        return { status: '', className: "" };
+    };
+    const [statusLocal, setStatusLocal] = useState(() => getInitialPagStatus(props.pag.status));
 
     useEffect(()=>{
-        if(props.pag.status){          
-            if(props.pag.status === 'Pago'){
-                setStatusReserva({status: 'Pago', className: "fas fa-check-circle text-success"})
-            }else if(props.pag.status === 'Cancelado'){
-                setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
-            }            
-        }   
-    },[props.updateCount])
+        setStatusLocal(getInitialPagStatus(props.pag.status));
+    },[props.pag.status])
 
-    const handleChange = (e)=> {
-        e.preventDefault();
-
-        instance.post('/pagamentos/status', JSON.stringify({status: e.target.value, idPagamento: props.pag.idPagamento}))
-        .catch(err => console.error(err))
-        props.setUpdateCount(true)
-
-        if(e.target.value === 'Pago'){
-            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
+    const handleChange = useCallback(async (e)=> {
+        const newStatusValue = e.target.value;
+        try {
+            await editarStatusPagamento({idPagamento: props.pag.idPagamento, status: newStatusValue });
             
-        }else if(e.target.value === 'Cancelado'){
-            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
+            if(newStatusValue === 'Confirmado'){
+                setStatusLocal({status: newStatusValue, className: "fas fa-check-circle text-success"})
+            }else if(newStatusValue === 'Cancelado'){
+                setStatusLocal({status: newStatusValue, className: "fas fa-ban text-danger"})
+            }
+            
+            props.setUpdateCount(prevCount => prevCount + 1); 
+
+        } catch (err) {
+            console.error("Erro ao atualizar status do Tour:", err);
         }
-    }
+    }, [props.pag.idPagamento, props.setUpdateCount]);
+
     return(
         <>
             <td>{props.pag.idPagamento}</td>
@@ -50,7 +45,7 @@ export default function TabalaPagamento(props){
                 <ModalComentario title={'Comentário Pagamento'} id={props.pag.idPagamento} comentario={props.pag.comentario}/>                
             </td>
             <td>
-                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/imagem/${props.pag.idPagamento}/${localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}`}>
+                <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/pagamento/comprovante/${props.pag.idPagamento}`}>
                     <i className="fas fa-image	"></i>
                     &nbsp; Ver
                 </a>
@@ -59,7 +54,7 @@ export default function TabalaPagamento(props){
                 <div className="dropdown">
                 
                 <a type="button" data-toggle="dropdown" aria-expanded="false">
-                <i title={statusReserva.status} className={statusReserva.className}></i>
+                    <i title={statusLocal.status} className={statusLocal.className}></i>                
                 </a>
                 <div style={{minWidth: "40px"}} className="dropdown-menu dropdown-menu-right">
                     <button className="dropdown-item" value="Pago" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-check-circle text-success"></i> Pago</button>

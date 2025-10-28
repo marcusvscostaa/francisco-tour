@@ -1,22 +1,4 @@
-import { use, useEffect, useState } from "react"
-import $ from "jquery"
-import { redirect } from "react-router";
-
 export default function ModalAlert(props){
-        const [show, setShow] = useState({
-            classNameName: "modal fade show",
-            style: {display: 'block', backgroundColor: "rgba(0, 0, 0, 0.5)", transition: '.15s linear'},
-            dialog: {transition: 'none'}
-        })
-
-        useEffect(()=>{
-/*             window.onload = function(){
-                document.getElementById("meuElemento").click();
-            }
-           
-            setTimeout(()=>{document.getElementById("modalAlert").click(); 
-                if(props.dados.status){window.location="/minhasReservas"};}, 4000) */
-        },[])   
     return (    
     <>  
         <div className="position-fixed bottom-0 right-0 p-3" style={{zIndex: 5, right: 0, bottom: 0}}>

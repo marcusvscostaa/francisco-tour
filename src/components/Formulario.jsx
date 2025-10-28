@@ -1,21 +1,13 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { createCliente, createReserva, createTour, createPagamento } from "../FranciscoTourService";
 import TourForm from "./TourForm";
 import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json"
 import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
 
-const id_reserva = uid().toString();
 const idCliente = uid(16).toString();
-const idPagamento = uid().toString();
 
 function useDebounce(callback, delay) {
     const timeoutRef = useRef(null);
@@ -33,41 +25,53 @@ function useDebounce(callback, delay) {
 
 export default function Formulario(props) {
 
-    const [numberTour, setNumberTour] = useState([1]);
     const [modalSpinner, setModalSpinner] = useState(false);
     const [addTour, setaddTour] = useState(2);
-    const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
-    const [formReserva, setformReserva] = useState({id: id_reserva, status: 'Confirmado'});
+    const [formReserva, setformReserva] = useState({});
     const [formCliente, setformCliente] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);
-    const [comentarioReserva, setcomentarioReserva] = useState("");
     const [options, setOptions] = useState("");
-    const [dadosPagForm, setDadosPagForm] = useState({id_reserva: id_reserva});
-    const [calculoTotal, setcalculoTotal] = useState([
-        { id: "1", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
-        { id: "2", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
-        { id: "3", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
-        { id: "4", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
-        { id: "5", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' },
-        { id: "6", id_reserva: 0, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0,status: 'Confirmado' }
+    const [dadosPagForm, setDadosPagForm] = useState({});
+    const [calculoTotal, setCalculoTotal] = useState([
+        { 
+            id: 1,
+            data:'', 
+            destino: '', 
+            tour: "", 
+            numeroAdultos: 0, 
+            valorAdulto: 0, 
+            numeroCriancas: 0, 
+            valorCriancas: 0,
+        }
     ]);
+    const nextTourId = useRef(2);
     const [modalStatus, setModalStatus] = useState([]);
     const [sugestoesAPI, setSugestoesAPI] = useState([]);
 
     useEffect(() => {
         setOptions(optionForm)
     },[])
-    const handleClick = () => {
-        if (numberTour.length <= 5) {
-            setaddTour(addTour + 1);
-            setNumberTour([...numberTour, addTour]);
+    const adicionarTour = () => {
+        if (calculoTotal.length < 6) {
+            const novoTour = {
+                id: nextTourId.current,
+                data:'', 
+                destino: '', 
+                tour: "", 
+                numeroAdultos: 0, 
+                valorAdulto: 0, 
+                numeroCriancas: 0, 
+                valorCriancas: 0,
+            };
+            
+            setCalculoTotal(prevTours => [...prevTours, novoTour]);
+            nextTourId.current += 1; 
         } else {
-            alert("Não é possivel add mais tour")
+            alert("Não é possivel add mais tour");
         }
+    };
 
-    }
-    
     const buscarSugestoesAPI = async (termoBusca) => {
         if (!termoBusca || termoBusca.length < 3) {
             setSugestoesAPI([]);
@@ -81,7 +85,7 @@ export default function Formulario(props) {
                     format: 'json',
                     addressdetails: 1,
                     limit: 5,
-                    countrycodes: 'cl' // Restringe a busca ao Chile
+                    countrycodes: 'cl' 
                 }
             });
             
@@ -93,24 +97,22 @@ export default function Formulario(props) {
             setSugestoesAPI([]);
         }
     };
+
     const buscarSugestoesDebounced = useDebounce(buscarSugestoesAPI, 500);
  
-    const removerTour = (index) => {
-        setNumberTour(numberTour => { return numberTour.filter(numberTour => numberTour != index) });
-        const dados = calculoTotal;
-        const dadosAtualizados = dados.map((tour) =>
-            tour.id === index ? { ...tour, numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 } : tour
-        );
-        setcalculoTotal(dadosAtualizados)
-    }
+    const removerTour = (tourId) => {
+        setCalculoTotal(prevTours => prevTours.filter(tour => tour.id !== tourId));
+    };
+    
     function handleChange(event) {
         const name = event.target.name
         const value = event.target.value
 
-        const newformCliente = { ...formCliente, id: idCliente ,[name]: value }
+        const newformCliente = { ...formCliente ,[name]: value }
 
         setformCliente(newformCliente)
     }
+
     function handleReserva(event) {
         const name = event.target.name
         const value = event.target.value
@@ -130,117 +132,98 @@ export default function Formulario(props) {
     const pagCheck = () => {
         setaddPag(!addPag);
     };
-    const handleSubmit = (e) => {
+
+    const handleSubmit = async (e) => { 
         e.preventDefault();     
+        setModalSpinner(true);
+        let success = true; 
 
-        if((!props.addReserva)){
-            instance.post('/cliente', JSON.stringify(formCliente))
-            .then(response => {
-                console.log(response)
-                if (response.data){
-                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1));
-                        setModalSpinner(false)
-                    },2000)
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Cliente"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
-                        setModalSpinner(false)
-                    },2000)
-                    throw new Error('Network response was not ok');
-                }})
-                .catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:1, mostrar:true, status: false, message: "Erro ao Salvar Cliente: " + e , titulo: "Cliente"}])
-                setModalSpinner(true)
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 1))
-                    setModalSpinner(false)
-                },2000)})   
+        let idClienteFinal = props.idCliente.status ? props.idCliente.id : null; 
+        let idReservaFinal = null; 
+
+        if (!props.addReserva && formCliente) {
+            idClienteFinal = formCliente.id || idCliente;
         }
 
-        setTimeout(()=>{
-            instance.post('/reservas', JSON.stringify(formReserva))
-            .then(response => {
-                console.log(response)
-                if (response.data){
-                    setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                    setModalSpinner(false)
-                },2000) 
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:2, mostrar:true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Reserva"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                        setModalSpinner(false)
-                    },2000)
-                    throw new Error('Network response was not ok');
-                }})
-                .catch(e => {
-                    setModalStatus(prevArray => [...prevArray, {id:2, mostrar:true, status: false, message: "Erro ao Salvar Reserva: " + e, titulo: "Reserva"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 2))
-                        setModalSpinner(false)
-                    },2000)})
-        },'300')
-          
-        setTimeout(() => {
-            numberTour.map((tour)=>{            
-                setTimeout(()=>{          
-                    instance.post('/tour', JSON.stringify(calculoTotal[tour-1]))
-                    .then((response) => {
-                        console.log(response)
-                        if (response.data) {
-                            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-                            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                                window.location.replace("/minhasReservas");
-                            },3000)
-                        }else{
-                            setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                            setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
-                            throw new Error('Network response was not ok');
-                        }
-                    }).catch(e => {
-                        setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
-                },'300')
-            })
-        },'600') 
-               
-        
-        if(addPag){
-            const formData = new FormData();
-            //if(imagemUpload){formData.append("comprovante", imagemUpload)}
-            if(dadosPagForm.id_reserva){formData.append("id_reserva", dadosPagForm.id_reserva);}
-            if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
-            if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
-            if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
-            if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
-            if(idPagamento){formData.append("idPagamento", idPagamento);}
-            formData.append("status", "Pago");
+        try {
+            if (!props.addReserva) {
+                const clienteResponse = await createCliente(formCliente); 
+                if (!clienteResponse.data || !clienteResponse.data.id) throw new Error('Falha ao Salvar Cliente');
+                idClienteFinal = clienteResponse.data.id;
+                setModalStatus(prev => [...prev, {id:1, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente", titulo: "Cliente"}]);
+            }
 
-            setTimeout(() =>{
-                instance.post('/pagamento', formData)
-                .then(response => {
-                    console.log(response)
-                    if (response.data){
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}])
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)
-                    }else{
-                        setModalStatus(prevArray => [...prevArray,  {id:4, mostrar: true, status: false, message: "Erro de Conexão com banco de dados", titulo: "Pagamento"}])
-                        setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)
-                        throw new Error('Network response was not ok');
-                    }})
-                .catch(e => {
-                    setModalStatus(prevArray => [...prevArray, {id:4, mostrar:true, status: false, message: "Erro ao Salvar Pagamento: " + e, titulo: "Pagamento"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 4))},3000)})
-            }, '900')
+            const dadosReservaFinal = {
+                ...formReserva,
+                id_cliente: idClienteFinal, 
+            };
+
+            const reservaResponse = await createReserva(dadosReservaFinal); 
+            if (!reservaResponse.data || !reservaResponse.data.idR) throw new Error('Falha ao Salvar Reserva');
+            
+            idReservaFinal = reservaResponse.data.idR;
+            console.log(idClienteFinal);
+            setModalStatus(prev => [...prev, {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}]);
+
+            if (idReservaFinal) { 
+                const tourPromises = calculoTotal.map(tourData => {
+                    
+                    const tourDataParaEnvio = { 
+                        ...tourData, 
+                        id_reserva: idReservaFinal 
+                    };
+
+                    delete tourDataParaEnvio.id; 
+                    return createTour(tourDataParaEnvio);
+                });
+
+                const tourResponses = await Promise.all(tourPromises);
+
+                if (tourResponses.some(res => !res.data)) {
+                    throw new Error('Falha em um ou mais Tours'); 
+                }
+                setModalStatus(prev => [...prev, {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tours", titulo: "Tour"}]);
+
+                if (addPag) {
+                const formData = new FormData();
+                if(idReservaFinal){formData.append("id_reserva", idReservaFinal);}
+                if(dadosPagForm.dataPagamento){formData.append("dataPagamento", dadosPagForm.dataPagamento);}
+                if(dadosPagForm.formaPagamento){formData.append("formaPagamento", dadosPagForm.formaPagamento);}
+                if(dadosPagForm.valorPago){formData.append("valorPago", dadosPagForm.valorPago);}
+                if(dadosPagForm.comentario){formData.append("comentario", dadosPagForm.comentario);}
+
+                if(imagemUpload){
+                    formData.append("imagem", imagemUpload); 
+                }
+
+                const pagamentoResponse = await createPagamento(formData);
+                if (!pagamentoResponse.data) throw new Error('Falha ao Salvar Pagamento');
+                setModalStatus(prev => [...prev, {id:4, mostrar:true, status: true, message: "Sucesso ao Salvar Pagamento", titulo: "Pagamento"}]);
+            }
+
+            } else {
+                throw new Error('Falha crítica: ID da Reserva não pôde ser determinado para Tours.');
+            }
+            
+            
+
+        } catch (e) {
+            success = false;
+            const errorMessage = e.message.includes("Falha") ? e.message : `Erro de Conexão/Sistema: ${e.message}`;
+            setModalStatus(prev => [...prev, {id:5, mostrar:true, status: false, message: errorMessage, titulo: "Erro Global"}]);
+            console.error("Erro no fluxo de submissão:", e);
+
+        } finally {
+            setModalSpinner(false);
+            
+            setTimeout(() => {
+                setModalStatus([]); 
+                if (success) {
+                    window.location.replace("/minhasReservas");
+                }
+            }, 3000); 
         }
-        
-
-        
-    }
+    };
 
     return (
         <div className="card shadow mb-4">
@@ -272,7 +255,6 @@ export default function Formulario(props) {
                         <input type="text" value={formReserva.endereco} className="form-control form-control-sm" name="endereco" id="inputEndereco" list="sugestoes-api-endereco" onChange={handleReserva}  required/>
                         <datalist id="sugestoes-api-endereco">
                             {sugestoesAPI.map((sugestao, index) => (
-                                // A key deve ser única, pode ser o próprio nome se não for muito longo
                                 <option key={index} value={sugestao} /> 
                             ))}
                         </datalist>
@@ -288,6 +270,7 @@ export default function Formulario(props) {
                     <div className="col-md-3 mb-3">
                         <label className="form-label" for="zona">Zona</label>
                         <select value={formReserva.zona} className="form-control form-control-sm" name="zona" id="zona" onChange={handleReserva}>
+                            <option value="" disabled>Selecione a Zona</option>  
                             {options&& options.zona.map((item) => {
                                 return <option value={item}>{item}</option>
                             })}
@@ -298,6 +281,7 @@ export default function Formulario(props) {
                     <div className="col-md-3 mb-3" >
                         <label className="form-label" for="paisOrigem">Pais de Origem</label>
                         <select value={formCliente.paisOrigem} className="form-control form-control-sm" name="paisOrigem" id="paisOrigem" onChange={handleChange}>
+                            <option value="" disabled>Selecione Pais de Origem</option>  
                             {options&& options.paisOrigem.map((item) => {
                                     return <option value={item}>{item}</option>
                                 })}
@@ -306,6 +290,7 @@ export default function Formulario(props) {
                     <div className="col-md-3 mb-3" >
                         <label className="form-label" for="idioma">Idioma</label>
                         <select value={formCliente.idioma} className="form-control form-control-sm" name="idioma" id="idioma" onChange={handleChange} required>
+                            <option value="" disabled>Selecione o Idioma</option>  
                             {options&& options.idioma.map((item) => {
                                     return <option value={item}>{item}</option>
                                 })}
@@ -317,21 +302,23 @@ export default function Formulario(props) {
                         <textarea value={formReserva.comentario} name="comentario" className="form-control" placeholder="Escreva um comentário..." onChange={handleReserva}></textarea>
                     </div>
 
-                    {numberTour.map((index) => {
-                        return (<TourForm numbTour={index.toString()} removerTour={removerTour}
-                            atualizarValor={setcalculoTotal}
-                            key={index}
-                            id_reserva ={id_reserva}
-                            calculoTotal={calculoTotal}
-                            options={options}
-                        />);
-                    })
-
-                    }
+                    {calculoTotal.map((tourData, index) => {
+                        return (
+                            <TourForm 
+                                numbTour={tourData.id} 
+                                tourIndex={index}    
+                                removerTour={removerTour}
+                                atualizarValor={setCalculoTotal} 
+                                key={tourData.id}
+                                calculoTotal={calculoTotal}
+                                options={options}
+                            />
+                        );
+                    })}
                     <div className="col-md-12">
 
                         {
-                            addTour <= 6 ? <button type="button" onClick={handleClick} className="btn btn-icon-split btn-dark btn-sm mb-3">
+                            addTour <= 6 ? <button type="button" onClick={adicionarTour} className="btn btn-icon-split btn-dark btn-sm mb-3">
                                 <span className="icon text-white-50">
                                     <i className="fa fa-plus"></i>
                                 </span>
@@ -357,9 +344,8 @@ export default function Formulario(props) {
                         </div>
                     </div>
                     {
-                        addPag == true ? <TourPag title='Adicionar' 
+                        addPag === true ? <TourPag title='Adicionar' 
                                             dadosPagForm={dadosPagForm} 
-                                            id_reserva ={id_reserva} 
                                             setImagemUpload={setImagemUpload}
                                             namePago={'Pago'} 
                                             removerPag={setaddPag} 

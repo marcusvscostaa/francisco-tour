@@ -12,24 +12,22 @@ const table = new DT;
 export default function TabelaReservas(props) {
     const [tour, setTour] = useState(false);
     const [reservas, setReservas] = useState(false);
-    const [updateCount, setUpdateCount] = useState(false);
+    const [updateCount, setUpdateCount] = useState(0);
     const [updateData, setUpdateData] = useState(false);
     const [pagamentoreservas, setPagamentoreservas] = useState(false);
     const dataTableOptions = {
-        // 1. Define a coluna 1 (Data) como a coluna de ordenação padrão (0 = Nome, 1 = Data)
         order: [[1, 'desc']], 
         
-        // 2. Define o tipo e a capacidade de ordenação de cada coluna (0 a 8)
         columns: [
-            { orderable: true },    // 0: Nome
-            { orderable: true, type: 'date' }, // 1: Data (CRUCIAL: Define o tipo 'date')
-            { orderable: false },    // 2: Tour/Endereço
-            { orderable: false },    // 3: Pagamento
-            { orderable: false },    // 4: Telefone
-            { orderable: false },    // 5: Valor Total
-            { orderable: false },    // 6: Comentário
-            { orderable: false },    // 7: Status
-            { orderable: false }    // 8: Configurações (Geralmente não é ordenável)
+            { orderable: true },    
+            { orderable: true, type: 'date' }, 
+            { orderable: false },   
+            { orderable: false },    
+            { orderable: false },   
+            { orderable: false },    
+            { orderable: false },    
+            { orderable: false },    
+            { orderable: false }    
         ]
     };
 
@@ -42,17 +40,14 @@ export default function TabelaReservas(props) {
                     getPagamentoReservas()
                 ]);
 
-                // Trata as reservas e armazena (usando dataReservas)
                 if (dataReservas.fatal || dataReservas.code) {
                     setReservas([]);
                 } else {
                     
-                    // 💡 SOLUÇÃO DE ORDENAÇÃO #1: Ordenar os dados ANTES de salvar no estado
                     const reservasOrdenadas = dataReservas.sort((a, b) => {
-                        // Assume que a data está no campo 'data' ou 'dataDoTour' na reserva
                         const dataA = new Date(a.data); 
                         const dataB = new Date(b.data);
-                        return dataA - dataB; // Ordena do mais antigo para o mais novo
+                        return dataA - dataB; 
                     });
                     
                     setReservas(reservasOrdenadas);
@@ -63,15 +58,14 @@ export default function TabelaReservas(props) {
 
             } catch (error) {
                 console.error("Erro no carregamento de dados: ", error);
-                // Trate erros
             }
         };
-            if (updateCount === false) { 
-            fetchData();
-        }
+        fetchData();
     }, [updateCount]);
 
-
+    const handleUpdate = () => {
+        setUpdateCount(prevCount => prevCount + 1);
+    };
 
     return (
         <div className="card shadow mb-4">
@@ -104,7 +98,7 @@ export default function TabelaReservas(props) {
                             </thead>
                             <tbody>
                                 {reservas&&reservas.map((reserva, index) => {                                   
-                                    return (<RowTabela pagamentoreservas={pagamentoreservas} setUpdateCount={setUpdateCount} updateCount={updateData} reserva={reserva} index={index} tour={tour} />)   
+                                    return (<RowTabela pagamentoreservas={pagamentoreservas} setUpdateCount={handleUpdate} updateCount={updateCount} reserva={reserva} index={index} tour={tour} />)   
                                 })}
                             </tbody>
                         </DataTable>

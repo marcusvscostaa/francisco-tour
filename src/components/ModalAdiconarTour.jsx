@@ -2,20 +2,13 @@ import { useEffect, useState } from "react";
 import TourForm from "./TourForm";
 import ModalAlert from "./ModalAlert";
 import optionForm from "./lista.json"
+import { createTour} from "../FranciscoTourService";
 import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
-
 
 
 export default function ModalAdicionarTour(props){
         const [calculoTotal, setcalculoTotal] = useState([
-        { id: "1", id_reserva: props.id, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 } ]);
+        {id: '1', id_reserva: props.id, data:'', destino: '', tour: "", numeroAdultos: 0, valorAdulto: 0, numeroCriancas: 0, valorCriancas: 0 } ]);
         const [modalStatus, setModalStatus] = useState([]);
         const [modalSpinner, setModalSpinner] = useState(false);
         const [options, setOptions] = useState("");
@@ -26,26 +19,8 @@ export default function ModalAdicionarTour(props){
 
         const handleSubmit = async (e) => {
             e.preventDefault()
-
-            instance.post('/tour', JSON.stringify(calculoTotal[0]))
-            .then((response) => {
-                console.log(response)
-                if (response.data) {
-                    setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Tour" , titulo: "Tour"}])
-                    setModalSpinner(true)
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))
-                                    props.setUpdateCount(true)
-                                    setModalSpinner(false)
-                                    document.getElementById(`modalX${props.id}`).click()
-                    },3000)
-                }else{
-                    setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Tour"}])
-                    setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)
-                    throw new Error('Network response was not ok');
-                }
-            }).catch(e => {
-                setModalStatus(prevArray => [...prevArray, {id:3, mostrar:true, status: false, message: "Erro ao Salvar Tour: " + e , titulo: "Tour"}])
-                setTimeout(()=>{setModalStatus(modalStatus.filter((data)=> data.id !== 3))},3000)})
+            delete calculoTotal[0].id;
+            createTour(calculoTotal[0]);
         }
     
     return(

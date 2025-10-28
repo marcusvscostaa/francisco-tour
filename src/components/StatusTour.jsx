@@ -1,4 +1,5 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react";
+import { editarStatusTours } from '../FranciscoTourService';
 import axios from "axios";
 const instance = axios.create({
     baseURL: process.env.REACT_APP_BASE_URL,
@@ -9,40 +10,40 @@ const instance = axios.create({
   });
 
 export default function StatusTour(props){
+    const getInitialStatus = (status) => {
+        if (status === 'Confirmado') return { status: 'Confirmado', className: "fas fa-check-circle text-success" };
+        if (status === 'Cancelado') return { status: 'Cancelado', className: "fas fa-ban text-danger" };
+        return { status: 'Confirmado', className: "fas fa-check-circle text-success" };
+    };
+    const [statusLocal, setStatusLocal] = useState(() => getInitialStatus(props.status));
     const [statusReserva, setStatusReserva] = useState('Confirmado')
 
-    useEffect(()=>{
-        if(props.status){          
-            if(props.status === 'Confirmado'){
-                setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            }else if(props.status === 'Cancelado'){
-                setStatusReserva({status: 'Cancelado', className: "fas fa-ban text-danger"})
-            }            
-        }else{
-            setStatusReserva({status: 'Confirmado', className: "fas fa-check-circle text-success"})
-            instance.post('/tours/status', JSON.stringify({status: 'Confirmado', idtour: props.id}))
-            .catch(err => console.error(err))   
-        }    
-    },[props.updateCount])
+    useEffect(() => {
+        setStatusLocal(getInitialStatus(props.status));
 
-    const handleChange = (e)=> {
-        instance.post('/tours/status', JSON.stringify({status: e.target.value, idtour: props.id}))
-        .catch(err => console.error(err))  
-        
-        if(e.target.value === 'Confirmado'){
-            setStatusReserva({status: e.target.value, className: "fas fa-check-circle text-success"})
-            props.setUpdateCount(true)
-        }else if(e.target.value === 'Cancelado'){
-            setStatusReserva({status: e.target.value, className: "fas fa-ban text-danger"})
-            props.setUpdateCount(true)
+        if (!props.status && props.updateCount === 0) {
+            editarStatusTours({status: 'Confirmado', idtour: props.id})
+            .catch(err => console.error("Erro ao inicializar status do Tour:", err));
         }
-    }
+        
+    }, [props.status, props.id, props.updateCount]);
+
+    const handleChange = useCallback(async (e) => {
+        const newStatusValue = e.target.value;
+          
+        try {
+            await editarStatusTours({status: newStatusValue, idtour: props.id});
+            props.setUpdateCount(prevCount => prevCount + 1); 
+
+        } catch (err) {
+            console.error("Erro ao atualizar status do Tour:", err);
+        }
+    }, [props.id, props.setUpdateCount]);
             
     return (
     <div className="dropdown">
         <a type="button" data-toggle="dropdown" aria-expanded="false" >
-            <i title={statusReserva.status} className={statusReserva.className}></i>
-        </a>
+            <i title={statusLocal.status} className={statusLocal.className}></i>        </a>
         <div style={{ minWidth: "40px" }} className="dropdown-menu dropdown-menu-right">
             <button className="dropdown-item" value="Confirmado" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-check-circle text-success"></i> Confirmado</button>
             <button className="dropdown-item" value="Cancelado" onClick={handleChange} disabled={props.disabledButton}><i className="fas fa-ban text-danger"></i> Cancelado</button>

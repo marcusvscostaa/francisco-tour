@@ -14,7 +14,7 @@ export default function(props) {
                 "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'}            
         };
 
-        await fetch(`${process.env.REACT_APP_BASE_URL}/pagreserva/${props.idR}`, deletePagReserva)
+        await fetch(`${process.env.REACT_APP_BASE_URL}/pagamento/${props.idR}`, deletePagReserva)
         .then(response => {
             if (!response.ok) {
                 setModalStatus(prevArray => [...prevArray,  {id:1, mostrar:true, status: false, message: "Erro de Conexão com banco de dados" , titulo: "Pagamento"}])

@@ -3,16 +3,8 @@ import {getToursCadastroDestino} from "../FranciscoTourService";
 
 export default function TourForm(props){
     const [toursPorDestino, setToursPorDestino] = useState([]);
-    const tourData = props.calculoTotal[props.numbTour - 1];
+    const tourData = props.calculoTotal[props.numbTour - 1] || {};    
     const destinoAtual = tourData.destino;
-
-    useEffect(()=>{
-        const dados =  props.calculoTotal;
-        const dadosAtualizados = dados.map((tour) =>
-            tour.id === props.numbTour ? { ...tour, id_reserva: props.id_reserva } : tour
-          );
-        props.atualizarValor(dadosAtualizados)
-    },[])
 
     useEffect(() => {
         if (destinoAtual) {
@@ -20,7 +12,7 @@ export default function TourForm(props){
                 try {
                     const data = await getToursCadastroDestino(destinoAtual);
                     setToursPorDestino(data);
-                    console.log(data)
+                    console.log(destinoAtual)
                     
                     if(data.length > 0 && tourData.tour) {
                          updateTour({ target: { value: '' } }); 
@@ -35,7 +27,7 @@ export default function TourForm(props){
             };
             fetchTours();
         } else {
-            setToursPorDestino([]); // Limpa se nenhum destino estiver selecionado
+            setToursPorDestino([]); 
         }
     }, [destinoAtual]);
 
@@ -104,6 +96,9 @@ export default function TourForm(props){
           );
         props.atualizarValor(dadosAtualizados)
     }
+    if (!tourData.id) { 
+        return null; 
+    }
 
     return(
         <div className="col-md-12">
@@ -161,4 +156,5 @@ export default function TourForm(props){
           
       </div>
     )
+    
 }
