@@ -26,6 +26,7 @@ const {
     } = props;
 
     const [collapseTable, setCollapseTable] = useState(false);
+    const [collapsePagamento, setCollapsePagamento] = useState(false);
     const [valorPago, setValorPago] = useState(0); 
     const [statusReserva, setStatusReserva] = useState(STATUS.CONFIRMADO);
     
@@ -150,7 +151,7 @@ const {
     const isButtonDisabled = statusReserva.isDisabled;
 
     const handleCollapseClick = () => {
-        setCollapseTable(prev => !prev);
+        setCollapsePagamento(prev => !prev);
     }
     return (
         <Fragment>
@@ -176,17 +177,17 @@ const {
                 }><i className={collapseTable?"fas fa-arrow-alt-circle-down	":"fas fa-arrow-alt-circle-right"}></i> Ver</a> {props.reserva.tour}
                         {/* collapseTable && <RowTabelaChild dadosTour={dadosTour} collapseTable={collapseTable} idcollapseTable={idcollapseTable}/> */}    
                 </td>
-                <td><a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#modal${props.reserva.idR}`}>
+                <td><a title="Ver Pagamento" data-toggle="modal"  onClick={handleCollapseClick} className="cpointer" data-target={`#modal${props.reserva.idR}`}>
                         {getPagamentoBadge()}
                     </a>
-                    <ModalPagamento 
+                    {collapsePagamento&&<ModalPagamento 
                         id={reserva.idR} 
                         disabledButton={isButtonDisabled} 
                         pagamento={pagamentoreservas} 
                         updateCount={parentUpdateCount} 
                         valorTotal={valorTotal} 
                         setUpdateCount={setParentUpdateCount}
-                    />                    </td>
+                    />           }         </td>
                 <td className="text-left"><a href={`https://api.whatsapp.com/send?phone=${props.reserva.telefone}`} title="Abrir Whatsapp" target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i> {props.reserva.telefone}</a></td>
                 <td>R$: {valorTotal.toFixed(2).replace(".", ",")}</td>
                 <td>

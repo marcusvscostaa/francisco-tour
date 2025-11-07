@@ -1,8 +1,23 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthService from '../AuthService';
+import decodeJwtPayload from '../decodeJwtPayload';
 
 const AuthContext = createContext();
+
+const getUserDataFromToken = (token) => {
+    if (!token) return null;
+    
+    const decodedPayload = decodeJwtPayload(token); 
+    
+    if (!decodedPayload) return null;
+
+    return {
+        id: decodedPayload.id,
+        username: decodedPayload.username,
+        acesso: decodedPayload.acesso, 
+    };
+};
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null); 
@@ -14,9 +29,10 @@ export const AuthProvider = ({ children }) => {
         const loadUserFromStorage = async () => {
             const authData = AuthService.getCurrentUser(); 
             if (authData && authData.token) {
+                const userData = getUserDataFromToken(authData.token);
                 const isValid = await AuthService.validateToken(authData.token);               
                 if (isValid) {
-                    setUser(authData.user); 
+                    setUser(userData); 
                 } else {
                     AuthService.logout();
                 }
@@ -36,9 +52,10 @@ export const AuthProvider = ({ children }) => {
         const authData = AuthService.getCurrentUser();
 
         if (authData && authData.token) {
+          const userData = getUserDataFromToken(authData.token);
           const isValid = await AuthService.validateToken();           
           if (isValid) { 
-              setUser(authData.user);
+              setUser(userData);
               return true;
           }
         }
@@ -66,16 +83,18 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-    const logout = () => {
-        AuthService.logout();
-        setUser(null); 
-        navigate('/login');
-    };
+
+  const logout = () => {
+      AuthService.logout();
+      setUser(null); 
+      navigate('/login');
+  };
 
 
   const value = {
     user,
     isAuthenticated: !!user, 
+    userRole: user ? user.acesso : null,
     login,
     logout,
     loading,

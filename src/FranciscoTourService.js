@@ -79,8 +79,18 @@ export async function getPagamentoReservas(){
     return response.data;
 }
 
+export async function getPagamentosByReservaId(idReserva) {
+    const response = await instance.get(`/pagamentos/reserva/${idReserva}`); 
+    return response.data;
+}
+
 export async function getTours(){
     const response = await instance.get(`/tours`);
+    return response.data;
+}
+
+export async function getToursByReservaId(idReserva) {
+    const response = await instance.get(`/tours/reserva/${idReserva}`);
     return response.data;
 }
 
@@ -102,6 +112,11 @@ export async function getToursCadastro() {
 export async function getToursCadastroDestino(destino) {
     const response = await instance.get(`/tourCadastro/destino/?destino=${destino}`);
     return response.data;
+}
+
+export async function getUsuarios() {
+    const response = await instance.get(`/users`);
+    return response.data;    
 }
 
 //sets
@@ -143,13 +158,14 @@ export async function createTourCadastro(tourCadastro) {
     return response;
 }
 
-export async function updateTourCadastro(id_tour, tourCadastro) {
-    const response = await instance.put(`/tourCadastro/${id_tour}`, tourCadastro);
+export async function createUsuario(data) {
+    const response = await instance.post('/signup', data);
     return response;
 }
 
-export async function deleteTourCadastro(id_tour) {
-    await instance.delete(`/tourCadastro/${id_tour}`);
+export async function updateTourCadastro(id_tour, tourCadastro) {
+    const response = await instance.put(`/tourCadastro/${id_tour}`, tourCadastro);
+    return response;
 }
 
 export async function editarStatusReserva(status){
@@ -179,5 +195,35 @@ export async function editarTour(id, dados) {
 
 export async function editarPagamento(id, formData) {
     const response = await instance.put(`/pagamento/${id}`, formData);
+    return response;
+}
+
+export async function editarStatusUsuario(idUsuario, data) {
+    //alert(data.status)
+    const response = await instance.put(`/user/status/${idUsuario}`, data); 
+    return response;
+}
+
+export async function deleteTourCadastro(id_tour) {
+    await instance.delete(`/tourCadastro/${id_tour}`);
+}
+
+export async function deletarCliente(id) {
+    const response = await instance.delete(`/cliente/${id}`);
+    return response;
+}
+
+export async function deletarReserva(idR) {
+    const response = await instance.delete(`/reserva/${idR}`);
+    return response;
+}
+
+export async function deletarReservaTour(idR) {
+    const response = await instance.delete(`/reserva/${idR}/tours`);
+    return response;
+}
+
+export async function deletarPagamentoReserva(idR) {
+    const response = await instance.delete(`/reserva/${idR}/pagamentos`);
     return response;
 }

@@ -100,14 +100,14 @@ export default function AgendaReserva() {
                         </ul>
                     }
                     {width> 481?
-                        <ul class="calendar-dates">                    
+                        <ul class="calendar-dates ">                    
                             {dateList.map(date => (<li className={`mb-1 border h-100`}>
                                 <div className='bg-dark text-white font-weight-bold'>{date}</div>
                                 {dataDiferentes&& dataDiferentes.map(datas => {
                                      if(datas.data.substr(8,2) == date){
                                         return(
                                         <>
-                                        <div className='bg-info text-white border font-weight-bold d-flex m-0'>
+                                        <div className='bg-info text-white border font-weight-bold d-flex m-0 '>
                                             <div className="w-25 border-right"><p className="m-0">QTD. </p></div>
                                             <div className="w-75"><p className="m-0 text-center">TOUR</p></div>
                                         </div>                                                                                                                      

@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import decodeJwtPayload from "./decodeJwtPayload";
 import { PrivateRoute } from "./components/PrivateRoutes.jsx"; 
 import NovaReserva from './pages/NovaReserva';
 import AgendaReservas from './pages/AgendaReservas';
@@ -12,6 +13,13 @@ import Login from './pages/Login';
 import Painel from './pages/Painel';
 import Usuarios from './pages/Usuarios';
 import { PublicRoute } from "./components/PublicRoute.jsx";
+import { RoleBasedRoute } from "./components/RoleBasedRoute.jsx";
+const acesso = () => {
+    if(localStorage.getItem('user')){
+    return decodeJwtPayload(JSON.parse(localStorage.getItem('user')).token).acesso === "ADMIN";
+}else{
+    return false;
+}}
 
 export const AppRouter = () => {
   return (
@@ -22,15 +30,19 @@ export const AppRouter = () => {
         
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Painel />} />
-          <Route path="/financeiro" element={<Financeiro />} />
           <Route path="/novaReserva" element={<NovaReserva />}/>
           <Route path="/agendaReservas" element={<AgendaReservas />}/>
           <Route path="/minhasReservas" element={<MinhasReservas />}/>
           <Route path="/comissoes" element={<Comissoes />}/>
           <Route path="/tabelaCliente" element={<TabelaCliente />}/>
-          <Route path="/usuarios" element={<Usuarios />}/>
-          <Route path="/configuracoes" element={<Configuracoes />} />
           <Route path="*" element={<PaginaNaoEncontrada />} />
+        </Route>
+
+        {/* Rotas de Nível ADMIN (Usam o RoleBasedRoute) */}
+        <Route element={<RoleBasedRoute allowedRoles={['ADMIN']} />}>
+          <Route path="/financeiro" element={<Financeiro />} />
+          <Route path="/usuarios" element={<Usuarios />} />
+          <Route path="/configuracoes" element={<Configuracoes />} />
         </Route>
 
       </Routes>  );

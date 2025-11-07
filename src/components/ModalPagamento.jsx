@@ -4,7 +4,7 @@ import ModalAlert from "./ModalAlert";
 import ModalDelete from "./ModalDelete";
 import TabalaPagamento from "./TabelaPagamento";
 import optionForm from "./lista.json"
-import {createPagamento, editarPagamento } from "../FranciscoTourService";
+import {createPagamento, editarPagamento, getPagamentosByReservaId } from "../FranciscoTourService";
 
 
 export default function ModalPagamento(props){
@@ -15,10 +15,13 @@ export default function ModalPagamento(props){
     const [modalStatus, setModalStatus] = useState([]);
     const [modalSpinner, setModalSpinner] = useState(false);
     const [options, setOptions] = useState("");
+    const [pagamentosLocais, setPagamentosLocais] = useState([]); 
+    const [loadingPagamentos, setLoadingPagamentos] = useState(true);
+    const idReserva = props.id;
 
-    const dadosPag = useMemo(() => 
-        (props.pagamento || []).filter((item) => item.id_reserva === props.id),
-        [props.pagamento, props.id]
+    const dadosPag = useMemo(() => {
+        return pagamentosLocais},
+        [pagamentosLocais]
     );
 
     const valorPagoAtual = useMemo(() => 
@@ -45,8 +48,21 @@ export default function ModalPagamento(props){
     });
     
     useEffect(()=>{
+        const fetchPagamentos = async () => {
+            setLoadingPagamentos(true);
+            try {
+                const data = await getPagamentosByReservaId(idReserva);
+                setPagamentosLocais(data);
+            } catch (error) {
+                console.error("Erro ao buscar pagamentos:", error);
+                setPagamentosLocais([]);
+            } finally {
+                setLoadingPagamentos(false);
+            }
+        };
+        fetchPagamentos();
         setOptions(optionForm)
-    },[props.updateCount])
+    },[idReserva, props.updateCount])
     
 
     const handleSubmit = async (e) => {
@@ -129,8 +145,12 @@ export default function ModalPagamento(props){
                     </button>
                 </div>
                 <div className="modal-body">
-                    {dadosPag.length !== 0?
-                    <>
+                    {loadingPagamentos ? (
+                        <div className="d-flex justify-content-center py-5">
+                            <div className="spinner-border text-secondary" role="status"></div>
+                        </div>
+                    ) : dadosPag.length !== 0 ? 
+                        <>
                     <div className="table-responsive">
                     <table className="table table-sm table-bordered ">
                     <thead>
@@ -150,8 +170,8 @@ export default function ModalPagamento(props){
                         <TabalaPagamento updateCount={props.updateCount} disabledButton={props.disabledButton} setUpdateCount={props.setUpdateCount} pag={pag} />
                         <td>
                             <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: pag.idPagamento})} disabled={showEditPag.status || showAddPag} ><i className="fas fa-edit	"></i></button>
-                            <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                            <ModalDelete title="Pagamento" setUpdateCount={props.setUpdateCount} idPag={pag.idPagamento}/>
+                            {/* <button type="button" data-toggle="modal" data-target={`#deletePag${pag.idPagamento}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button> */}
+                            {/* <ModalDelete title="Pagamento" setUpdateCount={props.setUpdateCount} idPag={pag.idPagamento}/> */}
                         </td>
                     </tr>
                         )}

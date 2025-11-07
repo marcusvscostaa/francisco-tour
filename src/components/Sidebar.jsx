@@ -1,16 +1,17 @@
 import { useEffect, useState } from "react"
-import AuthService from '../AuthService';
+import decodeJwtPayload from "../decodeJwtPayload";
+import { useAuth } from '../context/AuthContext.jsx';
 
 export  default function Sidebar(props){
+    const { user, userRole, logout } = useAuth();
     const [useName, setUsername] =  useState('USER')
     const [toggle, setToggle] = useState("navbar-nav bg-gradient-primary sidebar sidebar-dark accordion")
     
     useEffect(()=>{
-        const currentUser = AuthService.getCurrentUser();
-        if(currentUser && currentUser.user && currentUser.user.nome){
-            setUsername(currentUser.user.nome);
-        } else if (currentUser && currentUser.user) {
-             setUsername(currentUser.user);
+        if(user && user.username){
+            setUsername(user.username); 
+        } else {
+            setUsername('USER');
         }
         const handleResize = () => {
             const width = window.innerWidth;
@@ -28,7 +29,7 @@ export  default function Sidebar(props){
 
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
-    },[])
+    },[user])
 
     const sidebarToggle = () => {
         setToggle(prevToggle => {
@@ -43,9 +44,10 @@ export  default function Sidebar(props){
     }
     
     const handleLogout = () => {
-        AuthService.logout();
-        window.location.reload(true);
+        logout();
     };
+
+    const isAdmin = userRole === "ADMIN";
 
     return(
         <>
@@ -66,11 +68,11 @@ export  default function Sidebar(props){
                 <span>Painel</span></a>
         </li>
         
-        <li className={props.financeiro}>
+        {isAdmin && <li className={props.financeiro}>
             <a className="nav-link" href="/financeiro">
                 <i className="fas fa-money-bill-wave"></i>
                 <span>Financeiro</span></a>
-        </li>
+        </li>}
         <li className={props.agendaReserva}>
             <a className="nav-link" href="agendaReservas">
                 <i className="far fa-calendar-alt"></i>
@@ -97,16 +99,16 @@ export  default function Sidebar(props){
                 <i className="fas fa-fw fa-table"></i>
                 <span>Tabela de Clientes</span></a>
         </li>
-        <li className={props.usuarios}>
+        {isAdmin && <li className={props.usuarios}>
             <a className="nav-link" href="usuarios">
                 <i className="fas fa-user-alt"></i>
                 <span>Usuários</span></a>
-        </li>
-        <li className={props.configuracoes}>
+        </li>}
+        {isAdmin && <li className={props.configuracoes}>
             <a className="nav-link" href="configuracoes">
                 <i className="fa fa-cogs"></i>
                 <span>Configurações</span></a>
-        </li>
+        </li>}
 
         <hr className="sidebar-divider" />
         <li className="nav-item">
@@ -145,7 +147,7 @@ export  default function Sidebar(props){
                   
 
                         {/* Nav Item - Alerts */}
-                        
+                        <span className={user.acesso === 'ADMIN'?'badge badge-dark text-white-600 m-auto p-1':'badge badge-info text-white-600 m-auto p-1'}>{decodeJwtPayload(JSON.parse(localStorage.getItem('user')).token).acesso}</span>
                         <div className="topbar-divider d-none d-sm-block"></div>
 
                         {/* Nav Item - User Information */}

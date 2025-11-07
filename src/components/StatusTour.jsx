@@ -1,13 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 import { editarStatusTours } from '../FranciscoTourService';
-import axios from "axios";
-const instance = axios.create({
-    baseURL: process.env.REACT_APP_BASE_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        "authorization": localStorage.getItem('user') !== null?JSON.parse(localStorage.getItem('user')).token:'21'
-      }
-  });
 
 export default function StatusTour(props){
     const getInitialStatus = (status) => {
@@ -16,7 +8,6 @@ export default function StatusTour(props){
         return { status: 'Confirmado', className: "fas fa-check-circle text-success" };
     };
     const [statusLocal, setStatusLocal] = useState(() => getInitialStatus(props.status));
-    const [statusReserva, setStatusReserva] = useState('Confirmado')
 
     useEffect(() => {
         setStatusLocal(getInitialStatus(props.status));
@@ -33,7 +24,7 @@ export default function StatusTour(props){
           
         try {
             await editarStatusTours({status: newStatusValue, idtour: props.id});
-            props.setUpdateCount(prevCount => prevCount + 1); 
+            props.setUpdateCount(); 
 
         } catch (err) {
             console.error("Erro ao atualizar status do Tour:", err);

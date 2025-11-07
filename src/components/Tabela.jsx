@@ -77,8 +77,8 @@ export default function Tabela(props) {
                                             <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i className="fa fa-plus"></i></button>
                                             <button type="button" data-toggle="modal" data-target={`#clienteEditar${client.id}`}title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
                                             <ModalEditarCliente setUpdateCount={setUpdateCount} dados={client} id={client.id}/>
-                                            <button type="button" data-toggle="modal" data-target={`#clienteDelete${client.id}`} title="Deletar" className="btn btn-sm btn-danger" onClick={() => handleClick(client.id)}><i className="fa fa-trash"></i></button>
-                                            <ModalDeletarCliete dados={client} setUpdateCount={setUpdateCount} id={client.id} clicado = {clicado}/>
+                                            {/*<button type="button" data-toggle="modal" data-target={`#clienteDelete${client.id}`} title="Deletar" className="btn btn-sm btn-danger" onClick={() => handleClick(client.id)}><i className="fa fa-trash"></i></button>
+                                            <ModalDeletarCliete dados={client} setUpdateCount={setUpdateCount} id={client.id} clicado = {clicado}/>*/}
                                             <ModalAdiconarReserva dados={client} id={client.id} />
                                         </td>
 

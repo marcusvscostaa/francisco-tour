@@ -1,5 +1,5 @@
 import Sidebar from "../components/Sidebar";
-import TabelaReservas from "../components/TabelaReservas"
+import TabelaReservas from "../components/tabelaReservas/TabelaReservas"
 export default function MinhasReservas(){
     return(
         <div id="wrapper">
