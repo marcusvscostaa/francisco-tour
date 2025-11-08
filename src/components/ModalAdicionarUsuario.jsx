@@ -93,9 +93,9 @@ export default function ModalAdicionarUsuario({ setUpdateKey, id }) {
                             <select className="form-control form-control-sm" name="acesso" value={dataForm.acesso} onChange={handleChange} required> 
                                 <option value='ADMIN'>ADMIN</option>
                                 <option value='VENDEDOR'>VENDEDOR</option> 
-                                <option value='VENDEDOR'>GUIA</option> 
-                                <option value='VENDEDOR'>MOTORISTA</option> 
-                                <option value='VENDEDOR'>AGENCIA</option> 
+                                <option value='GUIA'>GUIA</option> 
+                                <option value='MOTORISTA'>MOTORISTA</option> 
+                                <option value='AGENCIA'>AGENCIA</option> 
 
                             </select>
                         </div>

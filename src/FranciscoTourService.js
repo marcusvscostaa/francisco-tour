@@ -19,19 +19,32 @@ export async function getCurrentUser(){
     
 }
 
-export async function getDadoAno(anoSelecionado){
-    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`);
+export async function getDadoAno(anoSelecionado, idVendedor){
+    const params = { ano: anoSelecionado };
+    if (idVendedor) {
+        params.idVendedor = idVendedor; 
+    }
+    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`, { params: params });
     return response.data;
 }
 
-export async function getDadoMesAtual(){
-    const response = await instance.get(`/reservas/valorMesAtual`);
+export async function getDadoMesAtual(idVendedor){
+    const params = {};
+    if (idVendedor) {
+        params.idVendedor = idVendedor;
+    }
+
+    const response = await instance.get(`/reservas/valorMesAtual`,{ params: params });
     console.log(token);
     return response.data;
 }
 
-export async function getDadoQuantidade(anoSelecionado){
-    const response = await instance.get(`/reservas/quantidade/${anoSelecionado}`);
+export async function getDadoQuantidade(anoSelecionado, idVendedor){
+    const params = { ano: anoSelecionado };
+    if (idVendedor) {
+        params.idVendedor = idVendedor;
+    }
+    const response = await instance.get(`/reservas/quantidade/${anoSelecionado}`, { params: params });
     return response.data;
 }
 
@@ -59,8 +72,12 @@ export async function getPagamentoReservaValorMes(anoSelecionado){
     return response.data;
 }
 
-export async function getQuantidadeAtua(){
-    const response = await instance.get(`/reservas/quantidadeAtual`);
+export async function getQuantidadeAtua(idVendedor){
+    const params = {};
+    if (idVendedor) {
+        params.idVendedor = idVendedor;
+    }
+    const response = await instance.get(`/reservas/quantidadeAtual`, { params: params });
     return response.data;
 }
 

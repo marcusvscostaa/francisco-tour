@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import PainelGrafico from "./PainelGrafico";
 import PainelPizza from "./PainelPizza";
-import { getDadoAno, getDadoMesAtual, getDadoQuantidade, getQuantidadeAtua } from "../FranciscoTourService";
+import { getDadoAno, getDadoMesAtual, getDadoQuantidade, getQuantidadeAtua, getUsuarios } from "../FranciscoTourService";
+import { Select, Button as AntButton } from 'antd';
+import { useAuth } from '../context/AuthContext.jsx'; 
+
+
+const { Option } = Select;
 const date = new Date();
 const currentYear = date.getFullYear();
 
@@ -12,27 +17,44 @@ const formatarNumero = (valor) => {
     }
     return new Intl.NumberFormat('pt-BR', {
         style: 'decimal',
-        minimumFractionDigits: 2, // Garante que dois decimais sejam exibidos
+        minimumFractionDigits: 2, 
         maximumFractionDigits: 2,
     }).format(numero);
 };
 
 export default function PainelPrincipal() {
+    const {  userRole } = useAuth();
+    const isAdmin = userRole === "ADMIN";
     const [dadoAno, setDadoAno] = useState(false)
     const [dadoMesAtual, setDadoMesAtual] = useState(false)
     const [dadoQuantidade, setDadoQuantidade] = useState(false)
     const [dadoQuantidadeAtual, setQuantidadeAtua] = useState(false)
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
-    const [updateCount, setUpdateCount] = useState(false)
+    const [updateCount, setUpdateCount] = useState(0)
+
+    const [vendedorSelecionado, setVendedorSelecionado] = useState(null); 
+    const [listaVendedores, setListaVendedores] = useState([]);
+
+       const handleVendedorChange = (value) => {
+        setVendedorSelecionado(value);
+        setUpdateCount(prev => prev + 1); 
+    };
 
     useEffect(() => {
         const fetchData = async () => {
             try {
+                if (listaVendedores.length === 0 && isAdmin) {
+                    const dataUsuarios = await getUsuarios();
+                    if (Array.isArray(dataUsuarios)) {
+                        setListaVendedores(dataUsuarios);
+                    }
+                }
+                const idParaBusca = vendedorSelecionado || null;
                 const [dataAno, dataMes, dataQuantidade, dataQuantidadeAtual] = await Promise.all([
-                    getDadoAno(anoSelecionado),
-                    getDadoMesAtual(),
-                    getDadoQuantidade(anoSelecionado),
-                    getQuantidadeAtua(),
+                    getDadoAno(anoSelecionado, idParaBusca),
+                    getDadoMesAtual(idParaBusca),
+                    getDadoQuantidade(anoSelecionado, idParaBusca),
+                    getQuantidadeAtua(idParaBusca),
                 ]);
 
                 setDadoAno(dataAno);
@@ -53,8 +75,8 @@ export default function PainelPrincipal() {
         };
         fetchData();
 
-    }, [anoSelecionado])
-
+    }, [anoSelecionado, vendedorSelecionado])
+ 
 
     
     return(
@@ -127,6 +149,32 @@ export default function PainelPrincipal() {
             </div>
         </div>
     </div>
+    {isAdmin&&<div className="col-xl-3 col-md-6 d-md-flex">
+        <label className="form-label font-weight-bold my-auto mr-2 mb-sm-4">Vendedor:</label>
+        <Select
+            className="mb-sm-4"
+            allowClear
+            placeholder="Todos os Vendedores"
+            style={{ width: 200 }}
+            value={vendedorSelecionado}
+            onChange={handleVendedorChange}
+        >
+            {listaVendedores.map(vendedor => (
+                <Option key={vendedor.idUsuario} value={vendedor.idUsuario}>
+                    {vendedor.username}
+                </Option>
+            ))}
+        </Select>
+        <AntButton 
+            className="ml-md-2 mb-sm-4"
+            onClick={() => handleVendedorChange(null)}
+            type="default"
+            icon={<i className="fas fa-eraser"></i>}
+            disabled={!vendedorSelecionado} 
+        >
+            Limpar Vendedor
+        </AntButton>
+    </div>}
     <div class="row">
         <PainelGrafico title1={"Vendas Confirmadas"}  title2={"Vendas Canceladas"} size={"8"} dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
         <PainelPizza dadoQuantidade={dadoQuantidade} dadoQuantidadeAtual={dadoQuantidadeAtual}  anoSelecionado={anoSelecionado}/>

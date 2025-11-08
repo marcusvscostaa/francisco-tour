@@ -1,18 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo} from 'react';
 import { Table, Tag, Button as AntButton, Typography } from 'antd';
-import { getToursByReservaId } from '../../FranciscoTourService.js'; 
+import { getToursByReservaId} from '../../FranciscoTourService.js'; 
 
 import ModalAdicionarTour from '../ModalAdiconarTour.jsx';
-import ModalDeleteTour from '../ModalDeleteTour.jsx';
 import ModalEditarTour from '../ModalEditarTour.jsx';
-import StatusTour from '../StatusTour.jsx'; 
+import ModalComentario from '../ModalComentario.jsx';
+import StatusTourDropdown from './StatusTourDropdown';
 
 const TOUR_STATUS_MAP = {
     'Confirmado': 'success',
     'Cancelado': 'error',
 };
 
-export default function DetalheReservaMUI({ reserva, setUpdateCount }) {
+export default function DetalheReserva({ reserva, setUpdateCount }) {
     const [dadosTour, setDadosTour] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -34,7 +34,7 @@ export default function DetalheReservaMUI({ reserva, setUpdateCount }) {
             return dateB - dateA; 
         });
     }, [dadosTour]);
-    
+
     const tourColumns = [
         { title: 'Tour', dataIndex: 'tour', key: 'tour', width: 150 },
         { title: 'Data', dataIndex: 'data', key: 'data', render: (text) => text.substr(0, 10).split('-').reverse().join('/') },
@@ -43,16 +43,19 @@ export default function DetalheReservaMUI({ reserva, setUpdateCount }) {
         { title: 'Crianças', dataIndex: 'quantidadeCriancas', key: 'Criancas', width: 80 },
         { title: 'Valor Criança',key: 'valorCrianca', render: (record) => `R$ ${record.valorCrianca.toFixed(2).replace(".", ",")}` },
         { title: 'Total', key: 'total', render: (record) => `R$ ${((record.quantidadeAdultos * record.valorAdulto) + (record.quantidadeCriancas * record.valorCrianca)).toFixed(2).replace(".", ",")}` },
-        { title: 'Status', dataIndex: 'status', key: 'status', render: (status) => (
-            <Tag color={TOUR_STATUS_MAP[status] || 'default'}>{status}</Tag>
+        { title: 'Status', dataIndex: 'status', key: 'status', render: (status, record) => (
+            <StatusTourDropdown 
+                tourRecord={record} 
+                setUpdateCount={setUpdateCount} 
+            />
         )},
         {
             title: 'Ações',
             key: 'actions',
             render: (_, record) => (
                 <div style={{ display: 'flex', gap: '4px' }}>
-                    <AntButton size="small" title="Editar" icon={<i className="fas fa-edit"></i>} />
-                    <AntButton size="small" danger title="Deletar" icon={<i className="fa fa-trash"></i>} />
+                    <AntButton size="small" title="Editar" data-toggle="modal" data-target={`#editarTour${record.idtour}`} icon={<i className="fas fa-edit"></i>} />
+                    <ModalEditarTour dados={record} setUpdateCount={setUpdateCount} idtour={record.idtour}/>
                 </div>
             )
         },
@@ -87,6 +90,12 @@ export default function DetalheReservaMUI({ reserva, setUpdateCount }) {
                         <br/>
                     </>
                 )}
+                {reserva.comentario&& <> 
+                    <a data-trigger="hover" data-toggle="modal" data-target={`#comentario${reserva.idR}`}> 
+                        <span className="badge badge-light"><i className='fas fa-comments'></i> Ver Comentário </span>
+                        <br/></a>
+                        <ModalComentario title={'Comentário Reserva'} id={reserva.idR} comentario={reserva.comentario}/>
+                    </>}
             </address>
             </div> 
 
@@ -100,10 +109,11 @@ export default function DetalheReservaMUI({ reserva, setUpdateCount }) {
 
             {/* BOTÃO ADICIONAR TOUR */}
             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 10 }}>
-                <AntButton type="primary" icon={<i className="fas fa-plus-circle"></i>} >
+                <AntButton data-toggle="modal" data-target={`#modalT${reserva.idR}`} type="primary" icon={<i className="fas fa-plus-circle"></i>} >
                     Adicionar Tour
                 </AntButton>
             </div>
+            <ModalAdicionarTour id={reserva.idR} setUpdateCount={setUpdateCount}/>
         </div>
     );
 }

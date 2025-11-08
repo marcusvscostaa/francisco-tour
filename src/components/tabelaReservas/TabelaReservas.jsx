@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useMemo, useCallback } from 'react';
-import { Table, Tag, Button as AntButton, Select, DatePicker } from 'antd'; 
-import DetalheReservaMUI from './DetalheReservaMUI.jsx'; 
+import { Table, Tag, Button as AntButton, Select, DatePicker, Input } from 'antd'; 
+import DetalheReserva from './DetalheReserva.jsx'; 
 import { getReservas, getUsuarios, editarStatusReserva, editarStatusTours, editarStatusPagamento, getToursByReservaId, getPagamentosByReservaId } from '../../FranciscoTourService.js';
 import { useAuth } from '../../context/AuthContext.jsx'; 
 import ModalPagamento from '../ModalPagamento.jsx';
@@ -31,6 +31,7 @@ export default function TabelaReservas() {
     const [vendedorSelecionado, setVendedorSelecionado] = useState(null);
     const [dataInicio, setDataInicio] = useState(null);
     const [dataFim, setDataFim] = useState(null);
+    const [filtroBusca, setFiltroBusca] = useState('');
     
     const handleUpdate = () => setUpdateCount(prevCount => prevCount + 1);
     const isAdmin = userRole === "ADMIN";
@@ -39,14 +40,12 @@ export default function TabelaReservas() {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Ajustando o caminho para o serviço (subindo dois níveis)
                 const [dataReservas, dataUsuarios] = await Promise.all([
                     getReservas(),
                     isAdmin ? getUsuarios() : Promise.resolve([]) 
                 ]);
 
                 if (Array.isArray(dataReservas)) {
-                    // Prepara o nome exibido e o valor total/pago (vindos do Backend)
                     const processedReservas = dataReservas.map(r => {
                         const partesDoNome = r.nome ? r.nome.trim().split(/\s+/) : [];
                         const nomeExibido = partesDoNome.length > 1 
@@ -73,44 +72,45 @@ export default function TabelaReservas() {
         fetchData();
     }, [updateCount, isAdmin]);
 
-    // 🛑 Lógica de Filtragem (Mantida no Frontend)
     const reservasFiltradas = useMemo(() => {
         let filtrado = reservas;
 
-        // --- FILTRO 1: VENDEDOR ---
-        if (vendedorSelecionado) {
+        if (vendedorSelecionado && isAdmin) {
             filtrado = filtrado.filter(reserva => 
                 reserva.vendedor && reserva.vendedor.toUpperCase() === vendedorSelecionado.toUpperCase()
             );
         }
 
-        // --- FILTRO 2: INTERVALO DE DATAS ---
         if (dataInicio && dataFim) {
             const inicioTimestamp = new Date(dataInicio).getTime(); 
 
-            // 2. Normalização do Fim do Período (23:59:59.999)
             const dataFimObj = new Date(dataFim);
-            // Move para o próximo dia e subtrai 1 milissegundo (23:59:59)
             dataFimObj.setDate(dataFimObj.getDate() + 1); 
             const fimTimestamp = dataFimObj.getTime() - 1; 
 
             filtrado = filtrado.filter(reserva => {
-                // 3. Converte a data da reserva (string ISO) para o Timestamp
                 const dataReservaTimestamp = new Date(reserva.dataReserva).getTime(); 
-
-                // 4. Comparação
                 return dataReservaTimestamp >= inicioTimestamp && dataReservaTimestamp <= fimTimestamp;
+            });
+        }
+
+        if (filtroBusca) {
+            const termo = filtroBusca.toLowerCase().trim();
+
+            filtrado = filtrado.filter(reserva => {
+                const idMatch = reserva.idR?.toLowerCase().includes(termo);
+                const nomeMatch = reserva.nomeExibido?.toLowerCase().includes(termo);
+                return idMatch || nomeMatch;
             });
         }
         
         return filtrado;
-    }, [reservas, vendedorSelecionado, dataInicio, dataFim]);
+    }, [reservas, vendedorSelecionado, dataInicio, dataFim, filtroBusca]);
     
-    // 🛑 1. Funções de Renderização
     
     const renderPaymentBadge = (text, record) => {
         const total = record.valorTotalCalculado || 0;
-        const pago = text || 0; // text é o valorPagoCalculado
+        const pago = text || 0;
         
         let color = STATUS_MAP['Cancelado'].color;
         let label = "NÂO PAGO";
@@ -126,15 +126,12 @@ export default function TabelaReservas() {
         return <Tag color={statusInfo.color}>{statusInfo.label}</Tag>;
     };
 
-    // 🛑 3. Função de Renderização de Linha Expandida (Substitui o RowTabelaChild)
     const renderRowDetails = (record) => {
-        // AntD passa o objeto da linha como 'record'
         return (
             <div style={{ padding: '10px 0', backgroundColor: '#f5f5f5' }}>
-                <DetalheReservaMUI 
+                <DetalheReserva 
                     reserva={record} 
                     setUpdateCount={handleUpdate} 
-                    // Outras props necessárias
                 />
             </div>
         );
@@ -155,17 +152,16 @@ export default function TabelaReservas() {
         }
     };
     
-    // 🛑 3. Função para Limpar Filtros
     const handleClearFilters = () => {
         setVendedorSelecionado(null);
         setDataInicio(null);
         setDataFim(null);
+        setFiltroBusca(null);
     };
 
     const handleCollapseClick = () => {
         setCollapsePagamento(prev => !prev);
     }
-    // 🛑 4. Renderização Final
     const handleStatusUpdate = useCallback(async (record, status) => {
 
         try {
@@ -236,7 +232,6 @@ export default function TabelaReservas() {
         handleStatusUpdate(e.target.value);
     }
 
-        // 🛑 2. Definição das Colunas AntD
     const columns = useMemo(() => [
         { 
             title: 'Cliente', 
@@ -250,7 +245,6 @@ export default function TabelaReservas() {
             title: 'Data', 
             dataIndex: 'dataReserva', 
             key: 'dataReserva',
-            // AntD lida com a ordenação de data automaticamente se o tipo for Date
             sorter: (a, b) => new Date(a.dataReserva) - new Date(b.dataReserva),
             defaultSortOrder: 'descend',
             render: (text) => text ? text.substr(0, 10).split('-').reverse().join('/') : '',
@@ -274,12 +268,10 @@ export default function TabelaReservas() {
             key: 'vendedor',
             width: 100,
             render: (text, record) => {
-                // 'text' é o valor de dataIndex ('vendedor')
-                const isVendedor = record.acesso === 'VENDEDOR'; // Assumindo que 'acesso' está disponível
-                const color = isVendedor ? 'blue' : 'geekblue'; // Estilo simples para distinguir
+                const isVendedor = record.acesso === 'VENDEDOR'; 
+                const color = isVendedor ? 'blue' : 'geekblue'; 
                 
                 return (
-                    // Exibe o nome do vendedor dentro da Tag
                     <Tag color={color} key={text}>
                         {text}
                     </Tag>
@@ -292,7 +284,6 @@ export default function TabelaReservas() {
             width: 150,
             render: (_, record) => (
                 <div style={{ display: 'flex', gap: '4px' }}>
-                    {/* Botão Pagamento/Modal */}
                     <AntButton 
                         size="small" 
                         title="Ver Pagamento" 
@@ -300,7 +291,6 @@ export default function TabelaReservas() {
                         data-toggle="modal" 
                         data-target={`#modal${record.idR}`}
                     />
-                     {/* Botão Editar */}
                     <AntButton 
                         size="small" 
                         title="Editar" 
@@ -312,38 +302,46 @@ export default function TabelaReservas() {
             ),
         },
 
-    ], [renderPaymentBadge]); // Adiciona dependência para evitar erro de lint
+    ], [renderPaymentBadge]); 
+   
+    const handleSingleDateChange = (date, type) => {
+        if (type === 'start') {
+            setDataInicio(date);
+        } else {
+            setDataFim(date);
+        }
+    };
     return ( 
         <>
         {reservasFiltradas.map(reserva => (
             <React.Fragment key={`modals-${reserva.idR}`}>
-                {/* 1. Modal de Pagamento (ID: #modalPagamento{idR}) */}
                 <ModalPagamento 
                     id={reserva.idR}
                     valorTotal={reserva.valorTotalCalculado}
                     setUpdateCount={handleUpdate}
-
-                    // ... (outras props)
                 />
                 
-                {/* 2. Modal de Edição (ID: #reservaEditar{idR}) */}
                 <ModalEditarReserva 
                     idR={reserva.idR}
                     dadosReserva={reserva}
                     setUpdateCount={handleUpdate}
-                    // ... (outras props)
                 />
 
-                {/* 3. Modal de Exclusão (ID: #reservaDelete{idR}) */}
-                {/* ... */}
                 
             </React.Fragment>
         ))}
-        {/* 🛑 5. LINHA DE FILTROS NA INTERFACE (Inputs AntD) */}
-                <div className="row mb-4 pt-3 align-items-end">
-                    
-                    {/* Filtro por Vendedor */}
-                    <div className="col-md-3">
+                <div className="row pt-3 justify-content-between">
+                    <div className="col-md-2 mb-4">
+                        <label className="form-label">Buscar por Cliente ou ID</label>
+                        <Input
+                            allowClear
+                            prefix={<i className="fas fa-search" />}
+                            placeholder="ID, Nome, ou Sobrenome"
+                            value={filtroBusca}
+                            onChange={(e) => setFiltroBusca(e.target.value)} // 🛑 Atualiza o termo de busca
+                        />
+                    </div>
+                    {isAdmin&&<div className="col-md-2 mt-auto mb-4">
                         <label className="form-label">Vendedor</label>
                         <Select
                             allowClear
@@ -358,10 +356,9 @@ export default function TabelaReservas() {
                                 </Option>
                             ))}
                         </Select>
-                    </div>
+                    </div>}
 
-                    {/* Filtro por Intervalo de Datas */}
-                    <div className="col-md-6">
+                    <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
                         <label className="form-label">Intervalo de Datas</label>
                         <DatePicker.RangePicker 
                             style={{ width: '100%' }}
@@ -370,26 +367,49 @@ export default function TabelaReservas() {
                             format="DD/MM/YYYY"
                         />
                     </div>
+                    <div className="col-12 mb-4 d-sm-none">
+                        <label className="form-label">Data Início</label>
+                            <DatePicker 
+                                placeholder="Início"
+                                className='mb-4'
+                                style={{ width: '100%', marginBottom: '10px' }}
+                                value={dataInicio}
+                                // Use a função auxiliar para atualizar o estado de início
+                                onChange={(date) => handleSingleDateChange(date, 'start')}
+                                format="DD/MM/YYYY"
+                                getPopupContainer={trigger => trigger.parentElement || document.body} 
+                            />
+                        
+                        <label className="form-label">Data Fim</label>
+                            <DatePicker 
+                                placeholder="Fim"
+                                style={{ width: '100%' }}
+                                value={dataFim}
+                                // Use a função auxiliar para atualizar o estado de fim
+                                onChange={(date) => handleSingleDateChange(date, 'end')}
+                                format="DD/MM/YYYY"
+                                minDate={dataInicio}
+                                getPopupContainer={trigger => trigger.parentElement || document.body} 
+                            />
+                    </div>
                     
-                    {/* Botão de Limpar */}
-                    <div className="col-md-3">
+                    <div className="col-md-3 mt-auto mb-4">
                         <AntButton 
                             onClick={handleClearFilters}
                             icon={<i className="fas fa-eraser"></i>}
                             type="default"
-                            disabled={!vendedorSelecionado && !dataInicio && !dataFim}
+                            disabled={!vendedorSelecionado && !dataInicio && !dataFim && !filtroBusca}
                         >
                             Limpar Filtros
                         </AntButton>
                     </div>
                 </div>
-                {/* FIM LINHA DE FILTROS */}
             <Table
-                rowKey="idR" // CRÍTICO: Chave única
+                rowKey="idR" 
                 bordered={true}
                 size="small" 
                 columns={columns}
-                dataSource={reservasFiltradas} // Usa o array filtrado
+                dataSource={reservasFiltradas} 
                 loading={loading}
                 scroll={{ 
                     y: 450 
@@ -397,15 +417,14 @@ export default function TabelaReservas() {
                 pagination={{ 
                         current: currentPage,
                         pageSize: pageSize,
-                        showSizeChanger: true, // Exibe o seletor
-                        pageSizeOptions: ['10', '25', '50', '100'], // Opções para o seletor
+                        showSizeChanger: true, 
+                        pageSizeOptions: ['10', '25', '50', '100'], 
                         showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
                         className: 'pagination-centered',
                     }}
-                // Configuração de Expansão de Linha (NATIVA)
                 expandable={{
-                    expandedRowRender: renderRowDetails, // Função que renderiza o detalhe
-                    rowExpandable: (record) => record.valorTotalCalculado >= 0, // Apenas expande se houver valor
+                    expandedRowRender: renderRowDetails, 
+                    rowExpandable: (record) => record.valorTotalCalculado >= 0, 
                 }}
                 onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
             />

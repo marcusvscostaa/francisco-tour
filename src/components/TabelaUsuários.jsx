@@ -12,11 +12,10 @@ const STATUS = {
     CANCELADO: { status: 'BLOQUEADO', className: "fas fa-ban text-danger", isDisabled: true }
 };
 
-// Componente para exibir e gerenciar a lista de usuários
 export default function TabelaUsuarios(props) {
     const [usuarios, setUsuarios] = useState(null);
     const [loading, setLoading] = useState(true);
-    const { updateKey, handleUpdate } = props;// Para forçar o re-fetch
+    const { updateKey, handleUpdate } = props;
     
     // Assumindo que você terá um ModalEditarUsuario e um ModalDeleteUsuario
     // import ModalEditarUsuario from './ModalEditarUsuario';
@@ -29,7 +28,6 @@ export default function TabelaUsuarios(props) {
             try {
                 const data = await getUsuarios();
                 
-                // Verifica se há dados válidos (não um objeto de erro)
                 if (Array.isArray(data)) {
                     setUsuarios(data);
                 } else {
@@ -45,7 +43,7 @@ export default function TabelaUsuarios(props) {
         };
 
         fetchUsers();
-    }, [updateKey]); // Re-fetch sempre que o updateKey mudar
+    }, [updateKey]); 
 
     if (loading) {
         return (

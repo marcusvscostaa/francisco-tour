@@ -30,7 +30,7 @@ export default function ModalAdicionarTour(props){
         <div className="modal-dialog modal-xl" role="document">
             <div className="modal-content">
                 <div className="modal-header">
-                    <h5 className="modal-title" id="modalLabel">Adicionar Tour</h5>
+                    <h5 className="modal-title" id="modalLabel">Adicionar Tour {props.id}</h5>
                     <button id={`modalX${props.id}`} className="close" type="button" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">×</span>
                     </button>
