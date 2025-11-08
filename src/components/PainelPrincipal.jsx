@@ -63,7 +63,7 @@ export default function PainelPrincipal() {
                 setQuantidadeAtua(dataQuantidadeAtual);
 
             } catch (error) {
-                console.error("Erro ao carregar dados do painel:", error);
+                console.error("Erro ao carregar dados do painel :", error);
                 setDadoAno(false); 
                 setDadoMesAtual(false);
                 setDadoQuantidade(false);
