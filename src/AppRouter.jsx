@@ -1,4 +1,4 @@
-import { BrowserRouter as Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoutes.jsx"; 
 import NovaReserva from './pages/NovaReserva';
 import AgendaReservas from './pages/AgendaReservas';
