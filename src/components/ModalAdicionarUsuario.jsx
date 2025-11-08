@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback } from "react";
 import ModalAlert from "./ModalAlert";
 import { createUsuario } from '../FranciscoTourService'; 
 
