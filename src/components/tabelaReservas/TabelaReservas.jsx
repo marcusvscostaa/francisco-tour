@@ -302,7 +302,7 @@ export default function TabelaReservas() {
             ),
         },
 
-    ], [renderPaymentBadge]); 
+    ], [renderPaymentBadge, renderStatusDropdown, renderStatusTag]); 
    
     const handleSingleDateChange = (date, type) => {
         if (type === 'start') {

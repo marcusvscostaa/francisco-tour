@@ -1,5 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import decodeJwtPayload from "./decodeJwtPayload";
+import { BrowserRouter as Routes, Route } from "react-router-dom";
 import { PrivateRoute } from "./components/PrivateRoutes.jsx"; 
 import NovaReserva from './pages/NovaReserva';
 import AgendaReservas from './pages/AgendaReservas';
@@ -14,12 +13,6 @@ import Painel from './pages/Painel';
 import Usuarios from './pages/Usuarios';
 import { PublicRoute } from "./components/PublicRoute.jsx";
 import { RoleBasedRoute } from "./components/RoleBasedRoute.jsx";
-const acesso = () => {
-    if(localStorage.getItem('user')){
-    return decodeJwtPayload(JSON.parse(localStorage.getItem('user')).token).acesso === "ADMIN";
-}else{
-    return false;
-}}
 
 export const AppRouter = () => {
   return (

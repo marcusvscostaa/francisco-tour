@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import TourForm from "./TourForm";
 import TourPag from "./TourPag";
 import { uid } from 'uid/secure';
-import ModalAlert from "./ModalAlert";
 import axios from "axios";
 axios.defaults.baseURL = process.env.REACT_APP_BASE_URL;
 
@@ -12,7 +11,6 @@ const idPagamento = uid().toString();
 export default  function AddReserva(props){
     const [numberTour, setNumberTour] = useState([1]);
     const [addTour, setaddTour] = useState(2);
-    const [dadosTour, setdadosTour] = useState(2);
     const [addPag, setaddPag] = useState(false);
     const [formFields, setFormFields] = useState(false);
     const [imagemUpload, setImagemUpload] = useState(false);

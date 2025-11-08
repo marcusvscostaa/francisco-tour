@@ -36,7 +36,7 @@ export default function StatusUsuario({ idUsuario, acesso, initialStatus, setUpd
         } catch (err) {
             console.error("Erro ao atualizar status do Usuário:", err);
         }
-    }, [idUsuario]);
+    }, [idUsuario, initialStatus, setUpdateKey]);
 
     return (
         <div className="dropdown">

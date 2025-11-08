@@ -67,7 +67,7 @@ export default function ModalAdicionarUsuario({ setUpdateKey, id }) {
                 }
             }, 3000);
         }
-    }, [dataForm, setUpdateKey]);
+    }, [dataForm, setUpdateKey, MODAL_ID]);
 
 
     return (

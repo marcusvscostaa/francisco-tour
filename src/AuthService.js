@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; 
 class AuthService {
     login(username, password) {
         return axios.post(`${process.env.REACT_APP_BASE_URL}/login`, { username, password })
