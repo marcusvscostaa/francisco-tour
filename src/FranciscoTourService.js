@@ -58,6 +58,11 @@ export async function getEstorno(){
     return response.data;
 }
 
+export async function getEstornoByReservaId(idReserva) {
+    const response = await instance.get(`/estornos/reserva/${idReserva}`); 
+    return response.data;
+}
+
 export async function getPagamentoReservaAnual(anoSelecionado){
     const response = await instance.get(`/pagamentos/Anual/${anoSelecionado}`);
     return response.data;
@@ -67,8 +72,12 @@ export async function getPagamentoReservaMensal(month, year){
     return response.data;
 }
 
-export async function getPagamentoReservaValorMes(anoSelecionado){
-    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`);
+export async function getPagamentoReservaValorMes(anoSelecionado, idVendedor){
+    const params = {};
+    if (idVendedor) {
+        params.idVendedor = idVendedor;
+    }
+    const response = await instance.get(`/reservas/valorMes/${anoSelecionado}`,{ params: params });
     return response.data;
 }
 

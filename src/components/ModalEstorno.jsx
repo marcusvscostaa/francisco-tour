@@ -8,7 +8,7 @@ import ModalComentario from "./ModalComentario";
 import StatusEstorno from "./StatusEstorno";
 import ModalDeleteEstorno from "./ModalDeleteEstorno";
 import optionForm from "./lista.json"
-import {createEstorno, editEstorno} from "../FranciscoTourService";
+import {createEstorno, editEstorno, getEstornoByReservaId} from "../FranciscoTourService";
 
 
 DataTable.use(DT);
@@ -23,11 +23,28 @@ export default function ModalEstorno(props){
     const [dadosPagForm, setDadosPagForm] = useState({id_reserva: props.idR});
     const [showEditPag, setShowEditPag] = useState({status: false})
     const [options, setOptions] = useState("");
+    const [estornosLocais, setEstornosLocais] = useState([]);
+    const [loadingEstornos, setLoadingEstornos] = useState(true);
 
 
     useEffect(()=>{
+        const fetchEstornos = async () => {
+            setLoadingEstornos(true);
+            try {
+                const data = await getEstornoByReservaId(props.idR); 
+                setEstornosLocais(data);
+            } catch (error) {
+                console.error("Erro ao buscar estornos:", error);
+                setEstornosLocais([]);
+            } finally {
+                setLoadingEstornos(false);
+            }
+        };
+
+        window.$('#estorno'+props.idR).on('shown.bs.modal', fetchEstornos)
+
         setOptions(optionForm)
-    },[props.updateCount])
+    },[props.idR, props.updateCount])
     
     const handleApiResponse = (response, acao) => {
         if(response.data){
@@ -38,7 +55,7 @@ export default function ModalEstorno(props){
                 setModalSpinner(false);
                 setModalAddEstorno(false);
                 setShowEditPag(false); 
-                props.setUpdateCount(true);
+                props.setUpdateCount(prevCount => prevCount + 1);
             }, 2000);
             return true;
         } else {
@@ -111,7 +128,7 @@ export default function ModalEstorno(props){
                         </button>
                     </div>
                     <div className="modal-body">
-                        {props.estorno.length !== 0?
+                        {estornosLocais.length !== 0?
                         <>
                         <div className="table-responsive">
                             <table className="table table-sm table-hover mr-0 mt-3 w-100 ">
@@ -127,7 +144,7 @@ export default function ModalEstorno(props){
                                     <th className="text-left">Configurações</th>
                                 </tr>
                             </thead>
-                            {props.estorno.map(item => {
+                            {estornosLocais&&estornosLocais.map(item => {
                                 return (
                                     <tbody>
                                         <tr>
@@ -153,8 +170,6 @@ export default function ModalEstorno(props){
                                             </td>
                                             <td>
                                                 <button type="button" className="btn btn-sm mr-2 btn-warning" onClick={() => setShowEditPag({status: true, id: item.idEstorno})} disabled={showEditPag.status || addEstorno}><i className="fas fa-edit	"></i></button>
-                                                <button type="button" data-toggle="modal" data-target={`#deleteEstorno${item.idEstorno}`} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
-                                                <ModalDeleteEstorno setUpdateCount={props.setUpdateCount} idEstorno = {item.idEstorno} title ={'Estorno'}/>
                                             </td>
                                         </tr>
                                     </tbody>
@@ -175,13 +190,13 @@ export default function ModalEstorno(props){
                                             </li>
                                             <li className="list-group-item d-flex justify-content-between align-items-center px-0">
                                                 Valor Devolvido
-                                                <span>R$ {props.estorno.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0).toFixed(2).replace(".", ",")}</span>
+                                                <span>R$ {estornosLocais.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0).toFixed(2).replace(".", ",")}</span>
                                             </li>
                                                 <li className="list-group-item d-flex justify-content-between align-items-center border-0 px-0 mb-3">
                                                 <div>
                                                     <strong>Estorno Restante</strong>                                            
                                                 </div>
-                                            <span><strong>R$ {(props.valorTotal - props.estorno.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0)).toFixed(2).replace(".", ",")}</strong></span>
+                                            <span><strong>R$ {(props.valorTotal - estornosLocais.filter((item) => item.status === "Pago").reduce((sum, item) =>sum + item.valor,0)).toFixed(2).replace(".", ",")}</strong></span>
                                             </li>
                                         </ul>
                                 </div>
@@ -224,7 +239,7 @@ export default function ModalEstorno(props){
                             namePago={'Devolvido'}
                             editPag={showEditPag.status} 
                             idPag={showEditPag.id}
-                            dados={props.estorno.filter((pag) => pag.idEstorno === showEditPag.id).map((item)=>{
+                            dados={estornosLocais.filter((pag) => pag.idEstorno === showEditPag.id).map((item)=>{
                                 return({id_reserva: item.id_reserva,
                                         idPagamento: item.idEstorno,
                                         dataPagamento: item.data,

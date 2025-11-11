@@ -8,7 +8,8 @@ export default function ModalAdicionarUsuario({ setUpdateKey, id }) {
     const [dataForm, setDataForm] = useState({
         username: '',
         password: '',
-        acesso: 'ADMIN'
+        acesso: 'ADMIN',
+        comissoes: 10
     });
     const [modalSpinner, setModalSpinner] = useState(false);
     const [modalStatus, setModalStatus] = useState([]);
@@ -25,7 +26,8 @@ export default function ModalAdicionarUsuario({ setUpdateKey, id }) {
         setDataForm({
             username: '',
             password: '',
-            acesso: 'ADMIN'
+            acesso: 'ADMIN',
+            comissoes: 10
         });
     }
 
@@ -82,22 +84,31 @@ export default function ModalAdicionarUsuario({ setUpdateKey, id }) {
                         </button>
                     </div>
                     <form onSubmit={handleSubmit}>
-                        <div className="modal-body">
-                            <p>Usuário</p>
-                            <input name="username" type="text" className="form-control mb-3" value={dataForm.username} onChange={handleChange} required/>
-                            
-                            <p>Senha</p>
-                            <input name="password" type="password" className="form-control mb-2" value={dataForm.password} onChange={handleChange} required/>
-                            
-                            <label className="form-label">Acesso</label>
-                            <select className="form-control form-control-sm" name="acesso" value={dataForm.acesso} onChange={handleChange} required> 
-                                <option value='ADMIN'>ADMIN</option>
-                                <option value='VENDEDOR'>VENDEDOR</option> 
-                                <option value='GUIA'>GUIA</option> 
-                                <option value='MOTORISTA'>MOTORISTA</option> 
-                                <option value='AGENCIA'>AGENCIA</option> 
+                        <div className="modal-body row">
+                            <div className="col-md-6">
+                                <p>Usuário</p>
+                            <input name="username" type="text" className="form-control mb-3 form-control-sm " value={dataForm.username} onChange={handleChange} required/>
+                            </div>
+                            <div className="col-md-6">
+                                <p>Senha</p>
+                                <input name="password" type="password" className="form-control mb-2 form-control-sm" value={dataForm.password} onChange={handleChange} required/>
+                            </div>
+                            <div className="col-md-6">
+                                <label className="form-label">Acesso</label>
+                                <select className="form-control form-control-sm mb-2" name="acesso" value={dataForm.acesso} onChange={handleChange} required> 
+                                    <option value='ADMIN'>ADMIN</option>
+                                    <option value='VENDEDOR'>VENDEDOR</option> 
+                                    <option value='GUIA'>GUIA</option> 
+                                    <option value='MOTORISTA'>MOTORISTA</option> 
+                                    <option value='AGENCIA'>AGENCIA</option> 
 
-                            </select>
+                                </select>
+                            </div>
+                            {(dataForm.acesso === 'ADMIN' || dataForm.acesso === 'VENDEDOR')&&<div className="col-md-6">
+                                <label className="form-label">Porcentagem Comissão</label>
+                                <input className="form-control form-control-sm col-md-6" name="comissoes" value={dataForm.comissoes} onChange={handleChange} required></input>
+                            </div>}
+                        
                         </div>
                         <div className="modal-footer">
                             <button type="submit" className="btn btn-primary" disabled={modalSpinner}>

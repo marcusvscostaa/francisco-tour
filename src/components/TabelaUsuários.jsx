@@ -16,12 +16,7 @@ export default function TabelaUsuarios(props) {
     const [usuarios, setUsuarios] = useState(null);
     const [loading, setLoading] = useState(true);
     const { updateKey, handleUpdate } = props;
-    
-    // Assumindo que você terá um ModalEditarUsuario e um ModalDeleteUsuario
-    // import ModalEditarUsuario from './ModalEditarUsuario';
-    // import ModalDeleteUsuario from './ModalDeleteUsuario';
 
-    // Função para buscar os usuários
     useEffect(() => {
         const fetchUsers = async () => {
             setLoading(true);
@@ -72,6 +67,7 @@ export default function TabelaUsuarios(props) {
                         <th>ID</th>
                         <th>Usuário</th>
                         <th>Acesso</th>
+                        <th className='text-left'>Comissão</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -81,6 +77,7 @@ export default function TabelaUsuarios(props) {
                             <td title={user.idUsuario}>{user.idUsuario.substring(0, 8)}...</td>
                             <td>{user.username}</td>
                             <td ><span className={user.acesso === 'ADMIN'?'badge badge-dark':'badge badge-info'}>{user.acesso}</span></td>
+                            <td className='text-left'>{user.comissoes}%</td>
                             <td>
                                 <StatusUsuario
                                     idUsuario={user.idUsuario} 

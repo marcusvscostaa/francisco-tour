@@ -35,7 +35,7 @@ export default function PainelPrincipal() {
     const [vendedorSelecionado, setVendedorSelecionado] = useState(null); 
     const [listaVendedores, setListaVendedores] = useState([]);
 
-       const handleVendedorChange = (value) => {
+    const handleVendedorChange = (value) => {
         setVendedorSelecionado(value);
         setUpdateCount(prev => prev + 1); 
     };

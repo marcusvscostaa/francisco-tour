@@ -60,7 +60,7 @@ export default function ModalPagamento(props){
                 setLoadingPagamentos(false);
             }
         };
-        fetchPagamentos();
+        window.$('#modal'+props.id).on('shown.bs.modal',fetchPagamentos);
         setOptions(optionForm)
     },[idReserva, props.updateCount])
     

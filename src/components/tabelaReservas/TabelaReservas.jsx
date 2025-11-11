@@ -5,7 +5,21 @@ import { getReservas, getUsuarios, editarStatusReserva, editarStatusTours, edita
 import { useAuth } from '../../context/AuthContext.jsx'; 
 import ModalPagamento from '../ModalPagamento.jsx';
 import ModalEditarReserva from '../ModalEditarReserva.jsx';
+import ModalEstorno from "../ModalEstorno";
+
 const { Option } = Select;
+
+const formatarMoedaBRL = (valor) => {
+    const numero = typeof valor === 'number' ? valor : parseFloat(valor);
+    if (isNaN(numero)) {
+        return "0,00"; 
+    }
+    return new Intl.NumberFormat('pt-BR', {
+        style: 'decimal',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    }).format(numero);
+};
 
 const STATUS_MAP = {
     'Confirmado': { label: 'Confirmado', color: 'success' }, 
@@ -107,8 +121,22 @@ export default function TabelaReservas() {
         return filtrado;
     }, [reservas, vendedorSelecionado, dataInicio, dataFim, filtroBusca]);
     
-    
+    const getEstornoBadge = (record,saldoDevido, calculoEstorno) => {
+        return saldoDevido > 0 || calculoEstorno > 0?
+        <a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${record.idR}`}>
+            { calculoEstorno === 0 && <Tag title='Adicionar Estorno' color='error'>NÃO DEVOLVIDO</Tag>}
+            { calculoEstorno < saldoDevido && calculoEstorno > 0 &&<Tag title='Adicionar Estorno'color='warning'>INCOMPLETO</Tag>}
+            { calculoEstorno === saldoDevido &&<Tag title='Ver Estorno'color='success'>DEVOLVIDO</Tag>}
+            { calculoEstorno > saldoDevido &&<Tag title='Ver Estorno'color='blue'>EXCEDENTE</Tag>}
+        </a>
+        :''
+    };
     const renderPaymentBadge = (text, record) => {
+        const valorTotal = record.valorTotalCalculado;
+        const pagamento = record.valorPagoCalculado;
+        const calculoEstorno = record.valorEstornoPagoCalculado;
+        const saldoDevido = pagamento - valorTotal;
+
         const total = record.valorTotalCalculado || 0;
         const pago = text || 0;
         
@@ -117,8 +145,10 @@ export default function TabelaReservas() {
 
         if (total <= pago) { color = STATUS_MAP['Confirmado'].color; label = 'PAGO'; }
         else if (total > pago && pago > 0) { color = STATUS_MAP['Pendente'].color; label = 'PENDENTE'; }
-        
-        return <Tag color={color}>{label}</Tag>;
+        return <><Tag color={color}>{label}</Tag> {getEstornoBadge(record, saldoDevido, calculoEstorno)}
+        <ModalEstorno valorTotal={saldoDevido > 0 ?pagamento - valorTotal:0} updateCount={updateCount} setUpdateCount={setUpdateCount} idR={record.idR} formatarMoeda={formatarMoedaBRL}/>
+    
+        </>;
     };
 
     const renderStatusTag = (status) => {
@@ -159,9 +189,6 @@ export default function TabelaReservas() {
         setFiltroBusca(null);
     };
 
-    const handleCollapseClick = () => {
-        setCollapsePagamento(prev => !prev);
-    }
     const handleStatusUpdate = useCallback(async (record, status) => {
 
         try {
@@ -176,18 +203,8 @@ export default function TabelaReservas() {
                 editarStatusTours({ status: status, idtour: item.idtour })
             );
 
-            const pagamentosToUpdate = dependentPayments.map(item => {
-                let pagamentoStatus = item.status; 
-                if (status === STATUS.CONFIRMADO.status) {
-                    pagamentoStatus = 'Pago'; 
-                } else if (status === STATUS.CANCELADO.status) {
-                    pagamentoStatus = 'Cancelado'; 
-                } 
 
-                return editarStatusPagamento({ status: pagamentoStatus, idPagamento: item.idPagamento });
-            });
-
-            await Promise.all([...toursToUpdate, ...pagamentosToUpdate]);
+            await Promise.all([...toursToUpdate]);
 
             setUpdateCount(prevCount => prevCount + 1); 
 
@@ -197,7 +214,7 @@ export default function TabelaReservas() {
     }, [setUpdateCount]);
 
     const renderStatusDropdown = (text, record) => {
-        const statusInfo = STATUS_MAP[text] || STATUS_MAP.CONFIRMADO;
+        const statusInfo = STATUS_MAP[text] || STATUS_MAP['Confirmado'];
         
         return (
             <div className="dropdown">
@@ -319,12 +336,14 @@ export default function TabelaReservas() {
                     id={reserva.idR}
                     valorTotal={reserva.valorTotalCalculado}
                     setUpdateCount={handleUpdate}
+                    updateCount={updateCount}
                 />
                 
                 <ModalEditarReserva 
                     idR={reserva.idR}
                     dadosReserva={reserva}
                     setUpdateCount={handleUpdate}
+                    updateCount={updateCount}
                 />
 
                 
@@ -338,7 +357,7 @@ export default function TabelaReservas() {
                             prefix={<i className="fas fa-search" />}
                             placeholder="ID, Nome, ou Sobrenome"
                             value={filtroBusca}
-                            onChange={(e) => setFiltroBusca(e.target.value)} // 🛑 Atualiza o termo de busca
+                            onChange={(e) => setFiltroBusca(e.target.value)}
                         />
                     </div>
                     {isAdmin&&<div className="col-md-2 mt-auto mb-4">
@@ -374,7 +393,6 @@ export default function TabelaReservas() {
                                 className='mb-4'
                                 style={{ width: '100%', marginBottom: '10px' }}
                                 value={dataInicio}
-                                // Use a função auxiliar para atualizar o estado de início
                                 onChange={(date) => handleSingleDateChange(date, 'start')}
                                 format="DD/MM/YYYY"
                                 getPopupContainer={trigger => trigger.parentElement || document.body} 
@@ -385,7 +403,6 @@ export default function TabelaReservas() {
                                 placeholder="Fim"
                                 style={{ width: '100%' }}
                                 value={dataFim}
-                                // Use a função auxiliar para atualizar o estado de fim
                                 onChange={(date) => handleSingleDateChange(date, 'end')}
                                 format="DD/MM/YYYY"
                                 minDate={dataInicio}
@@ -393,7 +410,7 @@ export default function TabelaReservas() {
                             />
                     </div>
                     
-                    <div className="col-md-3 mt-auto mb-4">
+                    <div className="col-md-3 mt-auto mb-4 d-flex flex-row-reverse d-sm-block">
                         <AntButton 
                             onClick={handleClearFilters}
                             icon={<i className="fas fa-eraser"></i>}

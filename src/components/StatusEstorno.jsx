@@ -24,7 +24,7 @@ export default function StatusEstorno(props){
         
         try {
             await editStatusEstorno(props.id, {status: novoStatus});            
-            props.setUpdateCount(true);             
+            props.setUpdateCount(prevCount => prevCount + 1);             
             setStatusReserva(calcularStatusUI(novoStatus));
 
         } catch (err) {

@@ -25,9 +25,10 @@ export default function ModalCriarTourCadastro(props) {
                 nome_tour: props.tourParaEdicao.nome_tour || '',
                 valor_adulto: parseFloat(props.tourParaEdicao.valor_adulto) || 0,
                 valor_crianca: parseFloat(props.tourParaEdicao.valor_crianca) || 0,
+                custo: parseFloat(props.tourParaEdicao.custo) || 0,
             });
         } else {
-             setFormData({ destino: '', nome_tour: '', valor_adulto: 0, valor_crianca: 0 });
+             setFormData({ destino: '', nome_tour: '', valor_adulto: 0, valor_crianca: 0, custo: 0 });
         }
 
         const handleModalHidden = () => {
@@ -178,6 +179,20 @@ export default function ModalCriarTourCadastro(props) {
                                         name="valor_crianca" 
                                         value={renderValue('valor_crianca')} 
                                         onChange={handleChange} 
+                                    />
+                                </div>
+
+                                <div className="form-group col-md-6">
+                                    <label htmlFor="custo">Custo (R$):</label>
+                                    <input 
+                                        type="number" 
+                                        step="0.01" 
+                                        className="form-control form-control-sm" 
+                                        id="custo" 
+                                        name="custo" 
+                                        value={renderValue('custo')} 
+                                        onChange={handleChange} 
+                                        required 
                                     />
                                 </div>
                             </div>
