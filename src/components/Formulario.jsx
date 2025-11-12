@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
+import { Card } from 'antd';
 import { createCliente, createReserva, createTour, createPagamento } from "../FranciscoTourService";
 import TourForm from "./TourForm";
 import TourPag from "./TourPag";
@@ -226,13 +227,17 @@ export default function Formulario(props) {
     };
 
     return (
-        <div className="card shadow mb-4">
+        <Card 
+            className="border border-secondary mb-4"
+            title={props.title}
+            styles={{
+                header: {
+                backgroundColor: '#F8F9FC'
+                }
+            }}
+        >
             <ModalAlert dados={modalStatus} />
             {props.modalAlert}
-            <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">{props.title}</h6>
-            </div>
-            
             <div className="card-body">
                 <form className="row g-3 needs-validation" onSubmit={handleSubmit}>
                     {!(props.addReserva)?
@@ -369,6 +374,6 @@ export default function Formulario(props) {
                                     <span class="sr-only">Loading...</span>
                                 </div>
                             </div>}
-        </div>
+        </Card>
     )
 }

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Table, Card } from 'antd';
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
 import {getPagamentoReservaAnual, getPagamentoReservaValorMes, getPagamentoReservaMensal} from "../FranciscoTourService";
@@ -61,6 +62,71 @@ export default function TabelaComissoes(){
 
             setUpdateData(false)
     },[updateData])
+    const dataSource = dadoMensal
+        ? dadoMensal.filter(item => item.status === "Pago")
+        : [];
+    const columns = [
+        {
+            title: 'ID Pagamento',
+            dataIndex: 'idPagamento',
+            key: 'idPagamento',
+        },
+        {
+            title: 'Nome',
+            dataIndex: 'nome',
+            key: 'nome',
+        },
+        {
+            title: 'Data',
+            dataIndex: 'dataPagamento',
+            key: 'dataPagamento',
+            // Usamos a função render para formatar a data como você fez no HTML
+            render: (dataPagamento) => dataPagamento.substr(0, 10).split('-').reverse().join('/'),
+            // Define o método de ordenação
+            sorter: (a, b) => {
+                const dateA = new Date(a.dataPagamento.substr(0, 10));
+                const dateB = new Date(b.dataPagamento.substr(0, 10));
+                return dateA - dateB; // Ordem crescente (A-B). Para decrescente: dateB - dateA
+            },
+            defaultSortOrder: 'descend', // Aplica a ordenação decrescente por padrão (mais recente primeiro)
+        },
+        {
+            title: 'Pago',
+            dataIndex: 'valorPago',
+            key: 'valorPago',
+            // Função render para formatar como R$ e aplicar a classe de sucesso
+            render: (valorPago) => (
+            <span className="text-success">
+                R$ {valorPago.toFixed(2).replace(".", ",")}
+            </span>
+            ),
+            align: 'right',
+        },
+        {
+            title: 'Porcentagem',
+            dataIndex: 'comissaoPorcentagem', // Esta chave não existe no dado, é um valor fixo
+            key: 'porcentagem',
+            // Renderiza a variável 'porcentagem'
+            render: () => `${porcentagem}%`,
+            align: 'right',
+        },
+        {
+            title: 'Comissão',
+            dataIndex: 'valorComissao', // Esta chave não existe no dado
+            key: 'comissao',
+            // Calcula e formata o valor da comissão
+            render: (text, record) => { // 'record' é o objeto de dados inteiro (dado)
+            const valorComissao = record.valorPago * porcentagem / 100;
+            return (
+                <span className="text-success">
+                R$ {valorComissao.toFixed(2).replace(".", ",")}
+                </span>
+            );
+            },
+            align: 'right',
+            sorter: (a, b) => (a.valorPago * porcentagem) - (b.valorPago * porcentagem),
+        },
+    ];
     
     return(
     <>
@@ -68,7 +134,7 @@ export default function TabelaComissoes(){
     <>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div class="card border-left-success border border-secondary h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
@@ -84,7 +150,7 @@ export default function TabelaComissoes(){
                 </div>
             </div>
             <div class="col-xl-3 col-md-6 mb-4">
-                <div class="card border-left-success shadow h-100 py-2">
+                <div class="card border-left-success border border-secondary h-100 py-2">
                     <div class="card-body">
                         <div class="row no-gutters align-items-center">
                             <div class="col mr-2">
@@ -100,57 +166,29 @@ export default function TabelaComissoes(){
                 </div>
             </div>
         </div>
-        <div className="card shadow mb-4">
-            <div className="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 className="m-0 font-weight-bold text-primary">Comissões {`${months[month]}/${year}`}</h6>
-                <div class="d-flex text-center">
-                    <p className="m-auto pr-2">Porcentagem:</p> <input type="number" min="0" max="100" className="mr-2 form-control form-control-sm" 
-                    value={porcentagem}
-                    onChange={(e) =>{ e.target.value <= 100 && setPorcentagem(e.target.value);
-                                      e.target.value <= -1 && setPorcentagem(0);}
-                    }/>
-                    <input class="form-control form-control-sm" value={year+'-'+(month+1).toString().padStart(2, '0')} type="month" onChange={(e) =>{ setYear(e.target.value.substr(0, 4));
-                                                                                                                     setMonth((e.target.value.substr(5,6 )-1));
-                                                                                                                     setUpdateData(true);}}/>
-                </div>
-
-            </div>
-            <div className="card-body">
-                {dadoMensal&&<table
-                            className="table table-sm table-hover mr-0 mt-3 w-100 "
-                            cellspacing="0"
-                            width="100%"
-                            id="dataTable">
-                                 <thead>
-                                <tr>
-                                    <th className="text-left">ID Pagamento</th>
-                                    <th className="text-left">Nome</th>
-                                    <th className="text-left">Data</th>
-                                    <th className="text-left">Pago</th>
-                                    <th className="text-left">Porcentagem</th>
-                                    <th className="text-left">Comissão</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {dadoMensal&&dadoMensal.filter((item) => item.status === "Pago").sort((a, b) => {
-                                    const dateA = new Date(a.dataPagamento.substr(0, 10));
-                                    const dateB = new Date(b.dataPagamento.substr(0, 10));
-                                    return dateB - dateA;
-                                }).map((dado) => {
-                                                        return(
-                                        <tr className="text-left">
-                                            <td>{dado.idPagamento}</td>
-                                            <td>{dado.nome}</td>
-                                            <td>{dado.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
-                                            <td className="text-success">R$ {dado.valorPago.toFixed(2).replace(".", ",")}</td>
-                                            <td>{porcentagem}%</td>
-                                            <td className="text-success">R$ {(dado.valorPago*porcentagem/100).toFixed(2).replace(".", ",")}</td>
-                                        </tr>
-                                    )}
-                                )}
-                            </tbody>
-                </table>}
-            </div> 
+        <div className="d-block d-md-flex mt-4 ">
+            <h5 className="font-weight-bold mb-2 text-dark">Comissões {`${months[month]}/${year}`}</h5>
+            <div class="d-block d-md-flex mb-md-2 ml-auto my-auto">
+                <p className="mb-2 pr-2 my-md-auto">Porcentagem:</p> 
+                <input type="number" min="0" max="100" className="mr-2 form-control form-control-sm mb-2 my-md-auto" 
+                value={porcentagem}
+                onChange={(e) =>{ e.target.value <= 100 && setPorcentagem(e.target.value);
+                                    e.target.value <= -1 && setPorcentagem(0);}
+                }/>
+                <input class="form-control form-control-sm mb-4 my-md-auto" value={year+'-'+(month+1).toString().padStart(2, '0')} type="month" onChange={(e) =>{ setYear(e.target.value.substr(0, 4));
+                                                                                                                    setMonth((e.target.value.substr(5,6 )-1));
+                                                                                                                    setUpdateData(true);}}/>
+            </div>          
+        </div>
+        <div className="table-responsive card border border-secondary mb-5">
+            <Table
+                dataSource={dataSource} 
+                columns={columns}
+                bordered={true} 
+                size="small"
+                rowKey="idPagamento" 
+                pagination={false} 
+            />
         </div>
         </>: <div className="d-flex justify-content-center">
             <div className="spinner-border" role="status">

@@ -85,7 +85,7 @@ export default function PainelPrincipal() {
     <>
     <div class="row">
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-primary shadow h-100 py-2">
+            <div class="card border-left-primary border border-secondary h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -101,7 +101,7 @@ export default function PainelPrincipal() {
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-success shadow h-100 py-2">
+            <div class="card border-left-success border border-secondary h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -117,7 +117,7 @@ export default function PainelPrincipal() {
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-danger shadow h-100 py-2">
+            <div class="card border-left-danger border border-secondary h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -133,7 +133,7 @@ export default function PainelPrincipal() {
             </div>
         </div>
         <div class="col-xl-3 col-md-6 mb-4">
-            <div class="card border-left-info shadow h-100 py-2">
+            <div class="card border-left-info border border-secondary h-100 py-2">
                 <div class="card-body">
                     <div class="row no-gutters align-items-center">
                         <div class="col mr-2">
@@ -149,32 +149,34 @@ export default function PainelPrincipal() {
             </div>
         </div>
     </div>
-    {isAdmin&&<div className="col-xl-3 col-md-6 d-md-flex">
-        <label className="form-label font-weight-bold my-auto mr-2 mb-sm-4">Vendedor:</label>
-        <Select
-            className="mb-sm-4"
-            allowClear
-            placeholder="Todos os Vendedores"
-            style={{ width: 200 }}
-            value={vendedorSelecionado}
-            onChange={handleVendedorChange}
-        >
-            {listaVendedores.map(vendedor => (
-                <Option key={vendedor.idUsuario} value={vendedor.idUsuario}>
-                    {vendedor.username}
-                </Option>
-            ))}
-        </Select>
-        <AntButton 
-            className="ml-md-2 mb-sm-4"
-            onClick={() => handleVendedorChange(null)}
-            type="default"
-            icon={<i className="fas fa-eraser"></i>}
-            disabled={!vendedorSelecionado} 
-        >
-            Limpar Vendedor
-        </AntButton>
-    </div>}
+    {isAdmin&&<div className=" d-block d-md-flex">
+        <div className="mb-4 mr-3">
+            <label className="form-label d-block">Vendedor:</label>
+            <Select
+                allowClear
+                placeholder="Todos os Vendedores"
+                style={{ width: 200 }}
+                value={vendedorSelecionado}
+                onChange={handleVendedorChange}
+            >
+                {listaVendedores.map(vendedor => (
+                    <Option key={vendedor.idUsuario} value={vendedor.idUsuario}>
+                        {vendedor.username}
+                    </Option>
+                ))}
+            </Select>
+        </div>
+        <div className="mt-auto mb-4 d-flex flex-row-reverse d-md-block">
+            <AntButton 
+                onClick={() => handleVendedorChange(null)}
+                type="default"
+                icon={<i className="fas fa-eraser"></i>}
+                disabled={!vendedorSelecionado} 
+            >
+                Limpar Vendedor
+            </AntButton>
+        </div>
+   </div>}
     <div class="row">
         <PainelGrafico title1={"Vendas Confirmadas"}  title2={"Vendas Canceladas"} size={"8"} dadoAno={dadoAno} anoSelecionado={anoSelecionado} setAnoSelecionadol={setAnoSelecionadol} setUpdateCount={setUpdateCount} />
         <PainelPizza dadoQuantidade={dadoQuantidade} dadoQuantidadeAtual={dadoQuantidadeAtual}  anoSelecionado={anoSelecionado}/>

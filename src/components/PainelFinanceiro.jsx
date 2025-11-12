@@ -120,7 +120,7 @@ export default function PainelFinanceiro(){
     <>
     <div className="row">
         <div className="col-xl-3 col-md-6 mb-4">
-            <div className="card border-left-success shadow h-100 py-2">
+            <div className="card border-left-success border border-secondary h-100 py-2">
                 <div className="card-body">
                     <div className="row no-gutters align-items-center">
                         <div className="col mr-2">
@@ -136,7 +136,7 @@ export default function PainelFinanceiro(){
             </div>
         </div>
         <div className="col-xl-3 col-md-6 mb-4">
-            <div className="card border-left-danger shadow h-100 py-2">
+            <div className="card border-left-danger border border-secondary h-100 py-2">
                 <div className="card-body">
                     <div className="row no-gutters align-items-center">
                         <div className="col mr-2">

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import ModalComentario from "./ModalComentario";
+import { Button, Popconfirm   } from 'antd';
 import { editarStatusPagamento } from '../FranciscoTourService';
 
 export default function TabalaPagamento(props){
@@ -9,6 +10,20 @@ export default function TabalaPagamento(props){
         return { status: '', className: "" };
     };
     const [statusLocal, setStatusLocal] = useState(() => getInitialPagStatus(props.pag.status));
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const showModal = () => {
+        setIsModalOpen(true);
+    };
+
+    const handleOk = () => {
+        setIsModalOpen(false);
+    };
+
+    const handleCancel = () => {
+        setIsModalOpen(false);
+    };
 
     useEffect(()=>{
         setStatusLocal(getInitialPagStatus(props.pag.status));
@@ -37,12 +52,21 @@ export default function TabalaPagamento(props){
             <td>{props.pag.idPagamento}</td>
             <td>{props.pag.dataPagamento.substr(0, 10).split('-').reverse().join('/')}</td>
             <td>R$: {props.pag.valorPago.toFixed(2).replace(".", ",")}</td>
-            <td>
-                <a type="button" className="btn btn-sm btn-light" data-trigger="hover" data-toggle="modal" data-target={`#comentario${props.pag.idPagamento}`} title="Comentário">
-                    <i className="fas fa-comment-alt"></i>
+            <td>               
+                <Popconfirm  
+                    placement="bottom"
+                    title="Comentário"
+                    description={props.pag.comentario?props.pag.comentario:'Sem Comentário'}
+                    icon={<><i className="fas fa-comment-alt"></i>&nbsp;</>}
+                    open={isModalOpen}
+                    onConfirm={handleOk}
+                    showCancel={false}
+                >
+                    <a type="button" className="btn btn-sm btn-light" onClick={showModal}>
+                        <i className="fas fa-comment-alt"></i>
                         &nbsp; Ver
-                </a>
-                <ModalComentario title={'Comentário Pagamento'} id={props.pag.idPagamento} comentario={props.pag.comentario}/>                
+                    </a>
+                </Popconfirm  >
             </td>
             <td>
                 <a type="button" className="btn btn-sm btn-light" target="_blank" href={`${process.env.REACT_APP_BASE_URL}/pagamento/comprovante/${props.pag.idPagamento}`}>

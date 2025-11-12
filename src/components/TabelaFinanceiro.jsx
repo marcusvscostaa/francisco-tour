@@ -136,7 +136,7 @@ export default function TabelaFinanceiro(props) {
     ], [props.formatarMoeda]);
     return (
 
-        <div className="table-responsive card">
+        <div className="table-responsive card border border-secondary mb-5">
             {props.reservas ?
                 <Table
                     rowKey="idR"

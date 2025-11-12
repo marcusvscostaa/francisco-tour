@@ -421,30 +421,33 @@ export default function TabelaReservas() {
                         </AntButton>
                     </div>
                 </div>
-            <Table
-                rowKey="idR" 
-                bordered={true}
-                size="small" 
-                columns={columns}
-                dataSource={reservasFiltradas} 
-                loading={loading}
-                scroll={{ 
-                    y: 450 
-                }}
-                pagination={{ 
-                        current: currentPage,
-                        pageSize: pageSize,
-                        showSizeChanger: true, 
-                        pageSizeOptions: ['10', '25', '50', '100'], 
-                        showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
-                        className: 'pagination-centered',
+            <div className="table-responsive card border border-secondary mb-5">
+                <Table
+                    
+                    rowKey="idR" 
+                    bordered={true}
+                    size="small" 
+                    columns={columns}
+                    dataSource={reservasFiltradas} 
+                    loading={loading}
+                    scroll={{ 
+                        y: 450 
                     }}
-                expandable={{
-                    expandedRowRender: renderRowDetails, 
-                    rowExpandable: (record) => record.valorTotalCalculado >= 0, 
-                }}
-                onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
-            />
+                    pagination={{ 
+                            current: currentPage,
+                            pageSize: pageSize,
+                            showSizeChanger: true, 
+                            pageSizeOptions: ['10', '25', '50', '100'], 
+                            showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
+                            className: 'pagination-centered',
+                        }}
+                    expandable={{
+                        expandedRowRender: renderRowDetails, 
+                        rowExpandable: (record) => record.valorTotalCalculado >= 0, 
+                    }}
+                    onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
+                />
+            </div>
         </>
     );
 }

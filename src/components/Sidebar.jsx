@@ -130,7 +130,7 @@ export  default function Sidebar(props){
             <div id="content">
                 
                 {/* Topbar */}
-                <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+                <nav className="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top border-bottom border border-secondary">
 
                     {/* Sidebar Toggle (Topbar) */}
                     <button id="sidebarToggleTop" onClick={sidebarToggle} className="btn btn-link d-md-none rounded-circle mr-3">

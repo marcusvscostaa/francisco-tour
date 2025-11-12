@@ -1,5 +1,6 @@
 
 import { useEffect, useState, useMemo, useCallback } from 'react'
+import { Card } from 'antd';
 import AgendaReservaChild from './AgendaReservaChild';
 import { getTiposTours, getTourPorMes, getDataDiferentes } from "../FranciscoTourService";
 
@@ -77,16 +78,19 @@ export default function AgendaReserva() {
     return (
         <>
         {tiposTours&&tourPorMes&&dataDiferentes?
-        <div className="card shadow mb-4">
-            <div className="card-body">
+        <Card 
+            className="card mb-4 border border-secondary"
+            title={`${months[month]} ${year}`}
+            styles={{
+                header: {
+                backgroundColor: '#F8F9FC'
+                }
+            }}
+            extra={ <input className='form-control' value={year+'-'+(month+1).toString().padStart(2, '0')} type="month" onChange={(e) =>{ setYear(e.target.value.substr(0, 4));
+                                                                                                                     setMonth((e.target.value.substr(5,6 )-1));}}/>}       
+        >
+            <div className="">
                 <div class="calendar-container">
-                    <header class="calendar-header">
-                        <p class="calendar-current-date"> {`${months[month]} ${year}`}</p>
-                        <div class="calendar-navigation">
-                        <input class="form-control" value={year+'-'+(month+1).toString().padStart(2, '0')} type="month" onChange={(e) =>{ setYear(e.target.value.substr(0, 4));
-                                                                                                                     setMonth((e.target.value.substr(5,6 )-1));}}/>
-                        </div>
-                    </header>
                     <div class="calendar-body">
                     {width> 481&&
                         <ul class="calendar-weekdays">
@@ -144,7 +148,7 @@ export default function AgendaReserva() {
                     </div>
                 </div>
             </div>
-        </div>:<div className="d-flex justify-content-center">
+        </Card>:<div className="d-flex justify-content-center">
             <div className="spinner-border" role="status">
                 <span className="sr-only">Loading...</span>
             </div>

@@ -1,4 +1,4 @@
-import React from "react";
+import { Card } from 'antd';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -164,13 +164,17 @@ export default function PainelGrafico(props){
     return (
         
 
-        <div class={`col-xl-${props.size} col-lg-7`}>
-            <div class="card shadow mb-4">
-                <div
-                    class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                    <h6 class="m-0 font-weight-bold text-primary">RESERVAS {props.anoSelecionado}</h6>
-                    <div class="dropdown no-arrow">
-                        <a type="button" class="dropdown-toggle btn btn-primary" href="#" role="button" id="dropdownMenuLink"
+        <div class={`col-xl-${props.size} col-lg-7 mb-5`}>
+            <Card
+              className='border border-secondary'
+              title={<>RESERVAS {props.anoSelecionado}</>}
+              styles={{
+                  header: {
+                  backgroundColor: '#F8F9FC'
+                  }
+              }}
+              extra={ <div class="dropdown no-arrow">
+                        <a type="button" class="dropdown-toggle btn btn-dark" href="#" role="button" id="dropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <span>{props.anoSelecionado}</span>
                             <i className="fas fa-calendar-alt fa-fw ml-1 text-gray-400"></i>
@@ -183,14 +187,14 @@ export default function PainelGrafico(props){
                             <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2026); props.setUpdateCount(true)}}>2026</a>
                             <a class="dropdown-item" onClick={() =>{props.setAnoSelecionadol(2027); props.setUpdateCount(true)}}>2027</a>
                         </div>
-                    </div>
-                </div>
+                    </div>}
+            >
                 <div class="card-body">
                     <div className="chart-area">
                         <Line id="myAreaChart" data={data} options={options} />
                     </div>
                 </div>
-            </div>
+            </Card>
         </div>
     )
 }
