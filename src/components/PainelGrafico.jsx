@@ -189,7 +189,7 @@ export default function PainelGrafico(props){
                         </div>
                     </div>}
             >
-                <div class="card-body">
+                <div class="">
                     <div className="chart-area">
                         <Line id="myAreaChart" data={data} options={options} />
                     </div>

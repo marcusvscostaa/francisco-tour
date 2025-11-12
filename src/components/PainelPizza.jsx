@@ -47,7 +47,7 @@ export default function PainelPizza(props){
             }}
         >
 
-            <div class="card-body">
+            <div class="">
                 <div class="chart-pie pt-4 pb-2">
                     <Doughnut data={data} options={options} id="myPieChart" />
                 </div>
