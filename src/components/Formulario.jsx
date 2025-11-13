@@ -238,7 +238,7 @@ export default function Formulario(props) {
         >
             <ModalAlert dados={modalStatus} />
             {props.modalAlert}
-            <div className="card-body">
+            <div className="">
                 <form className="row g-3 needs-validation" onSubmit={handleSubmit}>
                     {!(props.addReserva)?
                     <>

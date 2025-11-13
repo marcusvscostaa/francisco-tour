@@ -110,6 +110,12 @@ export async function getPagamentosByReservaId(idReserva) {
     return response.data;
 }
 
+export async function getReservasPorTourEData(date, nomeTour) {
+    const response = await instance.get(`/reservas/data/nometour?data=${date}&nometour=${encodeURIComponent(nomeTour)}`);
+    return response.data;
+}
+
+
 export async function getTours(){
     const response = await instance.get(`/tours`);
     return response.data;
