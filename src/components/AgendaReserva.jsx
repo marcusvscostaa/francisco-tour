@@ -94,8 +94,19 @@ export default function AgendaReserva() {
         
         try {
             const reservas = await getReservasPorTourEData(formattedDate, tourName);
-            setModalReservas(reservas); 
-        } catch (error) {
+             if (Array.isArray(reservas)) {
+                    const processedReservas = reservas.map(r => {
+                        const partesDoNome = r.nomeCliente ? r.nomeCliente.trim().split(/\s+/) : [];
+                        const nomeExibido = partesDoNome.length > 1 
+                            ? `${partesDoNome[0]} ${partesDoNome[partesDoNome.length - 1]}`
+                            : r.nomeCliente;
+                        return { ...r, nomeExibido };
+                    });
+                    console.log(processedReservas)
+                    setModalReservas(processedReservas);
+                } else { setModalReservas([]); }
+
+            } catch (error) {
             console.error("Erro ao buscar detalhes da reserva:", error);
             setModalReservas([]); 
         }
@@ -109,7 +120,7 @@ export default function AgendaReserva() {
 
     const modalColumns = [
         { title: 'ID Reserva', dataIndex: 'idReserva', key: 'idReserva' }, 
-        { title: 'Cliente', dataIndex: 'nomeCliente', key: 'nomeCliente' },
+        { title: 'Cliente', dataIndex: 'nomeExibido', key: 'nomeCliente' },
         { title: 'Qtd. Adultos', dataIndex: 'quantidadeAdultos', key: 'adultos', align: 'right' },
         { title: 'Qtd. Crianças', dataIndex: 'quantidadeCriancas', key: 'criancas', align: 'right' },
         { title: 'Hotel', dataIndex: 'hotel', key: 'hotel' },
@@ -176,7 +187,7 @@ export default function AgendaReserva() {
                                     <div className="w-25 border-right"><p className="m-0">QTD. </p></div>
                                     <div className="w-75"><p className="m-0 text-center">TOUR</p></div>
                                 </div>                                                                                                                      
-                                <AgendaReservaChild tiposTours={tiposTours} tourPorMes={tourPorMes.filter((item) => item.data.substr(8,2) == datas)} date={datas} />                                                                                                                                                                                                                             
+                                <AgendaReservaChild tiposTours={tiposTours} onTourClick={handleTourClick} tourPorMes={tourPorMes.filter((item) => item.data.substr(8,2) == datas)} date={datas} />                                                                                                                                                                                                                             
                                 <div className='bg-info text-white border font-weight-bold d-flex m-0'>
                                     <div className=""><p className="m-0">TOTAL  {tourPorMes&&tourPorMes.filter((item) => item.data.substr(8,2) == datas).reduce((sum, item) => sum + (item.quantidadeAdultos + item.quantidadeCriancas),0)}</p></div>
                                 </div> 
@@ -202,14 +213,21 @@ export default function AgendaReserva() {
             footer={null}
             width={800} 
         >
-            <Table
+            <div className='table-responsive'>
+            <Table 
+                className='table'    
+                bordered={true}
                 dataSource={modalReservas}
                 columns={modalColumns}
                 rowKey="idReserva" 
                 pagination={{ pageSize: 8 }}
                 loading={isModalVisible && modalReservas.length === 0} 
                 size="small"
+                scroll={{ 
+                        x: 751 
+                    }}
             />
+            </div>
         </Modal>
         
         </>

@@ -423,7 +423,6 @@ export default function TabelaReservas() {
                 </div>
             <div className="table-responsive card border border-secondary mb-5">
                 <Table
-                    
                     rowKey="idR" 
                     bordered={true}
                     size="small" 
