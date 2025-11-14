@@ -163,7 +163,6 @@ export default function Formulario(props) {
             if (!reservaResponse.data || !reservaResponse.data.idR) throw new Error('Falha ao Salvar Reserva');
             
             idReservaFinal = reservaResponse.data.idR;
-            console.log(idClienteFinal);
             setModalStatus(prev => [...prev, {id:2, mostrar:true, status: true, message: "Sucesso ao Salvar Reserva", titulo: "Reserva"}]);
 
             if (idReservaFinal) { 

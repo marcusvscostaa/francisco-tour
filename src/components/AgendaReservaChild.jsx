@@ -21,7 +21,6 @@ export default function AgendaReservaChild(props){
         <div>
         {props.tiposTours.map(tour => {
             const quantidade = tourFilter[tour.tour] || 0;
-            console.log(tour.tour, tourFilter[tour.tour])
             if(quantidade > 0){
                 
                 return(

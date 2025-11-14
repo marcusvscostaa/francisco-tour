@@ -45,7 +45,6 @@ export default function ModalEditarCliente(props){
 
         instance.put(`/cliente/${props.id}`, JSON.stringify(formCliente))
         .then((response) => {
-            console.log(response)
             if (response.data) {
                 setModalStatus(prevArray => [...prevArray,  {id:3, mostrar:true, status: true, message: "Sucesso ao Salvar Cliente" , titulo: "Cliente"}])
                 setModalSpinner(true)

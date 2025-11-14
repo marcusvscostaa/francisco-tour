@@ -4,7 +4,6 @@ import { useAuth } from '../context/AuthContext';
 
 export const PrivateRoute = () => {
   const { isAuthenticated, loading } = useAuth();
-  console.log(isAuthenticated, loading)
   
   if (loading) {
     return <div>Carregando...</div>; 

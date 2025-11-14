@@ -12,7 +12,6 @@ export default function TourForm(props){
                 try {
                     const data = await getToursCadastroDestino(destinoAtual);
                     setToursPorDestino(data);
-                    console.log(destinoAtual)
                     
                     if(data.length > 0 && tourData.tour) {
                          updateTour({ target: { value: '' } }); 

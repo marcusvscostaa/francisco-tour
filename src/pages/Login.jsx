@@ -31,7 +31,6 @@ export default function Login() {
 
         AuthService.login(username, password)
             .then((response) => {
-                console.log("Login OK:", response);
                 if (remember) {
                     localStorage.setItem('myapp-username', username);
                     localStorage.setItem('myapp-password', password);
@@ -49,7 +48,6 @@ export default function Login() {
                     errorMessage = error.response.data?.message || `Falha no login: ${error.response.statusText}`;
                 } 
                 else if (error.request) {
-                    console.log(error.request);
                     errorMessage = "O servidor não está respondendo. Verifique sua conexão ou tente mais tarde.";
                 } 
                 else {

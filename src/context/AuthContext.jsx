@@ -62,7 +62,7 @@ export const AuthProvider = ({ children }) => {
         return false; 
     } catch (error) {
         console.error("Erro no login do contexto:", error);
-        console.log(error);
+       
         AuthService.logout(); 
         setUser(null);
 
@@ -71,7 +71,7 @@ export const AuthProvider = ({ children }) => {
             errorMessage = error.response.data?.message || `Falha no login: ${error.response.statusText}`;
         } 
         else if (error.request) {
-            console.log(error.request);
+            
             errorMessage = "O servidor não está respondendo. Verifique sua conexão ou tente mais tarde.";
         } 
         else {

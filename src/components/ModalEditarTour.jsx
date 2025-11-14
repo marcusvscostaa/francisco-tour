@@ -23,7 +23,6 @@ export default function ModalEditarTour(props){
 
     useEffect(() => {
         setTourData(() => [getInitialTourData(props.dados)]);
-        console.log(tourData)
     }, [props.dados]);
 
     useEffect(() => {
@@ -47,7 +46,6 @@ export default function ModalEditarTour(props){
                 throw new Error('Dados do Tour não encontrados no formulário.');
             }
             delete tourDataToSend.id;
-            console.log(tourDataToSend);
             const response = await editarTour(props.idtour, tourDataToSend);
 
             if (response.data) {

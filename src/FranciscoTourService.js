@@ -35,7 +35,6 @@ export async function getDadoMesAtual(idVendedor){
     }
 
     const response = await instance.get(`/reservas/valorMesAtual`,{ params: params });
-    console.log(token);
     return response.data;
 }
 
