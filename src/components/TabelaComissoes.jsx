@@ -1,21 +1,25 @@
-import { useEffect, useState } from "react";
-import { Table, Card } from 'antd';
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
-import {getPagamentoReservaAnual, getPagamentoReservaValorMes, getPagamentoReservaMensal} from "../FranciscoTourService";
+import { useEffect, useState, useCallback, useMemo } from "react";
+import { Table, DatePicker } from 'antd'; 
+import {getComissoes, getTotalComissoesAno, getTotalComissoesMes, getUsuarios} from "../FranciscoTourService";
 const date = new Date();
 const currentYear = date.getFullYear();
 
-DataTable.use(DT);
 export default function TabelaComissoes(){        
     const [porcentagem, setPorcentagem] = useState(10)
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
-    const [dadoAtual, setDadoAtual] = useState('')
-    const [dadoMensal, setDadoMensal] = useState('')
+    const [dadoMes, setDadoMes] = useState('')
+    const [dados, setDados] = useState('')
     const [dadoAno, setDadoAno] = useState('')
     const [updateData, setUpdateData] = useState(false)
     const [year, setYear] = useState(date.getFullYear(currentYear));
     const [month, setMonth] = useState(date.getMonth());
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
+    const [vendedorSelecionado, setVendedorSelecionado] = useState(null);
+    const [dataInicio, setDataInicio] = useState(null);
+    const [dataFim, setDataFim] = useState(null);
+    const [filtroBusca, setFiltroBusca] = useState('');
+    
     const months = [
         'Janeiro',
          'Fevereiro',
@@ -30,107 +34,165 @@ export default function TabelaComissoes(){
          'Novembro',
          'Dezembro'
      ];
-     
+
+     const fetchComissoes = useCallback(async () => {
+        try {
+           
+            const dados = await getComissoes();
+            const dadoAno = await getTotalComissoesAno(year);
+            const dadoMes = await getTotalComissoesMes(month, year);
+
+            if (Array.isArray(dados)) {
+                    const processedReservas = dados.map(r => {
+                        const partesDoNome = r.cliente ? r.cliente.trim().split(/\s+/) : [];
+                        const nomeExibido = partesDoNome.length > 1 
+                            ? `${partesDoNome[0]} ${partesDoNome[partesDoNome.length - 1]}`
+                            : r.cliente;
+                        return { ...r, nomeExibido };
+                    });
+                    setDados(processedReservas);
+                } else { setDados([]); }
+            setDadoAno(dadoAno);
+            setDadoMes(dadoMes);
+                  
+        } catch (error) {
+            console.error("Erro ao carregar comissões:", error);
+            setDados([]);
+            setDadoAno([]);
+            setDadoMes([])
+        }
+    }, []);   
 
 
     useEffect(()=>{
-        setTimeout(() => {
-            getPagamentoReservaAnual(anoSelecionado).then(
-                data => {
-                    if(data.fatal || data.code){
-                        setDadoAtual(false);
-                    }else{
-                        setDadoAtual(data)
-                    }    
-                }
-            ).catch((error) => console.log(error));
-        },"300")
-        setTimeout(() => {
-            getPagamentoReservaValorMes(year).then(
-                data => {
-                    setDadoAno(data)
-                }
-            ).catch((error) => console.log(error));
-        },"600")
-        setTimeout(() => {
-            getPagamentoReservaMensal(month, year).then(
-                data => {
-                    setDadoMensal(data)
-                }
-            ).catch((error) => console.log(error));
-        },"900")
-
-            setUpdateData(false)
+        fetchComissoes();
     },[updateData])
-    const dataSource = dadoMensal
-        ? dadoMensal.filter(item => item.status === "Pago")
+
+    const comissoeFiltradas = useMemo(() => {
+        let filtrado = dados;
+
+        if (dataInicio && dataFim) {
+            const inicioTimestamp = new Date(dataInicio).getTime(); 
+
+            const dataFimObj = new Date(dataFim);
+            dataFimObj.setDate(dataFimObj.getDate() + 1); 
+            const fimTimestamp = dataFimObj.getTime() - 1; 
+
+            filtrado = filtrado.filter(comissao => {
+                const dataComissaoTimestamp = new Date(comissao.dataPagamento).getTime(); 
+                return dataComissaoTimestamp >= inicioTimestamp && dataComissaoTimestamp <= fimTimestamp;
+            });
+        }
+
+        
+        return filtrado;
+    }, [dados, vendedorSelecionado, dataInicio, dataFim, filtroBusca]);
+
+    const dataSource = dados
+        ? dados.filter(item => item.status === "Pago")
         : [];
+
+    const handleTableChange = (pagination) => {
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
+    };
+
+    const handleSingleDateChange = (date, type) => {
+        if (type === 'start') {
+            setDataInicio(date);
+        } else {
+            setDataFim(date);
+        }
+    };
+
+    const handleDateRangeChange = (dates) => {
+        if (dates && dates.length === 2) {
+            setDataInicio(dates[0]);
+            setDataFim(dates[1]);
+        } else {
+            setDataInicio(null);
+            setDataFim(null);
+        }
+    };
+
+    const handleClearFilters = () => {
+        setVendedorSelecionado(null);
+        setDataInicio(null);
+        setDataFim(null);
+        setFiltroBusca(null);
+    };
+
     const columns = [
         {
-            title: 'ID Pagamento',
-            dataIndex: 'idPagamento',
-            key: 'idPagamento',
+            title: 'ID Reserva',
+            dataIndex: 'idReserva',
+            key: 'idReserva',
         },
         {
-            title: 'Nome',
-            dataIndex: 'nome',
-            key: 'nome',
+            title: 'Cliente',
+            dataIndex: 'nomeExibido',
+            key: 'cliente',
+        },
+        {
+            title: 'Vendedor',
+            dataIndex: 'vendedor',
+            key: 'vendedor',
         },
         {
             title: 'Data',
             dataIndex: 'dataPagamento',
             key: 'dataPagamento',
-            // Usamos a função render para formatar a data como você fez no HTML
+            sorter: (a, b) => new Date(a.dataPagamento) - new Date(b.dataPagamento),
+            defaultSortOrder: 'descend',
             render: (dataPagamento) => dataPagamento.substr(0, 10).split('-').reverse().join('/'),
-            // Define o método de ordenação
-            sorter: (a, b) => {
-                const dateA = new Date(a.dataPagamento.substr(0, 10));
-                const dateB = new Date(b.dataPagamento.substr(0, 10));
-                return dateA - dateB; // Ordem crescente (A-B). Para decrescente: dateB - dateA
-            },
-            defaultSortOrder: 'descend', // Aplica a ordenação decrescente por padrão (mais recente primeiro)
-        },
+            
+        },{
+            title: 'Valor Reserva',
+            dataIndex: 'valorTotalReserva', 
+            key: 'valorReserva',
+            render: (valorReserva) => `R$ ${valorReserva.toFixed(2).replace(".", ",")}`,
+            align: 'right',
+        },{
+            title: 'Valor Pago',
+            dataIndex: 'valorTotalPago', 
+            key: 'valorTotalPago',
+            render: (valorTotalPago) => <div className="text-success">R$ {valorTotalPago.toFixed(2).replace(".", ",")}</div>,
+            align: 'right',
+        },        
         {
-            title: 'Pago',
-            dataIndex: 'valorPago',
-            key: 'valorPago',
-            // Função render para formatar como R$ e aplicar a classe de sucesso
-            render: (valorPago) => (
-            <span className="text-success">
-                R$ {valorPago.toFixed(2).replace(".", ",")}
-            </span>
-            ),
+            title: 'Custo Total',
+            dataIndex: 'custoTotalReserva', 
+            key: 'custoTotalReserva',
+            render: (custoTotalReserva) => <div className="text-danger">R$ {custoTotalReserva.toFixed(2).replace(".", ",")}</div>,
             align: 'right',
         },
         {
             title: 'Porcentagem',
-            dataIndex: 'comissaoPorcentagem', // Esta chave não existe no dado, é um valor fixo
+            dataIndex: 'porcentagemComissao', 
             key: 'porcentagem',
-            // Renderiza a variável 'porcentagem'
-            render: () => `${porcentagem}%`,
+            render: (porcentagemComissao) => `${porcentagemComissao || 0}%`,
             align: 'right',
         },
         {
             title: 'Comissão',
-            dataIndex: 'valorComissao', // Esta chave não existe no dado
+            dataIndex: 'valorComissao',
             key: 'comissao',
-            // Calcula e formata o valor da comissão
-            render: (text, record) => { // 'record' é o objeto de dados inteiro (dado)
-            const valorComissao = record.valorPago * porcentagem / 100;
-            return (
-                <span className="text-success">
-                R$ {valorComissao.toFixed(2).replace(".", ",")}
-                </span>
-            );
+            render: (valorComissaoFinal) => { 
+                const valorFinal = valorComissaoFinal || 0;
+                return (
+                    <span className="text-success">
+                        R$ {valorFinal.toFixed(2).replace(".", ",")}
+                    </span>
+                );
             },
             align: 'right',
-            sorter: (a, b) => (a.valorPago * porcentagem) - (b.valorPago * porcentagem),
+            sorter: (a, b) => (a.valorComissaoFinal || 0) - (b.valorComissaoFinal || 0),
         },
     ];
     
     return(
     <>
-    {dadoAno&&dadoAtual&&dadoMensal?
+    {dados?
     <>
         <div class="row">
             <div class="col-xl-3 col-md-6 mb-4">
@@ -141,7 +203,7 @@ export default function TabelaComissoes(){
                                 <div class="text-xs font-weight-bolder text-success text-uppercase mb-1 ">                                   
                                     <p className="m-auto pr-2">Comissões {`${months[month]}/${year}`}</p>
                                     </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMensal&&(dadoMensal.filter((item) => item.status === "Pago").reduce((sum, item) => sum + item.valorPago, 0) * porcentagem/100).toFixed(2).replace(".", ",")}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMes.valorTotalMes}</div>
                             </div>
                             <div class="col-auto">
                             </div>
@@ -156,7 +218,7 @@ export default function TabelaComissoes(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Comissões ({year})</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {(dadoAno&&dadoAno.valorTotal *(porcentagem/100)).toFixed(2).replace(".", ",")}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotalAno}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -167,27 +229,57 @@ export default function TabelaComissoes(){
             </div>
         </div>
         <div className="d-block d-md-flex mt-4 ">
-            <h5 className="font-weight-bold mb-2 text-dark">Comissões {`${months[month]}/${year}`}</h5>
-            <div class="d-block d-md-flex mb-md-2 ml-auto my-auto">
-                <p className="mb-2 pr-2 my-md-auto">Porcentagem:</p> 
-                <input type="number" min="0" max="100" className="mr-2 form-control form-control-sm mb-2 my-md-auto" 
-                value={porcentagem}
-                onChange={(e) =>{ e.target.value <= 100 && setPorcentagem(e.target.value);
-                                    e.target.value <= -1 && setPorcentagem(0);}
-                }/>
-                <input class="form-control form-control-sm mb-4 my-md-auto" value={year+'-'+(month+1).toString().padStart(2, '0')} type="month" onChange={(e) =>{ setYear(e.target.value.substr(0, 4));
-                                                                                                                    setMonth((e.target.value.substr(5,6 )-1));
-                                                                                                                    setUpdateData(true);}}/>
-            </div>          
+            <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
+                <label className="form-label">Intervalo de Datas</label>
+                <DatePicker.RangePicker 
+                    style={{ width: '100%' }}
+                    value={[dataInicio, dataFim]}
+                    onChange={handleDateRangeChange}
+                    format="DD/MM/YYYY"
+                />
+            </div>
+            <div className="col-12 mb-4 d-sm-none">
+                <label className="form-label">Data Início</label>
+                    <DatePicker 
+                        placeholder="Início"
+                        className='mb-4'
+                        style={{ width: '100%', marginBottom: '10px' }}
+                        value={dataInicio}
+                        onChange={(date) => handleSingleDateChange(date, 'start')}
+                        format="DD/MM/YYYY"
+                        getPopupContainer={trigger => trigger.parentElement || document.body} 
+                    />
+                
+                <label className="form-label">Data Fim</label>
+                    <DatePicker 
+                        placeholder="Fim"
+                        style={{ width: '100%' }}
+                        value={dataFim}
+                        onChange={(date) => handleSingleDateChange(date, 'end')}
+                        format="DD/MM/YYYY"
+                        minDate={dataInicio}
+                        getPopupContainer={trigger => trigger.parentElement || document.body} 
+                    />
+            </div>     
         </div>
         <div className="table-responsive card border border-secondary mb-5">
             <Table
-                dataSource={dataSource} 
+                dataSource={comissoeFiltradas} 
                 columns={columns}
                 bordered={true} 
                 size="small"
                 rowKey="idPagamento" 
-                pagination={false} 
+                pagination={{ 
+                            current: currentPage,
+                            pageSize: pageSize,
+                            showSizeChanger: true, 
+                            pageSizeOptions: ['10', '25', '50', '100'], 
+                            showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
+                            className: 'pagination-centered',
+                        }}
+                scroll={{ y: 500 }} 
+                onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
+
             />
         </div>
         </>: <div className="d-flex justify-content-center">

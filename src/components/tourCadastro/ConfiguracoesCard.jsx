@@ -23,6 +23,7 @@ export default function ConfiguracoesCard(){
             { orderable: true },
             { orderable: true },    
             { orderable: false }, 
+            { orderable: false },
             { orderable: false }
         ]
     };
@@ -72,7 +73,8 @@ export default function ConfiguracoesCard(){
                                     <th>nome_tour</th>
                                     <th className="text-left">valor_adulto</th>
                                     <th className="text-left">valor_crianca</th>
-                                    <th className="text-left">Custo</th>
+                                    <th className="text-left">Custo Adulto</th>
+                                    <th className="text-left">Custo Criança</th>
                                     <th>EDT</th>
                                     <th>DLT</th>
                                 </tr>
@@ -85,7 +87,8 @@ export default function ConfiguracoesCard(){
                                         <td>{tour.nome_tour}</td>
                                         <td className="text-left">R$ {parseFloat(tour.valor_adulto || 0).toFixed(2).replace('.', ',')}</td> 
                                         <td className="text-left">R$ {parseFloat(tour.valor_crianca || 0).toFixed(2).replace('.', ',')}</td>
-                                        <td className="text-left">R$ {parseFloat(tour.custo || 0).toFixed(2).replace('.', ',')}</td>
+                                        <td className="text-left">R$ {parseFloat(tour.custo_adulto || 0).toFixed(2).replace('.', ',')}</td>
+                                        <td className="text-left">R$ {parseFloat(tour.custo_crianca || 0).toFixed(2).replace('.', ',')}</td>
                                         <td><button type="button" data-toggle="modal" data-target={`#modalEditarTourCadastro-${tour.id_tour}`} title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button></td>
                                         <td><button type="button" data-toggle="modal" data-target={`#modalDeletarTourCadastro-${tour.id_tour}`} title="Deletar" className="btn btn-sm mr-2 btn-danger"><i className="fas fa-trash"></i></button></td>
                                             <ModalCriarTourCadastro 

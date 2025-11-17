@@ -150,6 +150,21 @@ export async function getUsuarios() {
     return response.data;    
 }
 
+export async function getComissoes() {
+    const response = await instance.get('/reservas/comissoes');
+    return response.data;
+}
+
+export async function getTotalComissoesAno(ano) {
+    const response = await instance.get(`/reservas/comissoes/totalAno/${ano}`);
+    return response.data;
+}
+
+export async function getTotalComissoesMes(mes, ano) {
+    const response = await instance.get(`/reservas/comissoes/totalMes/${mes}/${ano}`);
+    return response.data;
+}
+
 //sets
 export async function createCliente(cliente) {
     const response = await instance.post(`/clientes`, cliente);
