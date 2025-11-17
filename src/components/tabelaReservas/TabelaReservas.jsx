@@ -349,78 +349,78 @@ export default function TabelaReservas() {
                 
             </React.Fragment>
         ))}
-                <div className="row pt-3 justify-content-between">
-                    <div className="col-md-2 mb-4">
-                        <label className="form-label">Buscar por Cliente ou ID</label>
-                        <Input
-                            allowClear
-                            prefix={<i className="fas fa-search" />}
-                            placeholder="ID, Nome, ou Sobrenome"
-                            value={filtroBusca}
-                            onChange={(e) => setFiltroBusca(e.target.value)}
-                        />
-                    </div>
-                    {isAdmin&&<div className="col-md-2 mt-auto mb-4">
-                        <label className="form-label">Vendedor</label>
-                        <Select
-                            allowClear
-                            placeholder="Todos os Vendedores"
-                            style={{ width: '100%' }}
-                            value={vendedorSelecionado}
-                            onChange={(value) => setVendedorSelecionado(value)}
-                        >
-                            {listaVendedores.map(vendedor => (
-                                <Option key={vendedor.id} value={vendedor.username}>
-                                    {vendedor.username}
-                                </Option>
-                            ))}
-                        </Select>
-                    </div>}
-
-                    <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
-                        <label className="form-label">Intervalo de Datas</label>
-                        <DatePicker.RangePicker 
-                            style={{ width: '100%' }}
-                            value={[dataInicio, dataFim]}
-                            onChange={handleDateRangeChange}
-                            format="DD/MM/YYYY"
-                        />
-                    </div>
-                    <div className="col-12 mb-4 d-sm-none">
-                        <label className="form-label">Data Início</label>
-                            <DatePicker 
-                                placeholder="Início"
-                                className='mb-4'
-                                style={{ width: '100%', marginBottom: '10px' }}
-                                value={dataInicio}
-                                onChange={(date) => handleSingleDateChange(date, 'start')}
-                                format="DD/MM/YYYY"
-                                getPopupContainer={trigger => trigger.parentElement || document.body} 
-                            />
-                        
-                        <label className="form-label">Data Fim</label>
-                            <DatePicker 
-                                placeholder="Fim"
-                                style={{ width: '100%' }}
-                                value={dataFim}
-                                onChange={(date) => handleSingleDateChange(date, 'end')}
-                                format="DD/MM/YYYY"
-                                minDate={dataInicio}
-                                getPopupContainer={trigger => trigger.parentElement || document.body} 
-                            />
-                    </div>
-                    
-                    <div className="col-md-3 mt-auto mb-4 d-flex flex-row-reverse d-sm-block">
-                        <AntButton 
-                            onClick={handleClearFilters}
-                            icon={<i className="fas fa-eraser"></i>}
-                            type="default"
-                            disabled={!vendedorSelecionado && !dataInicio && !dataFim && !filtroBusca}
-                        >
-                            Limpar Filtros
-                        </AntButton>
-                    </div>
+            <div className="row pt-3 justify-content-between">
+                <div className="col-md-2 mb-4">
+                    <label className="form-label">Buscar por Cliente ou ID</label>
+                    <Input
+                        allowClear
+                        prefix={<i className="fas fa-search" />}
+                        placeholder="ID, Nome, ou Sobrenome"
+                        value={filtroBusca}
+                        onChange={(e) => setFiltroBusca(e.target.value)}
+                    />
                 </div>
+                {isAdmin&&<div className="col-md-2 mt-auto mb-4">
+                    <label className="form-label">Vendedor</label>
+                    <Select
+                        allowClear
+                        placeholder="Todos os Vendedores"
+                        style={{ width: '100%' }}
+                        value={vendedorSelecionado}
+                        onChange={(value) => setVendedorSelecionado(value)}
+                    >
+                        {listaVendedores.map(vendedor => (
+                            <Option key={vendedor.id} value={vendedor.username}>
+                                {vendedor.username}
+                            </Option>
+                        ))}
+                    </Select>
+                </div>}
+
+                <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
+                    <label className="form-label">Intervalo de Datas</label>
+                    <DatePicker.RangePicker 
+                        style={{ width: '100%' }}
+                        value={[dataInicio, dataFim]}
+                        onChange={handleDateRangeChange}
+                        format="DD/MM/YYYY"
+                    />
+                </div>
+                <div className="col-12 mb-4 d-sm-none">
+                    <label className="form-label">Data Início</label>
+                        <DatePicker 
+                            placeholder="Início"
+                            className='mb-4'
+                            style={{ width: '100%', marginBottom: '10px' }}
+                            value={dataInicio}
+                            onChange={(date) => handleSingleDateChange(date, 'start')}
+                            format="DD/MM/YYYY"
+                            getPopupContainer={trigger => trigger.parentElement || document.body} 
+                        />
+                    
+                    <label className="form-label">Data Fim</label>
+                        <DatePicker 
+                            placeholder="Fim"
+                            style={{ width: '100%' }}
+                            value={dataFim}
+                            onChange={(date) => handleSingleDateChange(date, 'end')}
+                            format="DD/MM/YYYY"
+                            minDate={dataInicio}
+                            getPopupContainer={trigger => trigger.parentElement || document.body} 
+                        />
+                </div>
+                
+                <div className="col-md-3 mt-auto mb-4 d-flex flex-row-reverse d-sm-block">
+                    <AntButton 
+                        onClick={handleClearFilters}
+                        icon={<i className="fas fa-eraser"></i>}
+                        type="default"
+                        disabled={!vendedorSelecionado && !dataInicio && !dataFim && !filtroBusca}
+                    >
+                        Limpar Filtros
+                    </AntButton>
+                </div>
+            </div>
             <div className="table-responsive card border border-secondary mb-5">
                 <Table
                     rowKey="idR" 

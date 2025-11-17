@@ -19,6 +19,8 @@ export default function TabelaComissoes(){
     const [dataInicio, setDataInicio] = useState(null);
     const [dataFim, setDataFim] = useState(null);
     const [filtroBusca, setFiltroBusca] = useState('');
+    const [loading, setLoading] = useState(true);
+    
     
     const months = [
         'Janeiro',
@@ -60,6 +62,8 @@ export default function TabelaComissoes(){
             setDados([]);
             setDadoAno([]);
             setDadoMes([])
+        }finally{
+            setLoading(false)
         }
     }, []);   
 
@@ -127,16 +131,20 @@ export default function TabelaComissoes(){
             title: 'ID Reserva',
             dataIndex: 'idReserva',
             key: 'idReserva',
+            width: 120,
         },
         {
             title: 'Cliente',
             dataIndex: 'nomeExibido',
             key: 'cliente',
+            width: 180,
+
         },
         {
             title: 'Vendedor',
             dataIndex: 'vendedor',
             key: 'vendedor',
+            width: 120,
         },
         {
             title: 'Data',
@@ -145,6 +153,7 @@ export default function TabelaComissoes(){
             sorter: (a, b) => new Date(a.dataPagamento) - new Date(b.dataPagamento),
             defaultSortOrder: 'descend',
             render: (dataPagamento) => dataPagamento.substr(0, 10).split('-').reverse().join('/'),
+            width: 120,
             
         },{
             title: 'Valor Reserva',
@@ -152,12 +161,14 @@ export default function TabelaComissoes(){
             key: 'valorReserva',
             render: (valorReserva) => `R$ ${valorReserva.toFixed(2).replace(".", ",")}`,
             align: 'right',
+            width: 120,
         },{
             title: 'Valor Pago',
             dataIndex: 'valorTotalPago', 
             key: 'valorTotalPago',
             render: (valorTotalPago) => <div className="text-success">R$ {valorTotalPago.toFixed(2).replace(".", ",")}</div>,
             align: 'right',
+            width: 120,
         },        
         {
             title: 'Custo Total',
@@ -165,6 +176,7 @@ export default function TabelaComissoes(){
             key: 'custoTotalReserva',
             render: (custoTotalReserva) => <div className="text-danger">R$ {custoTotalReserva.toFixed(2).replace(".", ",")}</div>,
             align: 'right',
+            width: 120,
         },
         {
             title: 'Porcentagem',
@@ -172,6 +184,7 @@ export default function TabelaComissoes(){
             key: 'porcentagem',
             render: (porcentagemComissao) => `${porcentagemComissao || 0}%`,
             align: 'right',
+            width: 120,
         },
         {
             title: 'Comissão',
@@ -187,6 +200,7 @@ export default function TabelaComissoes(){
             },
             align: 'right',
             sorter: (a, b) => (a.valorComissaoFinal || 0) - (b.valorComissaoFinal || 0),
+            width: 120,
         },
     ];
     
@@ -194,7 +208,7 @@ export default function TabelaComissoes(){
     <>
     {dados?
     <>
-        <div class="row">
+        <div class="row pt-3 justify-content-between">
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-success border border-secondary h-100 py-2">
                     <div class="card-body">
@@ -227,8 +241,8 @@ export default function TabelaComissoes(){
                     </div>
                 </div>
             </div>
-        </div>
-        <div className="d-block d-md-flex mt-4 ">
+
+             <div className="d-block d-md-flex mt-4 ">
             <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
                 <label className="form-label">Intervalo de Datas</label>
                 <DatePicker.RangePicker 
@@ -262,13 +276,19 @@ export default function TabelaComissoes(){
                     />
             </div>     
         </div>
+        </div>
+       
         <div className="table-responsive card border border-secondary mb-5">
             <Table
                 dataSource={comissoeFiltradas} 
                 columns={columns}
                 bordered={true} 
                 size="small"
-                rowKey="idPagamento" 
+                rowKey="comissoes"
+                loading={loading} 
+                scroll={{ 
+                    y: 450
+                }}
                 pagination={{ 
                             current: currentPage,
                             pageSize: pageSize,
@@ -277,7 +297,7 @@ export default function TabelaComissoes(){
                             showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
                             className: 'pagination-centered',
                         }}
-                scroll={{ y: 500 }} 
+
                 onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
 
             />
