@@ -155,13 +155,21 @@ export async function getComissoes() {
     return response.data;
 }
 
-export async function getTotalComissoesAno(ano) {
-    const response = await instance.get(`/reservas/comissoes/totalAno/${ano}`);
+export async function getTotalComissoesAno(ano, vendedor) {
+    const params = {};
+    if (vendedor) {
+        params.vendedor = vendedor;
+    }
+    const response = await instance.get(`/reservas/comissoes/totalAno/${ano}`, { params: params });
     return response.data;
 }
 
-export async function getTotalComissoesMes(mes, ano) {
-    const response = await instance.get(`/reservas/comissoes/totalMes/${mes}/${ano}`);
+export async function getTotalComissoesMes(mes, ano, vendedor) {
+    const params = {};
+    if (vendedor) {
+        params.vendedor = vendedor;
+    }
+    const response = await instance.get(`/reservas/comissoes/totalMes/${mes}/${ano}`, { params: params });
     return response.data;
 }
 

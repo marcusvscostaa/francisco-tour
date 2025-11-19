@@ -1,10 +1,15 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
-import { Table, DatePicker } from 'antd'; 
+import { Table, DatePicker,Select } from 'antd'; 
 import {getComissoes, getTotalComissoesAno, getTotalComissoesMes, getUsuarios} from "../FranciscoTourService";
+import { useAuth } from '../context/AuthContext.jsx'; 
+
+const { Option } = Select;
+
 const date = new Date();
 const currentYear = date.getFullYear();
 
 export default function TabelaComissoes(){        
+    const { userRole } = useAuth();
     const [porcentagem, setPorcentagem] = useState(10)
     const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [dadoMes, setDadoMes] = useState('')
@@ -15,13 +20,15 @@ export default function TabelaComissoes(){
     const [month, setMonth] = useState(date.getMonth());
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
-    const [vendedorSelecionado, setVendedorSelecionado] = useState(null);
     const [dataInicio, setDataInicio] = useState(null);
     const [dataFim, setDataFim] = useState(null);
     const [filtroBusca, setFiltroBusca] = useState('');
     const [loading, setLoading] = useState(true);
+    const [vendedorSelecionado, setVendedorSelecionado] = useState(null);
+    const [listaVendedores, setListaVendedores] = useState([]);
     
-    
+    const isAdmin = userRole === "ADMIN";
+   
     const months = [
         'Janeiro',
          'Fevereiro',
@@ -41,8 +48,9 @@ export default function TabelaComissoes(){
         try {
            
             const dados = await getComissoes();
-            const dadoAno = await getTotalComissoesAno(year);
-            const dadoMes = await getTotalComissoesMes(month, year);
+            const dadoAno = await getTotalComissoesAno(year, vendedorSelecionado);
+            const dadoMes = await getTotalComissoesMes(month, year, vendedorSelecionado);
+            const dataUsuarios = isAdmin ? await getUsuarios() : Promise.resolve([]) ;
 
             if (Array.isArray(dados)) {
                     const processedReservas = dados.map(r => {
@@ -56,6 +64,7 @@ export default function TabelaComissoes(){
                 } else { setDados([]); }
             setDadoAno(dadoAno);
             setDadoMes(dadoMes);
+            setListaVendedores(dataUsuarios)
                   
         } catch (error) {
             console.error("Erro ao carregar comissões:", error);
@@ -65,15 +74,21 @@ export default function TabelaComissoes(){
         }finally{
             setLoading(false)
         }
-    }, []);   
+    }, [vendedorSelecionado]);   
 
 
     useEffect(()=>{
         fetchComissoes();
-    },[updateData])
+    },[updateData, vendedorSelecionado])
 
     const comissoeFiltradas = useMemo(() => {
         let filtrado = dados;
+        
+        if (vendedorSelecionado && isAdmin) {
+            filtrado = filtrado.filter(reserva => 
+                reserva.vendedor && reserva.vendedor.toUpperCase() === vendedorSelecionado.toUpperCase()
+            );
+        }
 
         if (dataInicio && dataFim) {
             const inicioTimestamp = new Date(dataInicio).getTime(); 
@@ -208,7 +223,7 @@ export default function TabelaComissoes(){
     <>
     {dados?
     <>
-        <div class="row pt-3 justify-content-between">
+        <div class="row pt-3">
             <div class="col-xl-3 col-md-6 mb-4">
                 <div class="card border-left-success border border-secondary h-100 py-2">
                     <div class="card-body">
@@ -217,7 +232,7 @@ export default function TabelaComissoes(){
                                 <div class="text-xs font-weight-bolder text-success text-uppercase mb-1 ">                                   
                                     <p className="m-auto pr-2">Comissões {`${months[month]}/${year}`}</p>
                                     </div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMes.valorTotalMes}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoMes.valorTotalMes.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                             </div>
@@ -232,7 +247,7 @@ export default function TabelaComissoes(){
                             <div class="col mr-2">
                                 <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
                                     Comissões ({year})</div>
-                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotalAno}</div>
+                                <div class="h5 mb-0 font-weight-bold text-gray-800">R$ {dadoAno.valorTotalAno.toFixed(2).replace(".", ",")}</div>
                             </div>
                             <div class="col-auto">
                                 <i class="fas fa-dollar-sign fa-2x text-gray-300"></i>
@@ -241,16 +256,18 @@ export default function TabelaComissoes(){
                     </div>
                 </div>
             </div>
+        </div>
 
-             <div className="d-block d-md-flex mt-4 ">
-            <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
-                <label className="form-label">Intervalo de Datas</label>
-                <DatePicker.RangePicker 
-                    style={{ width: '100%' }}
-                    value={[dataInicio, dataFim]}
-                    onChange={handleDateRangeChange}
-                    format="DD/MM/YYYY"
-                />
+        <div className="row pt-3 justify-content-between">
+           
+                <div className="col-md-4 mt-auto mb-4 d-none d-sm-block">
+                    <label className="form-label">Intervalo de Datas</label>
+                    <DatePicker.RangePicker 
+                        style={{ width: '100%' }}
+                        value={[dataInicio, dataFim]}
+                        onChange={handleDateRangeChange}
+                        format="DD/MM/YYYY"
+                    />
             </div>
             <div className="col-12 mb-4 d-sm-none">
                 <label className="form-label">Data Início</label>
@@ -274,10 +291,25 @@ export default function TabelaComissoes(){
                         minDate={dataInicio}
                         getPopupContainer={trigger => trigger.parentElement || document.body} 
                     />
-            </div>     
+            </div>
+            {isAdmin&&<div className="col-md-2 mt-auto mb-4">
+                <label className="form-label">Vendedor</label>
+                <Select
+                    allowClear
+                    placeholder="Todos os Vendedores"
+                    style={{ width: '100%' }}
+                    value={vendedorSelecionado}
+                    onChange={(value) => setVendedorSelecionado(value)}
+                >
+                    {listaVendedores.map(vendedor => (
+                        <Option key={vendedor.id} value={vendedor.username}>
+                            {vendedor.username}
+                        </Option>
+                    ))}
+                </Select>
+            </div>}
         </div>
-        </div>
-       
+
         <div className="table-responsive card border border-secondary mb-5">
             <Table
                 dataSource={comissoeFiltradas} 
@@ -299,9 +331,14 @@ export default function TabelaComissoes(){
                         }}
 
                 onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
+                footer={() => <div className="d-flex my-3">
+                                <h5 className="ml-auto mr-2">Total:</h5> 
+                                <h5 className="font-weight-bold">R$ {comissoeFiltradas.reduce((sum, data) =>  sum + data.valorComissao, 0).toFixed(2).replace(".", ",")}</h5>   
+                            </div>}
 
             />
         </div>
+        
         </>: <div className="d-flex justify-content-center">
             <div className="spinner-border" role="status">
                 <span className="sr-only">Loading...</span>

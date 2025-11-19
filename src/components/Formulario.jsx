@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from "react";
-import { Card } from 'antd';
+import { Card, Spin  } from 'antd';
 import { createCliente, createReserva, createTour, createPagamento } from "../FranciscoTourService";
 import TourForm from "./TourForm";
 import TourPag from "./TourPag";
@@ -226,6 +226,7 @@ export default function Formulario(props) {
     };
 
     return (
+        <Spin tip="Carregando..." size="large" spinning={modalSpinner}>
         <Card 
             className="border border-secondary mb-4"
             title={props.title}
@@ -368,11 +369,7 @@ export default function Formulario(props) {
                     </div>
                 </form>
             </div>
-            {modalSpinner&&<div className="position-absolute w-100 h-100 d-flex" style={{backgroundColor: 'rgba(0, 0, 0, .2)'}}> 
-                                <div className="spinner-border text-secondary m-auto" style={{width: '3rem', height: '3rem'}} role="status">
-                                    <span class="sr-only">Loading...</span>
-                                </div>
-                            </div>}
         </Card>
+        </Spin>
     )
 }
