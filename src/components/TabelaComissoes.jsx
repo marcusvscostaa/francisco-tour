@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { Table, DatePicker,Select } from 'antd'; 
 import {getComissoes, getTotalComissoesAno, getTotalComissoesMes, getUsuarios} from "../FranciscoTourService";
 import { useAuth } from '../context/AuthContext.jsx'; 
+import {exportToXLSX} from '../exportToXLSX.js'
 
 const { Option } = Select;
 
@@ -91,7 +92,7 @@ export default function TabelaComissoes(){
         }
 
         if (dataInicio && dataFim) {
-            const inicioTimestamp = new Date(dataInicio).getTime(); 
+            const inicioTimestamp = new Date(dataInicio).getTime();
 
             const dataFimObj = new Date(dataFim);
             dataFimObj.setDate(dataFimObj.getDate() + 1); 
@@ -128,6 +129,7 @@ export default function TabelaComissoes(){
         if (dates && dates.length === 2) {
             setDataInicio(dates[0]);
             setDataFim(dates[1]);
+            
         } else {
             setDataInicio(null);
             setDataFim(null);
@@ -139,6 +141,19 @@ export default function TabelaComissoes(){
         setDataInicio(null);
         setDataFim(null);
         setFiltroBusca(null);
+    };
+
+    const handleExportXLSX = () => {
+        const dadosParaExportar = comissoeFiltradas;         
+        if (dadosParaExportar.length === 0) {
+            alert("Nenhum dado para exportar.");
+            return;
+        }
+        const vendedor = vendedorSelecionado;
+        const datas = dataInicio&&dataFim?`${new Date(dataInicio).toLocaleDateString()}_${new Date(dataFim).toLocaleDateString()}`:'todos_dados';
+        const fileName = `Comissoes${vendedor&&'-'+vendedor}_${datas}.xlsx`;
+        
+        exportToXLSX(dadosParaExportar, fileName);
     };
 
     const columns = [
@@ -308,6 +323,14 @@ export default function TabelaComissoes(){
                     ))}
                 </Select>
             </div>}
+            <div className="col-md-2 ml-auto mt-auto mb-4 d-flex"> 
+                <button 
+                    onClick={handleExportXLSX}
+                    className="btn btn-info btn-sm ml-auto"
+                >
+                    Exportar Dados
+                </button>
+            </div>
         </div>
 
         <div className="table-responsive card border border-secondary mb-5">
@@ -338,7 +361,6 @@ export default function TabelaComissoes(){
 
             />
         </div>
-        
         </>: <div className="d-flex justify-content-center">
             <div className="spinner-border" role="status">
                 <span className="sr-only">Loading...</span>

@@ -7,7 +7,7 @@ const formatarNumero = (valor) => {
     }
     return new Intl.NumberFormat('pt-BR', {
         style: 'decimal',
-        minimumFractionDigits: 2, // Garante que dois decimais sejam exibidos
+        minimumFractionDigits: 2, 
         maximumFractionDigits: 2,
     }).format(numero);
 };
