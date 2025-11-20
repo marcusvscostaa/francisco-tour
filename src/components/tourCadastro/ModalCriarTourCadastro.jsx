@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { createTourCadastro, updateTourCadastro } from '../../FranciscoTourService.js';
 import optionForm from "../lista.json"
 

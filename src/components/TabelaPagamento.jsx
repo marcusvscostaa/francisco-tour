@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import ModalComentario from "./ModalComentario";
-import { Button, Popconfirm   } from 'antd';
+import { Popconfirm   } from 'antd';
 import { editarStatusPagamento } from '../FranciscoTourService';
 
 export default function TabalaPagamento(props){
@@ -18,10 +17,6 @@ export default function TabalaPagamento(props){
     };
 
     const handleOk = () => {
-        setIsModalOpen(false);
-    };
-
-    const handleCancel = () => {
         setIsModalOpen(false);
     };
 

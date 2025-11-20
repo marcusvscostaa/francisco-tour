@@ -25,14 +25,11 @@ export default function PainelUsuario(){
         <ModalAdicionarUsuario                         
             setUpdateKey={handleUpdate} 
             id={MODAL_ID}/>
-        <div className="card shadow mb-4">
-            <div className="card-body">
-                   <TabelaUsuarios 
-                        updateKey={updateKey} 
-                        handleUpdate={handleUpdate}
-                    />
-                </div>
-        </div>
+       
+        <TabelaUsuarios 
+            updateKey={updateKey} 
+            handleUpdate={handleUpdate}
+        />
 
 
         </>

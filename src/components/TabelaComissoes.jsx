@@ -11,8 +11,6 @@ const currentYear = date.getFullYear();
 
 export default function TabelaComissoes(){        
     const { userRole } = useAuth();
-    const [porcentagem, setPorcentagem] = useState(10)
-    const [anoSelecionado, setAnoSelecionadol] = useState(currentYear)
     const [dadoMes, setDadoMes] = useState('')
     const [dados, setDados] = useState('')
     const [dadoAno, setDadoAno] = useState('')
@@ -205,6 +203,14 @@ export default function TabelaComissoes(){
             dataIndex: 'custoTotalReserva', 
             key: 'custoTotalReserva',
             render: (custoTotalReserva) => <div className="text-danger">R$ {custoTotalReserva.toFixed(2).replace(".", ",")}</div>,
+            align: 'right',
+            width: 120,
+        },
+        {
+            title: 'Valor Liquido',
+            dataIndex: 'valorLiquido', 
+            key: 'valorLiquido',
+            render: (valorLiquido) => <div>R$ {valorLiquido.toFixed(2).replace(".", ",")}</div>,
             align: 'right',
             width: 120,
         },

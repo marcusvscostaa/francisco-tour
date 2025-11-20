@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; 
 import AuthService from '../AuthService';
-import { useAuth } from '../context/AuthContext';
 import '../sb-admin-2.css';
 import '../App.css';
 
@@ -10,10 +8,7 @@ export default function Login() {
     const [password, setPassword] = useState(localStorage.getItem("myapp-password") || "");
     const [remember, setRemember] = useState(!!localStorage.getItem("myapp-password"));
     const [errorLogin, setErrorLogin] = useState('');
-    const { login, error } = useAuth();
-    
-    const navigate = useNavigate();
-    
+        
     React.useEffect(() => {
         document.body.classList.add('bg-gradient-primary');
         return () => {

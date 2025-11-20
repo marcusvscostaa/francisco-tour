@@ -1,18 +1,15 @@
 import { useEffect, useState } from "react";
-import "../dataTable/dataTables.bootstrap4.min.css";
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
 import ModalAdiconarReserva from "./ModalAdiconarReserva";
-import ModalDeletarCliete from "./ModalDeletarCliente";
 import ModalEditarCliente from "./ModalEditarCliente";
-import {getClientes, getReservaFind} from "../FranciscoTourService";
+import {getClientes} from "../FranciscoTourService";
+import { Table, Card } from 'antd';
 
-DataTable.use(DT);
 
 export default function Tabela(props) {
     const [clients, setClients] = useState([]);
     const [updateCount, setUpdateCount] = useState(false);
-    const [clicado, setClicado] = useState(null);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
 
@@ -32,64 +29,113 @@ export default function Tabela(props) {
 
     }, [updateCount]);
 
-    const handleClick = (id) => {
-        setClicado(id); 
-    }
+    const handleTableChange = (pagination) => {
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
+    };
+
+    const columns = [
+        {
+            title: 'Nome',
+            dataIndex: 'nome',
+            key: 'nome',
+            sorter: (a, b) => a.nome.localeCompare(b.nome),
+            render: (nome) => (
+                <>
+                    <i className="fas fa-user-alt"></i>&nbsp;{nome}
+                </>
+            ),
+            width: 250,
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            key: 'email',
+            render: (email) => (
+                <>
+                    <i className="fa fa-envelope"></i>&nbsp;{email}
+                </>
+            ),
+            width: 250,
+        },
+        {
+            title: 'Telefone',
+            dataIndex: 'telefone',
+            key: 'telefone',
+            render: (telefone) => (
+                <a href={`https://api.whatsapp.com/send?phone=${telefone}`} target="_blank" rel="noopener noreferrer">
+                    <i className="fas fa-phone"></i>&nbsp;{telefone}
+                </a>
+            ),
+            width: 150,
+        },
+        {
+            title: 'País Origem',
+            dataIndex: 'paisOrigem',
+            key: 'paisOrigem',
+            render: (paisOrigem) => (
+                <>
+                    <i className="fas fa-globe-americas"></i>&nbsp;{paisOrigem}
+                </>
+            ),
+            width: 120,
+        },
+        {
+            title: 'Idioma',
+            dataIndex: 'idioma',
+            key: 'idioma',
+            render: (idioma) => (
+                <>
+                    <i className="fa fa-language"></i>&nbsp;{idioma}
+                </>
+            ),
+            width: 120,
+        },
+        {
+            title: 'Configurações',
+            key: 'acoes',
+            render: (text, client) => ( 
+                <>
+                    <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> 
+                        <i className="fas fa-hot-tub"></i> <i className="fa fa-plus"></i>
+                    </button>
+                    <ModalAdiconarReserva dados={client} id={client.id} />
+
+                    <button type="button" data-toggle="modal" data-target={`#clienteEditar${client.id}`} title="Editar" className="btn btn-sm mr-2 btn-warning">
+                        <i className="fas fa-edit"></i>
+                    </button>
+                    <ModalEditarCliente setUpdateCount={setUpdateCount} dados={client} id={client.id}/>
+                </>
+            ),
+            width: 120,
+        },
+    ];
 
 
     return (
-        <div className="card shadow mb-4">
-            <div className="card-header py-3">
-                <h6 className="m-0 font-weight-bold text-primary">Tabela Clientes</h6>
-            </div>
-            <div className="card-body">
-                <div className="table-responsive">
-                    {!clients?.length ? <div className="d-flex justify-content-center">
-                        <div className="spinner-border" role="status">
-                            <span className="sr-only">Loading...</span>
-                        </div>
-                    </div> :
-                        <DataTable
-                            className="table table-hover mr-0 mt-3 w-100 "
-                            cellspacing="0"
-                            width="100%"
-                            id="dataTable"
-                        >
-                            <thead>
-                                <tr>
-                                    <th>Nome</th>
-                                    <th>Email</th>
-                                    <th className="text-left">Telefone</th>
-                                    <th>Pais Origem</th>
-                                    <th>Idioma</th>
-                                    <th>Configurações</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {(clients.map((client, index) => {
-                                    return (<tr key={index}>
-                                        <td><i className="fas fa-user-alt"></i>&nbsp;{client.nome}</td>
-                                        <td><i className="fa fa-envelope"></i>&nbsp;{client.email}</td>
-                                        <td className="text-left"> <a href={`https://api.whatsapp.com/send?phone=${client.telefone}`} target="_blank" rel="noopener noreferrer"><i className="fas fa-phone"></i>&nbsp;{client.telefone}</a></td>
-                                        <td><i className="fas fa-globe-americas	"></i>&nbsp;{client.paisOrigem}</td>
-                                        <td><i className="fa fa-language"></i>&nbsp;{client.idioma}</td>
-                                        <td>
-                                            <button type="button" data-toggle="modal" data-target={`#mr${client.id}`} title="Adicionar Reserva" className="btn btn-sm mr-2 btn-primary"> <i className="fas fa-hot-tub"></i> <i className="fa fa-plus"></i></button>
-                                            <button type="button" data-toggle="modal" data-target={`#clienteEditar${client.id}`}title="Editar" className="btn btn-sm mr-2 btn-warning"><i className="fas fa-edit	"></i></button>
-                                            <ModalEditarCliente setUpdateCount={setUpdateCount} dados={client} id={client.id}/>
-                                            {/*<button type="button" data-toggle="modal" data-target={`#clienteDelete${client.id}`} title="Deletar" className="btn btn-sm btn-danger" onClick={() => handleClick(client.id)}><i className="fa fa-trash"></i></button>
-                                            <ModalDeletarCliete dados={client} setUpdateCount={setUpdateCount} id={client.id} clicado = {clicado}/>*/}
-                                            <ModalAdiconarReserva dados={client} id={client.id} />
-                                        </td>
+        <div className="table-responsive card border border-secondary mb-5">
 
-                                    </tr>)
-                                }))}
+            <Table
+                dataSource={clients} 
+                columns={columns}   
+                rowKey="id"
+                loading={clients.length===0}
+                bordered={true}         
+                pagination={{ 
+                            current: currentPage,
+                            pageSize: pageSize,
+                            showSizeChanger: true, 
+                            pageSizeOptions: ['10', '25', '50', '100'], 
+                            showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
+                            className: 'pagination-centered',
+                        }}
+                onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
+                size="small"
+                scroll={{ 
+                    y: 450
+                }}
+            />
+        </div>                
 
-                            </tbody>
-                        </DataTable>
-                    }
-                </div>
-            </div>
-        </div>
     )
 }

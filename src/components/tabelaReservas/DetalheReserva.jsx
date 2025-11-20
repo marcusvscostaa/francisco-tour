@@ -1,16 +1,11 @@
 import React, { useState, useEffect, useMemo} from 'react';
-import { Table, Tag, Button as AntButton, Typography } from 'antd';
+import { Table, Button as AntButton, Typography } from 'antd';
 import { getToursByReservaId} from '../../FranciscoTourService.js'; 
 
 import ModalAdicionarTour from '../ModalAdiconarTour.jsx';
 import ModalEditarTour from '../ModalEditarTour.jsx';
 import ModalComentario from '../ModalComentario.jsx';
 import StatusTourDropdown from './StatusTourDropdown';
-
-const TOUR_STATUS_MAP = {
-    'Confirmado': 'success',
-    'Cancelado': 'error',
-};
 
 export default function DetalheReserva({ reserva, setUpdateCount }) {
     const [dadosTour, setDadosTour] = useState([]);

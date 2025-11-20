@@ -1,21 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getUsuarios } from '../FranciscoTourService';
 import StatusUsuario from './StatusUsuario';
-import DataTable from 'datatables.net-react';
-import DT from 'datatables.net-dt';
-import ModalAdicionarUsuario from './ModalAdicionarUsuario';
+import { Table, Tag, Spin } from 'antd';
 
-DataTable.use(DT);
-
-const STATUS = {
-    CONFIRMADO: { status: 'ATIVO', className: "fas fa-check-circle text-success", isDisabled: false },
-    CANCELADO: { status: 'BLOQUEADO', className: "fas fa-ban text-danger", isDisabled: true }
-};
 
 export default function TabelaUsuarios(props) {
     const [usuarios, setUsuarios] = useState(null);
     const [loading, setLoading] = useState(true);
     const { updateKey, handleUpdate } = props;
+    const [currentPage, setCurrentPage] = useState(1);
+    const [pageSize, setPageSize] = useState(10);
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -40,56 +34,84 @@ export default function TabelaUsuarios(props) {
         fetchUsers();
     }, [updateKey]); 
 
-    if (loading) {
-        return (
-            <div className="d-flex justify-content-center pt-5">
-                <div className="spinner-border text-primary" role="status">
-                    <span className="sr-only">Carregando Usuários...</span>
-                </div>
-            </div>
-        );
-    }
-    
-    if (!usuarios || usuarios.length === 0) {
-        return <p className="pt-3">Nenhum usuário cadastrado ou erro ao carregar.</p>;
-    }
+    const handleTableChange = (pagination) => {
+        setCurrentPage(pagination.current);
+        setPageSize(pagination.pageSize);
+    };
+
+    const columns = [
+        {
+            title: 'Usuário',
+            dataIndex: 'username',
+            key: 'username',
+            sorter: (a, b) => a.username.localeCompare(b.username),
+            width: 150,
+        },
+        {
+            title: 'Acesso',
+            dataIndex: 'acesso',
+            key: 'acesso',
+            filters: [ 
+                { text: 'ADMIN', value: 'ADMIN' },
+                { text: 'VENDEDOR', value: 'VENDEDOR' },
+                { text: 'MOTORISTA', value: 'MOTORISTA' },
+            ],
+            onFilter: (value, record) => record.acesso.indexOf(value) === 0,
+            render: (acesso) => (
+                <Tag color={acesso === 'ADMIN' ? 'default' : 'blue'}>
+                    {acesso}
+                </Tag>
+            ),
+            width: 150,
+        },
+        {
+            title: 'Comissão',
+            dataIndex: 'comissoes',
+            key: 'comissoes',
+            sorter: (a, b) => a.comissoes - b.comissoes,
+            render: (comissoes) => `${comissoes}%`,
+            align: 'left',
+            width: 150,
+        },
+        {
+            title: 'Status',
+            key: 'statusAcao',
+            width: 150,
+            render: (text, user) => ( 
+                <StatusUsuario
+                    idUsuario={user.idUsuario} 
+                    acesso={user.acesso}
+                    initialStatus={user.status} 
+                    setUpdateKey={handleUpdate} 
+                /> 
+            ),
+            width: 150,
+        },
+    ];
 
     return (
-        <div className="table-responsive pt-3">
-                <DataTable
-                    className="table table-hover mr-0 mt-3 w-100 "
-                    cellspacing="0"
-                    width="100%"
-                    id="dataTable"
-                >                
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Usuário</th>
-                        <th>Acesso</th>
-                        <th className='text-left'>Comissão</th>
-                        <th>Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {usuarios.map((user) => (
-                        <tr key={user.idUsuario}>
-                            <td title={user.idUsuario}>{user.idUsuario.substring(0, 8)}...</td>
-                            <td>{user.username}</td>
-                            <td ><span className={user.acesso === 'ADMIN'?'badge badge-dark':'badge badge-info'}>{user.acesso}</span></td>
-                            <td className='text-left'>{user.comissoes}%</td>
-                            <td>
-                                <StatusUsuario
-                                    idUsuario={user.idUsuario} 
-                                    acesso={user.acesso}
-                                    initialStatus={user.status} 
-                                    setUpdateKey={handleUpdate}
-                                /> 
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </DataTable>
-        </div>
+        <Spin tip="Carregando Usuários..." spinning={loading}>
+            <div className="table-responsive card border border-secondary mb-5">
+                <Table
+                dataSource={usuarios} 
+                columns={columns} 
+                bordered={true}    
+                rowKey="idUsuario"  
+                size="small"
+                pagination={{ 
+                            current: currentPage,
+                            pageSize: pageSize,
+                            showSizeChanger: true, 
+                            pageSizeOptions: ['10', '25', '50', '100'], 
+                            showTotal: (total, range) => `${range[0]}-${range[1]} de ${total} itens`,
+                            className: 'pagination-centered',
+                        }}
+                onChange={(pagination, filters, sorter) => handleTableChange(pagination)}
+                scroll={{ 
+                    y: 450
+                }}
+            />
+            </div>
+        </Spin>
     );
 }

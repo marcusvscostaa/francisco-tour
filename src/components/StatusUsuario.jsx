@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { editarStatusUsuario } from '../FranciscoTourService';
+import {  Tag } from 'antd';
+
 
 const STATUS_USER = {
     ATIVO: { status: 'ATIVO', className: "badge badge-success" },
@@ -11,8 +13,8 @@ const STATUS_USER = {
 export default function StatusUsuario({ idUsuario, acesso, initialStatus, setUpdateKey }) {
 
     const getInitialStatus = (status) => {
-        if(status === 'ATIVO') return { status: 'ATIVO', className: "badge badge-success" }
-        if(status === 'BLOQUEADO') return { status: 'BLOQUEADO', className: "badge badge-danger" }
+        if(status === 'ATIVO') return { status: 'ATIVO', className: "success" }
+        if(status === 'BLOQUEADO') return { status: 'BLOQUEADO', className: "error" }
     };
 
     const tipoAcesso = (tipo) => {
@@ -42,8 +44,8 @@ export default function StatusUsuario({ idUsuario, acesso, initialStatus, setUpd
         <div className="dropdown">
 
             {tipoAcesso(acesso)?<a type="button" data-toggle="dropdown" aria-expanded="false">
-                <span title={statusLocal.status} className={statusLocal.className}>{statusLocal.status}</span>
-            </a>: <span title={statusLocal.status} className={statusLocal.className}>{statusLocal.status}</span>}
+                <Tag title={statusLocal.status} color={statusLocal.className}>{statusLocal.status}</Tag>
+            </a>: <Tag title={statusLocal.status} color={statusLocal.className}>{statusLocal.status}</Tag>}
             {tipoAcesso(acesso)&&<div style={{ minWidth: "40px" }} className="dropdown-menu">
                 
                 <button 

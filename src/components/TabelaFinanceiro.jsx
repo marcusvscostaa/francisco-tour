@@ -1,6 +1,6 @@
 import DataTable from 'datatables.net-react';
 import DT from 'datatables.net-dt';
-import { Table, Tag, Button as AntButton } from 'antd';
+import { Table, Tag } from 'antd';
 import { useState, useEffect, useMemo } from 'react';
 import ModalEstorno from "./ModalEstorno.jsx";
 import { useAuth } from '../context/AuthContext.jsx'; 
@@ -28,7 +28,7 @@ export default function TabelaFinanceiro(props) {
         const calculoEstorno = record.valorEstornoPagoCalculado;
         const saldoDevido = pagamento - valorTotal;
         return saldoDevido > 0 || calculoEstorno > 0?
-        <a title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${record.idR}`}>
+        <a href='' title="Ver Pagamento" data-toggle="modal" className="cpointer" data-target={`#estorno${record.idR}`}>
             { calculoEstorno === 0 && <Tag title='Adicionar Estorno' color='error'>NÃO DEVOLVIDO</Tag>}
             { calculoEstorno < saldoDevido && calculoEstorno > 0 &&<Tag title='Adicionar Estorno'color='warning'>INCOMPLETO</Tag>}
             { calculoEstorno === saldoDevido &&<Tag title='Ver Estorno'color='success'>DEVOLVIDO</Tag>}
@@ -70,7 +70,7 @@ export default function TabelaFinanceiro(props) {
         }
         
         return filtrado;
-    }, [props.reservas, props.vendedorSelecionado, props.filtroBusca, props.dataInicio, props.dataFim,]);
+    }, [props.reservas, props.vendedorSelecionado, props.filtroBusca, props.dataInicio, props.dataFim]);
 
     const columns = useMemo(() => [
         { 

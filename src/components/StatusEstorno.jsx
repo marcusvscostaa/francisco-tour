@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react"
-import axios from "axios";
 import {editStatusEstorno} from "../FranciscoTourService";
 
 const calcularStatusUI = (status) => {
@@ -33,7 +32,7 @@ export default function StatusEstorno(props){
     }
     return (
     <div className="dropdown">
-        <a type="button" data-toggle="dropdown" aria-expanded="false" >
+        <a href=''type="button" data-toggle="dropdown" aria-expanded="false" >
             <i title={statusReserva.status} className={statusReserva.className}></i>
         </a>
         <div style={{ minWidth: "40px" }} className="dropdown-menu dropdown-menu-right">
